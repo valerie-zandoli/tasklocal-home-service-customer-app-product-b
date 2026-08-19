@@ -37,27 +37,46 @@ const DEMO_ACCOUNTS = [
 ];
 
 for (const account of DEMO_ACCOUNTS) {
+  let userId;
+
   const { data: created, error: createError } = await supabase.auth.admin.createUser({
     email: account.email,
     password: account.password,
     email_confirm: true,
   });
 
-  if (createError) {
+  if (!createError) {
+    userId = created.user.id;
+  } else if (/already registered|already exists/i.test(createError.message)) {
+    // Re-running after a previous partial failure (e.g. auth user created
+    // but the profile insert below failed) shouldn't require deleting
+    // anything by hand — look the existing user up and continue.
+    const { data: list, error: listError } = await supabase.auth.admin.listUsers();
+    if (listError) {
+      console.error(`Could not look up existing user ${account.email}:`, listError.message);
+      continue;
+    }
+    const existing = list.users.find((u) => u.email === account.email);
+    if (!existing) {
+      console.error(`${account.email} was reported as already registered but could not be found.`);
+      continue;
+    }
+    userId = existing.id;
+  } else {
     console.error(`Failed to create ${account.email}:`, createError.message);
     continue;
   }
 
-  const { error: profileError } = await supabase.from("customer_profiles").insert({
-    user_id: created.user.id,
-    customer_id: account.customer_id,
-    display_name: account.display_name,
-  });
+  // upsert, not insert: safe to run this script multiple times, e.g. after
+  // fixing a customer_id typo, without manually cleaning up first.
+  const { error: profileError } = await supabase
+    .from("customer_profiles")
+    .upsert({ user_id: userId, customer_id: account.customer_id, display_name: account.display_name });
 
   if (profileError) {
     console.error(`Failed to link profile for ${account.email}:`, profileError.message);
   } else {
-    console.log(`Created ${account.email} -> ${account.customer_id}`);
+    console.log(`Linked ${account.email} -> ${account.customer_id}`);
   }
 }
 
