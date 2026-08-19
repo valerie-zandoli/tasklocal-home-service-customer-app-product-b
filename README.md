@@ -20,9 +20,11 @@ All four products share a common data schema (customers, listings, providers, bo
 
 ## Architecture
 
-- **Frontend** (`frontend/`): plain HTML/CSS/JavaScript (no build step), deployed on Vercel. Works on both desktop and mobile browsers — it's a responsive site, not two separate codebases.
+- **Frontend** (`frontend/`): plain HTML/CSS/JavaScript (no build step), deployed on Vercel. Works on both desktop and mobile browsers — it's a responsive site, not two separate codebases. Supports light and dark mode automatically via `prefers-color-scheme`.
 - **Backend** (`backend/`): PostgreSQL via Supabase. `backend/schema.sql` defines the tables (matching the team's shared data schema exactly) and Row Level Security policies. `backend/seed_data.sql` loads the team's synthetic dataset. JSON copies of the same data live in `backend/data/` and `frontend/data/` (the frontend copies are used as a local fallback — see "Run it locally" below).
 - Auth is Supabase Auth (email + password). Four demo accounts (Valerie, Joan, Lady D, Sarah) are seeded via `backend/scripts/seed-demo-users.mjs` so the whole team can log in and click through without setting up their own accounts.
+- Shared pure logic (HTML-escaping, listing filters) lives in `frontend/js/utils.js` rather than being copy-pasted per page, and is unit-tested in `frontend/js/utils.test.mjs`.
+- **Current status: this project is presented in local demo mode, not deployed against a live Supabase project** — there's no current intention to load live data. Section 2 below is written for if/when that changes; skip straight to Section 1 for how this actually runs today.
 
 ## Data quality note
 
@@ -40,10 +42,11 @@ The synthetic `bookings.csv` from the team's shared dataset references 42 `listi
 - Demo account passwords in `frontend/js/demo-users.js` are the **real** passwords for the matching Supabase Auth accounts once you run `seed-demo-users.mjs`, tied to teammates' real `@pursuit.org` addresses — they're shipped in a public JS file by design, for a class demo with synthetic data. Rotate these (or use different, throwaway passwords) before this project ever holds real user data, since a public repo + a real email + a written password is a real credential-reuse risk if anyone reuses that password elsewhere.
 - The email/password `<input>`s on `login.html` intentionally have no `name` attribute (the JS reads them by `id`) — with a `name`, a browser falling back to native form submission (JS blocked or failed to load) would leak the password into the URL as a GET query string.
 
-## Known limitations (not yet fixed, flagged for awareness)
+## Known limitations
 
-- No automated integration test exists against a **real** Supabase project (RLS policies and the pricing/status triggers are reviewed by reading the SQL, not by running it against live Postgres) — `frontend/js/api.test.mjs` covers the pure pricing/id logic only. Worth a manual smoke test against your own Supabase project before trusting the RLS fixes in practice.
+- `backend/schema.sql`'s RLS policies and triggers are written for a real Supabase/Postgres deployment but haven't been exercised against one — there's no live Supabase project for this presentation, so `frontend/js/api.test.mjs` and `utils.test.mjs` (pure logic only) are the tests that actually run today. If this project is ever deployed for real, run the "Real Supabase mode only" checklist item below first.
 - No slot-locking: booking a time doesn't remove it from a listing's `availability_slots`, so two customers could still pick the same slot. `booking_schedules` (see `backend/schema.sql`) now at least *records* which slot each customer picked — it previously wasn't stored anywhere at all.
+- `booking_schedules` and the removal of `chatbot_requests.customer_id` are decisions Product B made locally, not yet confirmed with Products A/C/D — worth a quick team sync before the joint presentation, since integration is coming up.
 
 ---
 
@@ -60,7 +63,7 @@ python3 -m http.server 8901
 
 Open `http://localhost:8901` in a browser, and log in with one of the four demo buttons on the login screen (Valerie / Joan / Lady D / Sarah — click a name to auto-fill the email and password).
 
-### 2. Set up the real backend (Supabase)
+### 2. Set up the real backend (Supabase) — optional, not needed for the current presentation
 
 1. Create a free project at [supabase.com](https://supabase.com).
 2. In the Supabase dashboard, open the **SQL Editor** and run, in order: `backend/schema.sql`, then `backend/seed_data.sql`, then `backend/seed_demo_bookings.sql` (gives the 4 demo accounts a mix of pending/confirmed/completed bookings to click through instead of an empty screen).
@@ -93,9 +96,9 @@ Reload the frontend and it will now talk to your real Supabase database instead 
 ### 4. Run the automated tests
 
 ```bash
-node --test frontend/js/api.test.mjs
+node --test frontend/js/*.test.mjs
 ```
-Covers the pricing/booking-id logic (Node 20+; see the note at the top of that file). This does **not** cover the RLS policies or triggers — those need a real Supabase project (see "Known limitations" above).
+Covers the pricing/booking-id logic and the shared `escapeHtml`/`filterListings` helpers (Node 20+; see the note at the top of each test file). This does **not** cover the RLS policies or triggers — those need a real Supabase project (see "Known limitations" above).
 
 ### 5. Testing checklist before you call it done
 
@@ -105,5 +108,6 @@ Covers the pricing/booking-id logic (Node 20+; see the note at the top of that f
 - [ ] Confirm a completed booking can be rated 1–5 and the rating persists.
 - [ ] Log out and confirm you're redirected to the login screen, and that visiting `listings.html` directly while logged out redirects you back to login.
 - [ ] Resize the browser to a phone width and confirm the layout still reads cleanly.
+- [ ] Switch your OS/browser to dark mode and confirm text stays readable (status pills, badges, buttons all have dark-mode colors defined in `frontend/css/styles.css`).
 - [ ] (Real Supabase mode only) As a signed-in customer, try updating a booking's `total_cost` or `booking_status` via a direct `supabase.from('bookings').update(...)` call in the browser console — it should be rejected by `bookings_protect_update`.
 
