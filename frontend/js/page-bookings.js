@@ -1,5 +1,6 @@
 import { fetchMyBookings, rateBooking } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
+import { escapeHtml } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -8,12 +9,6 @@ if (session) {
   const listEl = document.getElementById("bookings-list");
   const emptyState = document.getElementById("empty-state");
   const bookingsError = document.getElementById("bookings-error");
-
-  function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str == null ? "" : str;
-    return div.innerHTML;
-  }
 
   function formatSlot(iso) {
     if (!iso) return null;

@@ -1,5 +1,6 @@
 import { fetchListing, createBooking } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
+import { escapeHtml } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -8,12 +9,6 @@ if (session) {
   const container = document.getElementById("listing-detail");
   const params = new URLSearchParams(window.location.search);
   const listingId = params.get("id");
-
-  function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
-  }
 
   function formatSlot(iso) {
     try {

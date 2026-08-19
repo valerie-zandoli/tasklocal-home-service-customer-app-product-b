@@ -1,4 +1,5 @@
 import { getSession, logout } from "./api.js";
+import { escapeHtml } from "./utils.js";
 
 export async function requireSession() {
   const session = await getSession();
@@ -7,12 +8,6 @@ export async function requireSession() {
     return null;
   }
   return session;
-}
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str == null ? "" : str;
-  return div.innerHTML;
 }
 
 export function renderNav(session, activePage) {
