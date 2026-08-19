@@ -1,0 +1,408 @@
+[
+  {
+    "booking_id": "bkg_237871",
+    "customer_id": "cust_80863",
+    "listing_id": "lst_333840",
+    "booking_status": "completed",
+    "total_cost": 152.88
+  },
+  {
+    "booking_id": "bkg_786170",
+    "customer_id": "cust_04025",
+    "listing_id": "lst_761747",
+    "booking_status": "draft",
+    "total_cost": 45.02
+  },
+  {
+    "booking_id": "bkg_919087",
+    "customer_id": "cust_78424",
+    "listing_id": "lst_451505",
+    "booking_status": "pending",
+    "total_cost": 159.79
+  },
+  {
+    "booking_id": "bkg_938516",
+    "customer_id": "cust_02683",
+    "listing_id": "lst_214104",
+    "booking_status": "pending",
+    "total_cost": 68.18
+  },
+  {
+    "booking_id": "bkg_720423",
+    "customer_id": "cust_20059",
+    "listing_id": "lst_402426",
+    "booking_status": "completed",
+    "total_cost": 57.96
+  },
+  {
+    "booking_id": "bkg_687152",
+    "customer_id": "cust_35270",
+    "listing_id": "lst_571542",
+    "booking_status": "completed",
+    "total_cost": 146.53
+  },
+  {
+    "booking_id": "bkg_180549",
+    "customer_id": "cust_81044",
+    "listing_id": "lst_812685",
+    "booking_status": "confirmed",
+    "total_cost": 144.88
+  },
+  {
+    "booking_id": "bkg_877320",
+    "customer_id": "cust_99767",
+    "listing_id": "lst_598284",
+    "booking_status": "completed",
+    "total_cost": 132.24
+  },
+  {
+    "booking_id": "bkg_116860",
+    "customer_id": "cust_45592",
+    "listing_id": "lst_466589",
+    "booking_status": "draft",
+    "total_cost": 142.96
+  },
+  {
+    "booking_id": "bkg_017107",
+    "customer_id": "cust_29802",
+    "listing_id": "lst_667686",
+    "booking_status": "pending",
+    "total_cost": 133.58
+  },
+  {
+    "booking_id": "bkg_690590",
+    "customer_id": "cust_83481",
+    "listing_id": "lst_648949",
+    "booking_status": "completed",
+    "total_cost": 74.97
+  },
+  {
+    "booking_id": "bkg_434392",
+    "customer_id": "cust_19388",
+    "listing_id": "lst_340814",
+    "booking_status": "draft",
+    "total_cost": 149.17
+  },
+  {
+    "booking_id": "bkg_224502",
+    "customer_id": "cust_59807",
+    "listing_id": "lst_451505",
+    "booking_status": "pending",
+    "total_cost": 168.83
+  },
+  {
+    "booking_id": "bkg_953132",
+    "customer_id": "cust_80824",
+    "listing_id": "lst_942108",
+    "booking_status": "draft",
+    "total_cost": 117.09
+  },
+  {
+    "booking_id": "bkg_092873",
+    "customer_id": "cust_13982",
+    "listing_id": "lst_214104",
+    "booking_status": "pending",
+    "total_cost": 67.01
+  },
+  {
+    "booking_id": "bkg_895100",
+    "customer_id": "cust_22675",
+    "listing_id": "lst_532902",
+    "booking_status": "draft",
+    "total_cost": 79.69
+  },
+  {
+    "booking_id": "bkg_368318",
+    "customer_id": "cust_45592",
+    "listing_id": "lst_571542",
+    "booking_status": "draft",
+    "total_cost": 152.38
+  },
+  {
+    "booking_id": "bkg_978893",
+    "customer_id": "cust_36414",
+    "listing_id": "lst_462948",
+    "booking_status": "confirmed",
+    "total_cost": 43.85
+  },
+  {
+    "booking_id": "bkg_397464",
+    "customer_id": "cust_49550",
+    "listing_id": "lst_214104",
+    "booking_status": "completed",
+    "total_cost": 68.46
+  },
+  {
+    "booking_id": "bkg_661430",
+    "customer_id": "cust_29883",
+    "listing_id": "lst_720351",
+    "booking_status": "pending",
+    "total_cost": 30.5
+  },
+  {
+    "booking_id": "bkg_103798",
+    "customer_id": "cust_69714",
+    "listing_id": "lst_185571",
+    "booking_status": "confirmed",
+    "total_cost": 73.92
+  },
+  {
+    "booking_id": "bkg_875724",
+    "customer_id": "cust_27133",
+    "listing_id": "lst_812685",
+    "booking_status": "draft",
+    "total_cost": 144.19
+  },
+  {
+    "booking_id": "bkg_138109",
+    "customer_id": "cust_23708",
+    "listing_id": "lst_870685",
+    "booking_status": "confirmed",
+    "total_cost": 90.74
+  },
+  {
+    "booking_id": "bkg_409181",
+    "customer_id": "cust_40957",
+    "listing_id": "lst_333840",
+    "booking_status": "pending",
+    "total_cost": 151.77
+  },
+  {
+    "booking_id": "bkg_677222",
+    "customer_id": "cust_02683",
+    "listing_id": "lst_462948",
+    "booking_status": "confirmed",
+    "total_cost": 45.8
+  },
+  {
+    "booking_id": "bkg_134266",
+    "customer_id": "cust_99767",
+    "listing_id": "lst_845474",
+    "booking_status": "draft",
+    "total_cost": 146.11
+  },
+  {
+    "booking_id": "bkg_208334",
+    "customer_id": "cust_36414",
+    "listing_id": "lst_183751",
+    "booking_status": "draft",
+    "total_cost": 139.31
+  },
+  {
+    "booking_id": "bkg_183424",
+    "customer_id": "cust_29802",
+    "listing_id": "lst_351396",
+    "booking_status": "confirmed",
+    "total_cost": 142.47
+  },
+  {
+    "booking_id": "bkg_596952",
+    "customer_id": "cust_03049",
+    "listing_id": "lst_444411",
+    "booking_status": "confirmed",
+    "total_cost": 150.15
+  },
+  {
+    "booking_id": "bkg_981494",
+    "customer_id": "cust_45424",
+    "listing_id": "lst_466589",
+    "booking_status": "completed",
+    "total_cost": 143.09
+  },
+  {
+    "booking_id": "bkg_951253",
+    "customer_id": "cust_39903",
+    "listing_id": "lst_183751",
+    "booking_status": "confirmed",
+    "total_cost": 138.61
+  },
+  {
+    "booking_id": "bkg_602166",
+    "customer_id": "cust_27133",
+    "listing_id": "lst_462948",
+    "booking_status": "completed",
+    "total_cost": 43.83
+  },
+  {
+    "booking_id": "bkg_279808",
+    "customer_id": "cust_03049",
+    "listing_id": "lst_021964",
+    "booking_status": "confirmed",
+    "total_cost": 112.14
+  },
+  {
+    "booking_id": "bkg_608194",
+    "customer_id": "cust_45592",
+    "listing_id": "lst_351396",
+    "booking_status": "completed",
+    "total_cost": 148.27
+  },
+  {
+    "booking_id": "bkg_049445",
+    "customer_id": "cust_28712",
+    "listing_id": "lst_571542",
+    "booking_status": "confirmed",
+    "total_cost": 146.75
+  },
+  {
+    "booking_id": "bkg_351880",
+    "customer_id": "cust_71452",
+    "listing_id": "lst_648949",
+    "booking_status": "completed",
+    "total_cost": 73.7
+  },
+  {
+    "booking_id": "bkg_497285",
+    "customer_id": "cust_90854",
+    "listing_id": "lst_133260",
+    "booking_status": "completed",
+    "total_cost": 144.2
+  },
+  {
+    "booking_id": "bkg_217888",
+    "customer_id": "cust_49418",
+    "listing_id": "lst_512141",
+    "booking_status": "completed",
+    "total_cost": 70.84
+  },
+  {
+    "booking_id": "bkg_172579",
+    "customer_id": "cust_95956",
+    "listing_id": "lst_362174",
+    "booking_status": "confirmed",
+    "total_cost": 42.57
+  },
+  {
+    "booking_id": "bkg_862284",
+    "customer_id": "cust_23623",
+    "listing_id": "lst_243549",
+    "booking_status": "confirmed",
+    "total_cost": 33.42
+  },
+  {
+    "booking_id": "bkg_103930",
+    "customer_id": "cust_19388",
+    "listing_id": "lst_942108",
+    "booking_status": "pending",
+    "total_cost": 114.96
+  },
+  {
+    "booking_id": "bkg_517714",
+    "customer_id": "cust_92171",
+    "listing_id": "lst_512141",
+    "booking_status": "confirmed",
+    "total_cost": 69.61
+  },
+  {
+    "booking_id": "bkg_057987",
+    "customer_id": "cust_32763",
+    "listing_id": "lst_483733",
+    "booking_status": "draft",
+    "total_cost": 127.69
+  },
+  {
+    "booking_id": "bkg_728315",
+    "customer_id": "cust_19015",
+    "listing_id": "lst_582775",
+    "booking_status": "draft",
+    "total_cost": 24.22
+  },
+  {
+    "booking_id": "bkg_945546",
+    "customer_id": "cust_59807",
+    "listing_id": "lst_870685",
+    "booking_status": "completed",
+    "total_cost": 89.77
+  },
+  {
+    "booking_id": "bkg_719802",
+    "customer_id": "cust_11653",
+    "listing_id": "lst_750016",
+    "booking_status": "completed",
+    "total_cost": 75.18
+  },
+  {
+    "booking_id": "bkg_660643",
+    "customer_id": "cust_62102",
+    "listing_id": "lst_675304",
+    "booking_status": "confirmed",
+    "total_cost": 89.39
+  },
+  {
+    "booking_id": "bkg_272042",
+    "customer_id": "cust_53749",
+    "listing_id": "lst_333840",
+    "booking_status": "pending",
+    "total_cost": 149.37
+  },
+  {
+    "booking_id": "bkg_649208",
+    "customer_id": "cust_68759",
+    "listing_id": "lst_812685",
+    "booking_status": "confirmed",
+    "total_cost": 149.51
+  },
+  {
+    "booking_id": "bkg_418801",
+    "customer_id": "cust_23885",
+    "listing_id": "lst_582775",
+    "booking_status": "confirmed",
+    "total_cost": 26.08
+  },
+  {
+    "booking_id": "bkg_876716",
+    "customer_id": "cust_70220",
+    "listing_id": "lst_065933",
+    "booking_status": "pending",
+    "total_cost": 145.65
+  },
+  {
+    "booking_id": "bkg_729856",
+    "customer_id": "cust_01312",
+    "listing_id": "lst_845474",
+    "booking_status": "confirmed",
+    "total_cost": 153.38
+  },
+  {
+    "booking_id": "bkg_466188",
+    "customer_id": "cust_20223",
+    "listing_id": "lst_589443",
+    "booking_status": "draft",
+    "total_cost": 27.88
+  },
+  {
+    "booking_id": "bkg_544173",
+    "customer_id": "cust_23623",
+    "listing_id": "lst_942108",
+    "booking_status": "draft",
+    "total_cost": 109.58
+  },
+  {
+    "booking_id": "bkg_564388",
+    "customer_id": "cust_01389",
+    "listing_id": "lst_333840",
+    "booking_status": "confirmed",
+    "total_cost": 157.6
+  },
+  {
+    "booking_id": "bkg_467172",
+    "customer_id": "cust_06505",
+    "listing_id": "lst_362174",
+    "booking_status": "completed",
+    "total_cost": 43.0
+  },
+  {
+    "booking_id": "bkg_619347",
+    "customer_id": "cust_94236",
+    "listing_id": "lst_870685",
+    "booking_status": "pending",
+    "total_cost": 89.18
+  },
+  {
+    "booking_id": "bkg_985746",
+    "customer_id": "cust_66195",
+    "listing_id": "lst_598284",
+    "booking_status": "completed",
+    "total_cost": 125.61
+  }
+]

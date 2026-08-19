@@ -1,0 +1,402 @@
+[
+  {
+    "customer_id": "cust_60227",
+    "signup_date": "2025-07-12"
+  },
+  {
+    "customer_id": "cust_04025",
+    "signup_date": "2024-01-28"
+  },
+  {
+    "customer_id": "cust_57744",
+    "signup_date": "2024-10-11"
+  },
+  {
+    "customer_id": "cust_80863",
+    "signup_date": "2024-06-08"
+  },
+  {
+    "customer_id": "cust_27133",
+    "signup_date": "2024-12-18"
+  },
+  {
+    "customer_id": "cust_68759",
+    "signup_date": "2025-01-22"
+  },
+  {
+    "customer_id": "cust_02683",
+    "signup_date": "2024-07-15"
+  },
+  {
+    "customer_id": "cust_70220",
+    "signup_date": "2024-08-26"
+  },
+  {
+    "customer_id": "cust_83481",
+    "signup_date": "2024-12-29"
+  },
+  {
+    "customer_id": "cust_22966",
+    "signup_date": "2024-06-24"
+  },
+  {
+    "customer_id": "cust_52429",
+    "signup_date": "2025-07-24"
+  },
+  {
+    "customer_id": "cust_23708",
+    "signup_date": "2024-11-19"
+  },
+  {
+    "customer_id": "cust_40957",
+    "signup_date": "2024-08-05"
+  },
+  {
+    "customer_id": "cust_63942",
+    "signup_date": "2024-09-09"
+  },
+  {
+    "customer_id": "cust_75745",
+    "signup_date": "2025-01-05"
+  },
+  {
+    "customer_id": "cust_29500",
+    "signup_date": "2024-04-22"
+  },
+  {
+    "customer_id": "cust_11653",
+    "signup_date": "2025-04-24"
+  },
+  {
+    "customer_id": "cust_59807",
+    "signup_date": "2025-07-03"
+  },
+  {
+    "customer_id": "cust_77321",
+    "signup_date": "2024-01-04"
+  },
+  {
+    "customer_id": "cust_98251",
+    "signup_date": "2024-04-18"
+  },
+  {
+    "customer_id": "cust_82661",
+    "signup_date": "2024-06-14"
+  },
+  {
+    "customer_id": "cust_57503",
+    "signup_date": "2024-01-20"
+  },
+  {
+    "customer_id": "cust_13982",
+    "signup_date": "2024-09-03"
+  },
+  {
+    "customer_id": "cust_89040",
+    "signup_date": "2025-06-29"
+  },
+  {
+    "customer_id": "cust_71452",
+    "signup_date": "2025-03-09"
+  },
+  {
+    "customer_id": "cust_99767",
+    "signup_date": "2025-02-12"
+  },
+  {
+    "customer_id": "cust_96451",
+    "signup_date": "2024-08-18"
+  },
+  {
+    "customer_id": "cust_00550",
+    "signup_date": "2024-03-01"
+  },
+  {
+    "customer_id": "cust_29802",
+    "signup_date": "2025-05-12"
+  },
+  {
+    "customer_id": "cust_21954",
+    "signup_date": "2025-04-29"
+  },
+  {
+    "customer_id": "cust_81044",
+    "signup_date": "2025-04-23"
+  },
+  {
+    "customer_id": "cust_80660",
+    "signup_date": "2024-12-13"
+  },
+  {
+    "customer_id": "cust_81151",
+    "signup_date": "2024-07-06"
+  },
+  {
+    "customer_id": "cust_22948",
+    "signup_date": "2025-07-17"
+  },
+  {
+    "customer_id": "cust_06500",
+    "signup_date": "2024-08-30"
+  },
+  {
+    "customer_id": "cust_14240",
+    "signup_date": "2025-01-23"
+  },
+  {
+    "customer_id": "cust_03972",
+    "signup_date": "2025-07-23"
+  },
+  {
+    "customer_id": "cust_64120",
+    "signup_date": "2025-07-09"
+  },
+  {
+    "customer_id": "cust_03049",
+    "signup_date": "2025-06-27"
+  },
+  {
+    "customer_id": "cust_19015",
+    "signup_date": "2024-08-28"
+  },
+  {
+    "customer_id": "cust_49550",
+    "signup_date": "2024-03-24"
+  },
+  {
+    "customer_id": "cust_45592",
+    "signup_date": "2024-11-17"
+  },
+  {
+    "customer_id": "cust_23623",
+    "signup_date": "2024-03-15"
+  },
+  {
+    "customer_id": "cust_06505",
+    "signup_date": "2025-06-02"
+  },
+  {
+    "customer_id": "cust_29883",
+    "signup_date": "2024-06-10"
+  },
+  {
+    "customer_id": "cust_45398",
+    "signup_date": "2025-06-25"
+  },
+  {
+    "customer_id": "cust_08269",
+    "signup_date": "2024-05-17"
+  },
+  {
+    "customer_id": "cust_28712",
+    "signup_date": "2024-08-03"
+  },
+  {
+    "customer_id": "cust_72624",
+    "signup_date": "2024-02-22"
+  },
+  {
+    "customer_id": "cust_04207",
+    "signup_date": "2024-09-25"
+  },
+  {
+    "customer_id": "cust_14751",
+    "signup_date": "2024-06-01"
+  },
+  {
+    "customer_id": "cust_58511",
+    "signup_date": "2024-11-11"
+  },
+  {
+    "customer_id": "cust_39903",
+    "signup_date": "2024-09-12"
+  },
+  {
+    "customer_id": "cust_63589",
+    "signup_date": "2024-06-07"
+  },
+  {
+    "customer_id": "cust_92171",
+    "signup_date": "2025-02-26"
+  },
+  {
+    "customer_id": "cust_07398",
+    "signup_date": "2024-09-11"
+  },
+  {
+    "customer_id": "cust_27188",
+    "signup_date": "2024-08-15"
+  },
+  {
+    "customer_id": "cust_19388",
+    "signup_date": "2024-08-16"
+  },
+  {
+    "customer_id": "cust_01389",
+    "signup_date": "2024-10-12"
+  },
+  {
+    "customer_id": "cust_35683",
+    "signup_date": "2024-01-29"
+  },
+  {
+    "customer_id": "cust_19192",
+    "signup_date": "2024-04-21"
+  },
+  {
+    "customer_id": "cust_53749",
+    "signup_date": "2024-04-28"
+  },
+  {
+    "customer_id": "cust_35270",
+    "signup_date": "2025-07-05"
+  },
+  {
+    "customer_id": "cust_69714",
+    "signup_date": "2024-12-04"
+  },
+  {
+    "customer_id": "cust_66195",
+    "signup_date": "2025-02-22"
+  },
+  {
+    "customer_id": "cust_36516",
+    "signup_date": "2025-01-23"
+  },
+  {
+    "customer_id": "cust_69635",
+    "signup_date": "2024-01-01"
+  },
+  {
+    "customer_id": "cust_32763",
+    "signup_date": "2025-03-28"
+  },
+  {
+    "customer_id": "cust_42497",
+    "signup_date": "2024-06-22"
+  },
+  {
+    "customer_id": "cust_62660",
+    "signup_date": "2024-08-28"
+  },
+  {
+    "customer_id": "cust_62102",
+    "signup_date": "2025-05-01"
+  },
+  {
+    "customer_id": "cust_67485",
+    "signup_date": "2025-01-28"
+  },
+  {
+    "customer_id": "cust_42607",
+    "signup_date": "2024-04-19"
+  },
+  {
+    "customer_id": "cust_72864",
+    "signup_date": "2025-07-24"
+  },
+  {
+    "customer_id": "cust_28486",
+    "signup_date": "2025-07-26"
+  },
+  {
+    "customer_id": "cust_59867",
+    "signup_date": "2025-05-31"
+  },
+  {
+    "customer_id": "cust_49418",
+    "signup_date": "2025-04-05"
+  },
+  {
+    "customer_id": "cust_22675",
+    "signup_date": "2024-09-01"
+  },
+  {
+    "customer_id": "cust_20223",
+    "signup_date": "2025-07-07"
+  },
+  {
+    "customer_id": "cust_01312",
+    "signup_date": "2025-02-28"
+  },
+  {
+    "customer_id": "cust_45424",
+    "signup_date": "2025-08-21"
+  },
+  {
+    "customer_id": "cust_90854",
+    "signup_date": "2024-12-26"
+  },
+  {
+    "customer_id": "cust_23885",
+    "signup_date": "2025-07-13"
+  },
+  {
+    "customer_id": "cust_78424",
+    "signup_date": "2025-02-02"
+  },
+  {
+    "customer_id": "cust_36414",
+    "signup_date": "2024-05-10"
+  },
+  {
+    "customer_id": "cust_95956",
+    "signup_date": "2024-03-26"
+  },
+  {
+    "customer_id": "cust_61403",
+    "signup_date": "2024-08-04"
+  },
+  {
+    "customer_id": "cust_43829",
+    "signup_date": "2025-03-07"
+  },
+  {
+    "customer_id": "cust_20059",
+    "signup_date": "2024-12-24"
+  },
+  {
+    "customer_id": "cust_20900",
+    "signup_date": "2024-09-10"
+  },
+  {
+    "customer_id": "cust_10116",
+    "signup_date": "2025-07-31"
+  },
+  {
+    "customer_id": "cust_94236",
+    "signup_date": "2024-04-27"
+  },
+  {
+    "customer_id": "cust_71359",
+    "signup_date": "2025-08-12"
+  },
+  {
+    "customer_id": "cust_69370",
+    "signup_date": "2024-09-05"
+  },
+  {
+    "customer_id": "cust_17861",
+    "signup_date": "2025-08-02"
+  },
+  {
+    "customer_id": "cust_73435",
+    "signup_date": "2024-12-15"
+  },
+  {
+    "customer_id": "cust_04443",
+    "signup_date": "2025-04-15"
+  },
+  {
+    "customer_id": "cust_74792",
+    "signup_date": "2025-07-05"
+  },
+  {
+    "customer_id": "cust_74853",
+    "signup_date": "2024-09-08"
+  },
+  {
+    "customer_id": "cust_80824",
+    "signup_date": "2025-01-23"
+  }
+]

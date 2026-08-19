@@ -1,0 +1,11 @@
+{
+  "name": "tasklocal-product-b-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed:users": "node scripts/seed-demo-users.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

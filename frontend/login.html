@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Log in · TaskLocal Home-Service</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-card">
+      <h1>TaskLocal Home-Service</h1>
+      <p class="subtitle">Sign in to browse and book local home services.</p>
+
+      <form id="login-form" novalidate>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="username" required />
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+
+        <button class="primary" type="submit">Log in</button>
+        <p class="error-text" id="error-text"></p>
+      </form>
+
+      <div class="demo-accounts">
+        <p>Demo accounts (click to fill in):</p>
+        <div class="demo-grid" id="demo-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script type="module" src="js/page-login.js"></script>
+</body>
+</html>

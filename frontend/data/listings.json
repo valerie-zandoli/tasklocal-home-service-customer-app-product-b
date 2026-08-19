@@ -1,0 +1,690 @@
+[
+  {
+    "listing_id": "lst_343432",
+    "provider_id": "prov_25855",
+    "title": "Move-Out Cleaning",
+    "service_type": "cleaning",
+    "description": "Standard weekly house cleaning service.",
+    "hourly_rate": 83.52,
+    "availability_slots": [
+      "2026-10-03T15:00:00Z",
+      "2026-09-30T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_402426",
+    "provider_id": "prov_35395",
+    "title": "Furniture Moving Assistance",
+    "service_type": "moving",
+    "description": "Furniture moving and heavy lifting assistance.",
+    "hourly_rate": 52.68,
+    "availability_slots": [
+      "2026-10-05T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_379617",
+    "provider_id": "prov_25759",
+    "title": "Weekly House Cleaning",
+    "service_type": "cleaning",
+    "description": "Full apartment deep clean including kitchen and bathrooms.",
+    "hourly_rate": 59.29,
+    "availability_slots": [
+      "2026-08-28T13:00:00Z",
+      "2026-08-22T09:00:00Z",
+      "2026-09-24T13:00:00Z",
+      "2026-10-03T11:00:00Z",
+      "2026-09-29T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_102439",
+    "provider_id": "prov_28104",
+    "title": "General Handyman Repairs",
+    "service_type": "handyman",
+    "description": "Small repairs including drywall patching and furniture assembly.",
+    "hourly_rate": 39.4,
+    "availability_slots": [
+      "2026-09-08T09:00:00Z",
+      "2026-09-04T09:00:00Z",
+      "2026-09-24T15:00:00Z",
+      "2026-09-27T11:00:00Z",
+      "2026-10-08T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_448936",
+    "provider_id": "prov_67922",
+    "title": "Deep Apartment Cleaning",
+    "service_type": "cleaning",
+    "description": "Full apartment deep clean including kitchen and bathrooms.",
+    "hourly_rate": 91.76,
+    "availability_slots": [
+      "2026-08-20T15:00:00Z",
+      "2026-09-17T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_227746",
+    "provider_id": "prov_97669",
+    "title": "Deep Apartment Cleaning",
+    "service_type": "cleaning",
+    "description": "Move-out cleaning for rental apartments.",
+    "hourly_rate": 39.37,
+    "availability_slots": [
+      "2026-10-11T11:00:00Z",
+      "2026-08-24T09:00:00Z",
+      "2026-08-30T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_589443",
+    "provider_id": "prov_42545",
+    "title": "Truck Loading Help",
+    "service_type": "moving",
+    "description": "Furniture moving and heavy lifting assistance.",
+    "hourly_rate": 23.36,
+    "availability_slots": [
+      "2026-10-02T09:00:00Z",
+      "2026-10-07T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_571542",
+    "provider_id": "prov_94894",
+    "title": "Small Home Repairs",
+    "service_type": "handyman",
+    "description": "Small repairs including drywall patching and furniture assembly.",
+    "hourly_rate": 131.51,
+    "availability_slots": [
+      "2026-09-15T15:00:00Z",
+      "2026-09-07T15:00:00Z",
+      "2026-10-11T09:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_433945",
+    "provider_id": "prov_96541",
+    "title": "Furniture Moving Assistance",
+    "service_type": "moving",
+    "description": "Loading and unloading moving trucks.",
+    "hourly_rate": 77.47,
+    "availability_slots": [
+      "2026-09-02T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_594619",
+    "provider_id": "prov_62155",
+    "title": "Deep Apartment Cleaning",
+    "service_type": "cleaning",
+    "description": "Standard weekly house cleaning service.",
+    "hourly_rate": 143.12,
+    "availability_slots": [
+      "2026-09-20T13:00:00Z",
+      "2026-09-21T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_444411",
+    "provider_id": "prov_57107",
+    "title": "Small Home Repairs",
+    "service_type": "handyman",
+    "description": "General handyman services for minor home repairs.",
+    "hourly_rate": 126.67,
+    "availability_slots": [
+      "2026-10-05T13:00:00Z",
+      "2026-10-12T15:00:00Z",
+      "2026-10-14T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_443739",
+    "provider_id": "prov_89238",
+    "title": "Move-Out Cleaning",
+    "service_type": "cleaning",
+    "description": "Standard weekly house cleaning service.",
+    "hourly_rate": 111.68,
+    "availability_slots": [
+      "2026-09-13T11:00:00Z",
+      "2026-09-20T09:00:00Z",
+      "2026-08-28T13:00:00Z",
+      "2026-10-14T09:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_845474",
+    "provider_id": "prov_61493",
+    "title": "General Handyman Repairs",
+    "service_type": "handyman",
+    "description": "General handyman services for minor home repairs.",
+    "hourly_rate": 130.8,
+    "availability_slots": [
+      "2026-09-13T13:00:00Z",
+      "2026-09-29T15:00:00Z",
+      "2026-10-14T09:00:00Z",
+      "2026-09-28T09:00:00Z",
+      "2026-09-04T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_974068",
+    "provider_id": "prov_46907",
+    "title": "Furniture Assembly & Mounting",
+    "service_type": "handyman",
+    "description": "Small repairs including drywall patching and furniture assembly.",
+    "hourly_rate": 51.75,
+    "availability_slots": [
+      "2026-09-25T11:00:00Z",
+      "2026-08-30T11:00:00Z",
+      "2026-08-25T15:00:00Z",
+      "2026-09-28T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_452646",
+    "provider_id": "prov_84250",
+    "title": "Garage Cleanout",
+    "service_type": "custom",
+    "description": "Miscellaneous home project support.",
+    "hourly_rate": 145.06,
+    "availability_slots": [
+      "2026-09-18T13:00:00Z",
+      "2026-09-01T15:00:00Z",
+      "2026-10-13T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_133260",
+    "provider_id": "prov_83087",
+    "title": "Miscellaneous Task Help",
+    "service_type": "custom",
+    "description": "Garage cleanout and organization.",
+    "hourly_rate": 128.27,
+    "availability_slots": [
+      "2026-10-08T11:00:00Z",
+      "2026-09-27T13:00:00Z",
+      "2026-09-03T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_667686",
+    "provider_id": "prov_96345",
+    "title": "Weekly House Cleaning",
+    "service_type": "cleaning",
+    "description": "Standard weekly house cleaning service.",
+    "hourly_rate": 117.17,
+    "availability_slots": [
+      "2026-09-01T11:00:00Z",
+      "2026-10-09T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_598284",
+    "provider_id": "prov_87319",
+    "title": "Local Moving Help",
+    "service_type": "moving",
+    "description": "Loading and unloading moving trucks.",
+    "hourly_rate": 114.15,
+    "availability_slots": [
+      "2026-10-13T13:00:00Z",
+      "2026-08-25T15:00:00Z",
+      "2026-08-20T13:00:00Z",
+      "2026-09-23T09:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_466589",
+    "provider_id": "prov_12085",
+    "title": "Deep Apartment Cleaning",
+    "service_type": "cleaning",
+    "description": "Move-out cleaning for rental apartments.",
+    "hourly_rate": 127.1,
+    "availability_slots": [
+      "2026-09-30T15:00:00Z",
+      "2026-08-27T11:00:00Z",
+      "2026-08-22T09:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_340814",
+    "provider_id": "prov_67947",
+    "title": "Miscellaneous Task Help",
+    "service_type": "custom",
+    "description": "Custom job tailored to specific customer needs.",
+    "hourly_rate": 128.38,
+    "availability_slots": [
+      "2026-09-15T13:00:00Z",
+      "2026-08-22T13:00:00Z",
+      "2026-09-02T15:00:00Z",
+      "2026-09-17T11:00:00Z",
+      "2026-10-13T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_065933",
+    "provider_id": "prov_11846",
+    "title": "General Handyman Repairs",
+    "service_type": "handyman",
+    "description": "Small repairs including drywall patching and furniture assembly.",
+    "hourly_rate": 122.28,
+    "availability_slots": [
+      "2026-08-28T11:00:00Z",
+      "2026-08-24T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_582775",
+    "provider_id": "prov_29957",
+    "title": "Local Moving Help",
+    "service_type": "moving",
+    "description": "Local moving help for apartments and small homes.",
+    "hourly_rate": 21.93,
+    "availability_slots": [
+      "2026-09-26T13:00:00Z",
+      "2026-08-21T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_214104",
+    "provider_id": "prov_35426",
+    "title": "Truck Loading Help",
+    "service_type": "moving",
+    "description": "Loading and unloading moving trucks.",
+    "hourly_rate": 59.21,
+    "availability_slots": [
+      "2026-08-23T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_841748",
+    "provider_id": "prov_31165",
+    "title": "Move-Out Cleaning",
+    "service_type": "cleaning",
+    "description": "Move-out cleaning for rental apartments.",
+    "hourly_rate": 58.34,
+    "availability_slots": [
+      "2026-09-27T15:00:00Z",
+      "2026-08-26T09:00:00Z",
+      "2026-10-13T11:00:00Z",
+      "2026-09-16T15:00:00Z",
+      "2026-10-15T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_483733",
+    "provider_id": "prov_29640",
+    "title": "Deep Apartment Cleaning",
+    "service_type": "cleaning",
+    "description": "Move-out cleaning for rental apartments.",
+    "hourly_rate": 116.04,
+    "availability_slots": [
+      "2026-09-24T09:00:00Z",
+      "2026-09-26T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_648949",
+    "provider_id": "prov_02315",
+    "title": "Local Moving Help",
+    "service_type": "moving",
+    "description": "Local moving help for apartments and small homes.",
+    "hourly_rate": 65.51,
+    "availability_slots": [
+      "2026-09-12T09:00:00Z",
+      "2026-10-07T13:00:00Z",
+      "2026-09-25T11:00:00Z",
+      "2026-10-10T15:00:00Z",
+      "2026-10-13T09:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_666027",
+    "provider_id": "prov_93116",
+    "title": "Move-Out Cleaning",
+    "service_type": "cleaning",
+    "description": "Full apartment deep clean including kitchen and bathrooms.",
+    "hourly_rate": 31.93,
+    "availability_slots": [
+      "2026-09-02T15:00:00Z",
+      "2026-09-15T15:00:00Z",
+      "2026-09-10T11:00:00Z",
+      "2026-09-12T13:00:00Z",
+      "2026-10-05T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_750016",
+    "provider_id": "prov_62644",
+    "title": "Move-Out Cleaning",
+    "service_type": "cleaning",
+    "description": "Full apartment deep clean including kitchen and bathrooms.",
+    "hourly_rate": 64.87,
+    "availability_slots": [
+      "2026-09-07T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_532902",
+    "provider_id": "prov_97721",
+    "title": "Local Moving Help",
+    "service_type": "moving",
+    "description": "Local moving help for apartments and small homes.",
+    "hourly_rate": 69.43,
+    "availability_slots": [
+      "2026-09-21T13:00:00Z",
+      "2026-08-24T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_800985",
+    "provider_id": "prov_57410",
+    "title": "Move-Out Cleaning",
+    "service_type": "cleaning",
+    "description": "Standard weekly house cleaning service.",
+    "hourly_rate": 128.16,
+    "availability_slots": [
+      "2026-08-25T15:00:00Z",
+      "2026-10-13T09:00:00Z",
+      "2026-09-04T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_553333",
+    "provider_id": "prov_15159",
+    "title": "Small Home Repairs",
+    "service_type": "handyman",
+    "description": "Small repairs including drywall patching and furniture assembly.",
+    "hourly_rate": 50.71,
+    "availability_slots": [
+      "2026-09-05T11:00:00Z",
+      "2026-08-31T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_761747",
+    "provider_id": "prov_74956",
+    "title": "Move-Out Cleaning",
+    "service_type": "cleaning",
+    "description": "Standard weekly house cleaning service.",
+    "hourly_rate": 39.62,
+    "availability_slots": [
+      "2026-09-19T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_675304",
+    "provider_id": "prov_03269",
+    "title": "Small Home Repairs",
+    "service_type": "handyman",
+    "description": "General handyman services for minor home repairs.",
+    "hourly_rate": 80.15,
+    "availability_slots": [
+      "2026-10-09T09:00:00Z",
+      "2026-09-17T11:00:00Z",
+      "2026-09-09T15:00:00Z",
+      "2026-09-21T11:00:00Z",
+      "2026-08-23T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_183751",
+    "provider_id": "prov_24451",
+    "title": "Garage Cleanout",
+    "service_type": "custom",
+    "description": "Garage cleanout and organization.",
+    "hourly_rate": 120.68,
+    "availability_slots": [
+      "2026-08-23T13:00:00Z",
+      "2026-08-24T13:00:00Z",
+      "2026-08-26T15:00:00Z",
+      "2026-09-07T13:00:00Z",
+      "2026-10-05T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_351396",
+    "provider_id": "prov_35933",
+    "title": "Truck Loading Help",
+    "service_type": "moving",
+    "description": "Loading and unloading moving trucks.",
+    "hourly_rate": 127.76,
+    "availability_slots": [
+      "2026-08-25T15:00:00Z",
+      "2026-09-21T13:00:00Z",
+      "2026-08-21T13:00:00Z",
+      "2026-09-08T11:00:00Z",
+      "2026-09-02T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_942108",
+    "provider_id": "prov_17880",
+    "title": "Miscellaneous Task Help",
+    "service_type": "custom",
+    "description": "Custom job tailored to specific customer needs.",
+    "hourly_rate": 97.64,
+    "availability_slots": [
+      "2026-08-30T11:00:00Z",
+      "2026-10-12T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_703796",
+    "provider_id": "prov_77229",
+    "title": "Custom Home Project",
+    "service_type": "custom",
+    "description": "Garage cleanout and organization.",
+    "hourly_rate": 108.18,
+    "availability_slots": [
+      "2026-09-17T15:00:00Z",
+      "2026-10-08T13:00:00Z",
+      "2026-10-08T15:00:00Z",
+      "2026-09-21T15:00:00Z",
+      "2026-08-30T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_812685",
+    "provider_id": "prov_18827",
+    "title": "Small Home Repairs",
+    "service_type": "handyman",
+    "description": "Small repairs including drywall patching and furniture assembly.",
+    "hourly_rate": 128.04,
+    "availability_slots": []
+  },
+  {
+    "listing_id": "lst_889433",
+    "provider_id": "prov_30230",
+    "title": "General Handyman Repairs",
+    "service_type": "handyman",
+    "description": "Small repairs including drywall patching and furniture assembly.",
+    "hourly_rate": 24.98,
+    "availability_slots": [
+      "2026-10-03T11:00:00Z",
+      "2026-10-07T15:00:00Z",
+      "2026-09-17T09:00:00Z",
+      "2026-10-16T09:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_021964",
+    "provider_id": "prov_72126",
+    "title": "General Handyman Repairs",
+    "service_type": "handyman",
+    "description": "General handyman services for minor home repairs.",
+    "hourly_rate": 97.58,
+    "availability_slots": [
+      "2026-09-29T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_720351",
+    "provider_id": "prov_65395",
+    "title": "Furniture Assembly & Mounting",
+    "service_type": "handyman",
+    "description": "General handyman services for minor home repairs.",
+    "hourly_rate": 25.66,
+    "availability_slots": [
+      "2026-09-12T13:00:00Z",
+      "2026-10-06T09:00:00Z",
+      "2026-09-11T09:00:00Z",
+      "2026-09-11T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_767730",
+    "provider_id": "prov_58174",
+    "title": "General Handyman Repairs",
+    "service_type": "handyman",
+    "description": "Small repairs including drywall patching and furniture assembly.",
+    "hourly_rate": 28.2,
+    "availability_slots": [
+      "2026-08-22T13:00:00Z",
+      "2026-09-01T09:00:00Z",
+      "2026-10-09T11:00:00Z",
+      "2026-10-15T09:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_333840",
+    "provider_id": "prov_62806",
+    "title": "Weekly House Cleaning",
+    "service_type": "cleaning",
+    "description": "Standard weekly house cleaning service.",
+    "hourly_rate": 135.63,
+    "availability_slots": []
+  },
+  {
+    "listing_id": "lst_870685",
+    "provider_id": "prov_30636",
+    "title": "Weekly House Cleaning",
+    "service_type": "cleaning",
+    "description": "Standard weekly house cleaning service.",
+    "hourly_rate": 78.13,
+    "availability_slots": [
+      "2026-09-28T15:00:00Z",
+      "2026-09-06T09:00:00Z",
+      "2026-08-24T15:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_386916",
+    "provider_id": "prov_70073",
+    "title": "Custom Home Project",
+    "service_type": "custom",
+    "description": "Miscellaneous home project support.",
+    "hourly_rate": 39.95,
+    "availability_slots": [
+      "2026-09-12T13:00:00Z",
+      "2026-09-17T09:00:00Z",
+      "2026-09-25T11:00:00Z",
+      "2026-09-22T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_362174",
+    "provider_id": "prov_35224",
+    "title": "Weekly House Cleaning",
+    "service_type": "cleaning",
+    "description": "Full apartment deep clean including kitchen and bathrooms.",
+    "hourly_rate": 35.94,
+    "availability_slots": []
+  },
+  {
+    "listing_id": "lst_840683",
+    "provider_id": "prov_30588",
+    "title": "Truck Loading Help",
+    "service_type": "moving",
+    "description": "Loading and unloading moving trucks.",
+    "hourly_rate": 42.63,
+    "availability_slots": [
+      "2026-09-21T11:00:00Z",
+      "2026-08-27T11:00:00Z",
+      "2026-10-09T11:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_243549",
+    "provider_id": "prov_18037",
+    "title": "Furniture Moving Assistance",
+    "service_type": "moving",
+    "description": "Loading and unloading moving trucks.",
+    "hourly_rate": 29.59,
+    "availability_slots": [
+      "2026-09-30T09:00:00Z",
+      "2026-09-17T15:00:00Z",
+      "2026-10-02T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_185571",
+    "provider_id": "prov_58853",
+    "title": "Move-Out Cleaning",
+    "service_type": "cleaning",
+    "description": "Full apartment deep clean including kitchen and bathrooms.",
+    "hourly_rate": 64.98,
+    "availability_slots": []
+  },
+  {
+    "listing_id": "lst_606551",
+    "provider_id": "prov_69390",
+    "title": "Move-Out Cleaning",
+    "service_type": "cleaning",
+    "description": "Move-out cleaning for rental apartments.",
+    "hourly_rate": 54.41,
+    "availability_slots": [
+      "2026-10-08T15:00:00Z",
+      "2026-09-28T09:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_462948",
+    "provider_id": "prov_62004",
+    "title": "Furniture Moving Assistance",
+    "service_type": "moving",
+    "description": "Loading and unloading moving trucks.",
+    "hourly_rate": 38.68,
+    "availability_slots": [
+      "2026-10-05T13:00:00Z",
+      "2026-09-14T11:00:00Z",
+      "2026-10-07T13:00:00Z"
+    ]
+  },
+  {
+    "listing_id": "lst_512141",
+    "provider_id": "prov_09849",
+    "title": "Truck Loading Help",
+    "service_type": "moving",
+    "description": "Loading and unloading moving trucks.",
+    "hourly_rate": 60.65,
+    "availability_slots": []
+  },
+  {
+    "listing_id": "lst_403425",
+    "provider_id": "prov_02586",
+    "title": "General Handyman Repairs",
+    "service_type": "handyman",
+    "description": "General handyman services for minor home repairs.",
+    "hourly_rate": 37.41,
+    "availability_slots": []
+  },
+  {
+    "listing_id": "lst_451505",
+    "provider_id": "prov_72961",
+    "title": "Furniture Assembly & Mounting",
+    "service_type": "handyman",
+    "description": "TV mounting and shelf installation.",
+    "hourly_rate": 142.06,
+    "availability_slots": []
+  },
+  {
+    "listing_id": "lst_013446",
+    "provider_id": "prov_53619",
+    "title": "Truck Loading Help",
+    "service_type": "moving",
+    "description": "Furniture moving and heavy lifting assistance.",
+    "hourly_rate": 85.95,
+    "availability_slots": []
+  }
+]

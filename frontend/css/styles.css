@@ -1,0 +1,368 @@
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --border: #e4e1db;
+  --text: #1f2320;
+  --text-muted: #6b6f6a;
+  --brand: #2f6b4f;
+  --brand-hover: #244f3b;
+  --accent: #b5651d;
+  --danger: #b3261e;
+  --radius: 10px;
+  --max-width: 960px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+a {
+  color: var(--brand);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+/* Nav */
+#app-nav {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.nav-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.brand {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+.brand span {
+  color: var(--brand);
+}
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+.nav-links a {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.nav-links a.active,
+.nav-links a:hover {
+  color: var(--brand);
+}
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--brand);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+/* Auth pages */
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+.auth-card h1 {
+  font-size: 1.4rem;
+  margin: 0 0 0.25rem;
+}
+.auth-card .subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Forms */
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0.9rem 0 0.3rem;
+}
+input,
+select {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  background: var(--surface);
+  color: var(--text);
+}
+input:focus,
+select:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+button.primary {
+  width: 100%;
+  margin-top: 1.25rem;
+  padding: 0.7rem;
+  background: var(--brand);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+button.primary:hover {
+  background: var(--brand-hover);
+}
+button.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  min-height: 1.1em;
+}
+
+.demo-accounts {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+.demo-accounts p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 0.6rem;
+}
+.demo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.demo-grid button {
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.demo-grid button:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+.filters > div {
+  flex: 1;
+  min-width: 140px;
+}
+.filters label {
+  margin-top: 0;
+}
+
+/* Listing grid */
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.listing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.listing-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--brand);
+  background: #e7f0ea;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+}
+.listing-card .desc {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  flex: 1;
+}
+.listing-card .price {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.listing-card .price span {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+/* Listing detail */
+.detail-header h1 {
+  margin: 0 0 0.3rem;
+}
+.detail-price {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0.5rem 0 1rem;
+}
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.5rem;
+  margin: 0.75rem 0 1.25rem;
+}
+.slot-btn {
+  padding: 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.slot-btn.selected {
+  border-color: var(--brand);
+  background: #e7f0ea;
+  color: var(--brand-hover);
+  font-weight: 600;
+}
+
+/* Bookings list */
+.booking-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.status-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 100px;
+}
+.status-draft { background: #eee; color: #555; }
+.status-pending { background: #fff2d9; color: #8a5a00; }
+.status-confirmed { background: #dcecff; color: #17509c; }
+.status-completed { background: #e2f4e5; color: #1f7a34; }
+
+.rating-form {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+.rating-form select {
+  width: auto;
+}
+.rating-form button {
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--brand);
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.toast {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 560px) {
+  .nav-inner {
+    gap: 0.75rem;
+  }
+  .filters {
+    flex-direction: column;
+  }
+  .booking-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

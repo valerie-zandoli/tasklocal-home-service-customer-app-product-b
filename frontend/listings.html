@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Browse services · TaskLocal Home-Service</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <nav id="app-nav"></nav>
+
+  <main class="container">
+    <h1>Browse services</h1>
+
+    <form class="filters" id="filters-form">
+      <div>
+        <label for="search">Search</label>
+        <input id="search" type="text" placeholder="e.g. deep clean, moving..." />
+      </div>
+      <div>
+        <label for="service_type">Service type</label>
+        <select id="service_type">
+          <option value="">All types</option>
+          <option value="cleaning">Cleaning</option>
+          <option value="handyman">Handyman</option>
+          <option value="moving">Moving</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div>
+        <label for="max_price">Max hourly rate ($)</label>
+        <input id="max_price" type="number" min="0" step="1" placeholder="Any" />
+      </div>
+    </form>
+
+    <div id="listing-grid" class="listing-grid"></div>
+    <p id="empty-state" class="empty-state" hidden>No listings match your filters yet — try widening your search.</p>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script type="module" src="js/page-listings.js"></script>
+</body>
+</html>
