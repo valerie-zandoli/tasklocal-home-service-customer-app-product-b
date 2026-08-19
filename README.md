@@ -35,7 +35,15 @@ The synthetic `bookings.csv` from the team's shared dataset references 42 `listi
 - Row Level Security means a signed-in customer can only read/write their own bookings and profile — not anyone else's.
 - All form inputs (login, search/filter, booking, rating) are validated before use so unexpected input can't break the app.
 - `total_cost` is never trusted from the client: a booking's price is computed from the listing's real `hourly_rate` by a Postgres trigger (`bookings_set_total_cost` in `backend/schema.sql`) on insert, so a tampered client request can't set an arbitrary price. Mock (local demo) mode mirrors this by computing the total in `frontend/js/api.js` rather than accepting it as a parameter.
-- Demo account passwords in `frontend/js/demo-users.js` are the **real** passwords for the matching Supabase Auth accounts once you run `seed-demo-users.mjs` — they're shipped in a public JS file by design, for a class demo with synthetic data. Rotate or remove them before this project ever holds real user data.
+- `booking_status` on a new booking is forced to `'pending'` server-side (`bookings_enforce_new_status` trigger) for any authenticated client request, so a customer can't self-insert a booking as already `'completed'`.
+- The RLS `UPDATE` policy on `bookings` has a matching `WITH CHECK`, and a trigger (`bookings_protect_update`) additionally rejects any authenticated-client update that touches `customer_id`, `listing_id`, `total_cost`, or `booking_status` — a signed-in customer can only ever change their own booking's `rating`, even via a direct API call that bypasses the app's UI.
+- Demo account passwords in `frontend/js/demo-users.js` are the **real** passwords for the matching Supabase Auth accounts once you run `seed-demo-users.mjs`, tied to teammates' real `@pursuit.org` addresses — they're shipped in a public JS file by design, for a class demo with synthetic data. Rotate these (or use different, throwaway passwords) before this project ever holds real user data, since a public repo + a real email + a written password is a real credential-reuse risk if anyone reuses that password elsewhere.
+- The email/password `<input>`s on `login.html` intentionally have no `name` attribute (the JS reads them by `id`) — with a `name`, a browser falling back to native form submission (JS blocked or failed to load) would leak the password into the URL as a GET query string.
+
+## Known limitations (not yet fixed, flagged for awareness)
+
+- No automated integration test exists against a **real** Supabase project (RLS policies and the pricing/status triggers are reviewed by reading the SQL, not by running it against live Postgres) — `frontend/js/api.test.mjs` covers the pure pricing/id logic only. Worth a manual smoke test against your own Supabase project before trusting the RLS fixes in practice.
+- No slot-locking: booking a time doesn't remove it from a listing's `availability_slots`, so two customers could still pick the same slot. `booking_schedules` (see `backend/schema.sql`) now at least *records* which slot each customer picked — it previously wasn't stored anywhere at all.
 
 ---
 
@@ -82,12 +90,20 @@ Reload the frontend and it will now talk to your real Supabase database instead 
 2. In Vercel, "Add New Project" → import this repo. `vercel.json` already points Vercel at the `frontend/` folder, so no extra config is needed.
 3. Deploy. Your live URL will serve `frontend/index.html`.
 
-### 4. Testing checklist before you call it done
+### 4. Run the automated tests
+
+```bash
+node --test frontend/js/api.test.mjs
+```
+Covers the pricing/booking-id logic (Node 20+; see the note at the top of that file). This does **not** cover the RLS policies or triggers — those need a real Supabase project (see "Known limitations" above).
+
+### 5. Testing checklist before you call it done
 
 - [ ] Log in with each of the 4 demo accounts.
 - [ ] Browse listings; filter by service type, search text, and max price.
-- [ ] Open a listing, pick a time slot, and book it — confirm it shows up under "My Bookings".
+- [ ] Open a listing, pick a time slot, and book it — confirm it shows up under "My Bookings" with the correct scheduled time.
 - [ ] Confirm a completed booking can be rated 1–5 and the rating persists.
 - [ ] Log out and confirm you're redirected to the login screen, and that visiting `listings.html` directly while logged out redirects you back to login.
 - [ ] Resize the browser to a phone width and confirm the layout still reads cleanly.
+- [ ] (Real Supabase mode only) As a signed-in customer, try updating a booking's `total_cost` or `booking_status` via a direct `supabase.from('bookings').update(...)` call in the browser console — it should be rejected by `bookings_protect_update`.
 

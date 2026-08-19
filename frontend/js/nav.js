@@ -27,10 +27,10 @@ export function renderNav(session, activePage) {
       <a class="brand" href="listings.html">TaskLocal <span>Home-Service</span></a>
       <div class="nav-links">
         ${links
-          .map(
-            (l) =>
-              `<a href="${l.href}" class="${l.href === activePage ? "active" : ""}">${l.label}</a>`
-          )
+          .map((l) => {
+            const isActive = l.href === activePage;
+            return `<a href="${l.href}" class="${isActive ? "active" : ""}"${isActive ? ' aria-current="page"' : ""}>${l.label}</a>`;
+          })
           .join("")}
       </div>
       <div class="nav-user">

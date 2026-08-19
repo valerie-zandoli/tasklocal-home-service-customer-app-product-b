@@ -53,11 +53,17 @@ export async function getSession() {
     const supabase = await getSupabase();
     const { data } = await supabase.auth.getSession();
     if (!data.session) return null;
-    const { data: profile } = await supabase
+    // maybeSingle(), not single(): a user with no linked customer_profiles
+    // row (shouldn't happen via the documented seed flow, but is possible if
+    // someone signs up outside it) must not throw here.
+    const { data: profile, error } = await supabase
       .from("customer_profiles")
       .select("*")
       .eq("user_id", data.session.user.id)
-      .single();
+      .maybeSingle();
+    if (error) {
+      console.error("Could not load customer profile:", error.message);
+    }
     return {
       email: data.session.user.email,
       displayName: profile?.display_name || data.session.user.email,
@@ -115,7 +121,7 @@ export async function fetchListing(listingId) {
 
 // ── Bookings ─────────────────────────────────────────────────────────────
 
-function randomBookingId() {
+export function randomBookingId() {
   // crypto, not Math.random: still a 6-digit id (matches the team's bkg_XXXXXX
   // format), so collisions are possible at scale — createBooking() below
   // retries on a collision rather than relying on id-space size alone.
@@ -125,35 +131,47 @@ function randomBookingId() {
   return "bkg_" + String(n % 1_000_000).padStart(6, "0");
 }
 
-function randomCommissionTotal(hourlyRate) {
+export function randomCommissionTotal(hourlyRate) {
   const commission = 0.1 + Math.random() * 0.1; // 10-20%, matches the team's shared schema
   return Math.round(hourlyRate * (1 + commission) * 100) / 100;
 }
 
 const MAX_BOOKING_ID_ATTEMPTS = 5;
 
-export async function createBooking({ customerId, listingId, hourlyRate }) {
-  if (!customerId || !listingId || !(hourlyRate > 0)) {
+export async function createBooking({ customerId, listingId, hourlyRate, scheduledSlot }) {
+  if (!customerId) {
+    throw new Error("Your account isn't linked to a customer profile yet — contact support.");
+  }
+  if (!listingId || !(hourlyRate > 0) || !scheduledSlot) {
     throw new Error("Missing booking details.");
   }
 
   if (isSupabaseConfigured()) {
     const supabase = await getSupabase();
     for (let attempt = 1; attempt <= MAX_BOOKING_ID_ATTEMPTS; attempt++) {
+      const bookingId = randomBookingId();
       const { data, error } = await supabase
         .from("bookings")
         // total_cost is intentionally omitted: the bookings_set_total_cost
         // trigger computes it server-side from the real listing price, so a
         // tampered client-side value can never reach the database.
         .insert({
-          booking_id: randomBookingId(),
+          booking_id: bookingId,
           customer_id: customerId,
           listing_id: listingId,
           booking_status: "pending",
         })
         .select()
         .single();
-      if (!error) return data;
+      if (!error) {
+        // Recorded in a Product-B-local table, not the shared `bookings` row
+        // — the shared schema has no column for it (see backend/schema.sql).
+        const { error: scheduleError } = await supabase
+          .from("booking_schedules")
+          .insert({ booking_id: bookingId, scheduled_slot: scheduledSlot });
+        if (scheduleError) throw new Error(scheduleError.message);
+        return { ...data, scheduled_slot: scheduledSlot };
+      }
       if (error.code !== "23505" || attempt === MAX_BOOKING_ID_ATTEMPTS) {
         throw new Error(error.message);
       }
@@ -180,6 +198,7 @@ export async function createBooking({ customerId, listingId, hourlyRate }) {
     booking_status: "pending",
     total_cost: randomCommissionTotal(hourlyRate),
     rating: null,
+    scheduled_slot: scheduledSlot,
   };
   rows.push(row);
   writeMockBookings(rows);
@@ -187,15 +206,25 @@ export async function createBooking({ customerId, listingId, hourlyRate }) {
 }
 
 export async function fetchMyBookings(customerId) {
+  if (!customerId) return [];
+
   if (isSupabaseConfigured()) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("bookings")
-      .select("*, listings(title, service_type)")
+      .select("*, listings(title, service_type), booking_schedules(scheduled_slot)")
       .eq("customer_id", customerId)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
-    return data;
+    // PostgREST embeds a to-one relation as an object when it can prove
+    // uniqueness (booking_schedules.booking_id is that table's primary key),
+    // but normalize defensively in case it's returned as a single-item array.
+    return data.map((row) => {
+      const schedule = Array.isArray(row.booking_schedules)
+        ? row.booking_schedules[0]
+        : row.booking_schedules;
+      return { ...row, scheduled_slot: schedule?.scheduled_slot || null };
+    });
   }
 
   const rows = await readMockBookings();

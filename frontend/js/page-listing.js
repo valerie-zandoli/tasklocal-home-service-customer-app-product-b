@@ -97,6 +97,7 @@ if (session) {
             customerId: session.customerId,
             listingId: listing.listing_id,
             hourlyRate: listing.hourly_rate,
+            scheduledSlot: selectedSlot,
           });
           window.location.href = "bookings.html";
         } catch (err) {

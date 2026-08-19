@@ -5,7 +5,8 @@
     "listing_id": "lst_333840",
     "booking_status": "completed",
     "total_cost": 152.88,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_786170",
@@ -13,7 +14,8 @@
     "listing_id": "lst_761747",
     "booking_status": "draft",
     "total_cost": 45.02,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_919087",
@@ -21,7 +23,8 @@
     "listing_id": "lst_451505",
     "booking_status": "pending",
     "total_cost": 159.79,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_938516",
@@ -29,7 +32,8 @@
     "listing_id": "lst_214104",
     "booking_status": "pending",
     "total_cost": 68.18,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_720423",
@@ -37,7 +41,8 @@
     "listing_id": "lst_402426",
     "booking_status": "completed",
     "total_cost": 57.96,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_687152",
@@ -45,7 +50,8 @@
     "listing_id": "lst_571542",
     "booking_status": "completed",
     "total_cost": 146.53,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_180549",
@@ -53,7 +59,8 @@
     "listing_id": "lst_812685",
     "booking_status": "confirmed",
     "total_cost": 144.88,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_877320",
@@ -61,7 +68,8 @@
     "listing_id": "lst_598284",
     "booking_status": "completed",
     "total_cost": 132.24,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_116860",
@@ -69,7 +77,8 @@
     "listing_id": "lst_466589",
     "booking_status": "draft",
     "total_cost": 142.96,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_017107",
@@ -77,7 +86,8 @@
     "listing_id": "lst_667686",
     "booking_status": "pending",
     "total_cost": 133.58,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_690590",
@@ -85,7 +95,8 @@
     "listing_id": "lst_648949",
     "booking_status": "completed",
     "total_cost": 74.97,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_434392",
@@ -93,7 +104,8 @@
     "listing_id": "lst_340814",
     "booking_status": "draft",
     "total_cost": 149.17,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_224502",
@@ -101,7 +113,8 @@
     "listing_id": "lst_451505",
     "booking_status": "pending",
     "total_cost": 168.83,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_953132",
@@ -109,7 +122,8 @@
     "listing_id": "lst_942108",
     "booking_status": "draft",
     "total_cost": 117.09,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_092873",
@@ -117,7 +131,8 @@
     "listing_id": "lst_214104",
     "booking_status": "pending",
     "total_cost": 67.01,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_895100",
@@ -125,7 +140,8 @@
     "listing_id": "lst_532902",
     "booking_status": "draft",
     "total_cost": 79.69,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_368318",
@@ -133,7 +149,8 @@
     "listing_id": "lst_571542",
     "booking_status": "draft",
     "total_cost": 152.38,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_978893",
@@ -141,7 +158,8 @@
     "listing_id": "lst_462948",
     "booking_status": "confirmed",
     "total_cost": 43.85,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_397464",
@@ -149,7 +167,8 @@
     "listing_id": "lst_214104",
     "booking_status": "completed",
     "total_cost": 68.46,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_661430",
@@ -157,7 +176,8 @@
     "listing_id": "lst_720351",
     "booking_status": "pending",
     "total_cost": 30.5,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_103798",
@@ -165,7 +185,8 @@
     "listing_id": "lst_185571",
     "booking_status": "confirmed",
     "total_cost": 73.92,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_875724",
@@ -173,7 +194,8 @@
     "listing_id": "lst_812685",
     "booking_status": "draft",
     "total_cost": 144.19,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_138109",
@@ -181,7 +203,8 @@
     "listing_id": "lst_870685",
     "booking_status": "confirmed",
     "total_cost": 90.74,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_409181",
@@ -189,7 +212,8 @@
     "listing_id": "lst_333840",
     "booking_status": "pending",
     "total_cost": 151.77,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_677222",
@@ -197,7 +221,8 @@
     "listing_id": "lst_462948",
     "booking_status": "confirmed",
     "total_cost": 45.8,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_134266",
@@ -205,7 +230,8 @@
     "listing_id": "lst_845474",
     "booking_status": "draft",
     "total_cost": 146.11,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_208334",
@@ -213,7 +239,8 @@
     "listing_id": "lst_183751",
     "booking_status": "draft",
     "total_cost": 139.31,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_183424",
@@ -221,7 +248,8 @@
     "listing_id": "lst_351396",
     "booking_status": "confirmed",
     "total_cost": 142.47,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_596952",
@@ -229,7 +257,8 @@
     "listing_id": "lst_444411",
     "booking_status": "confirmed",
     "total_cost": 150.15,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_981494",
@@ -237,7 +266,8 @@
     "listing_id": "lst_466589",
     "booking_status": "completed",
     "total_cost": 143.09,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_951253",
@@ -245,7 +275,8 @@
     "listing_id": "lst_183751",
     "booking_status": "confirmed",
     "total_cost": 138.61,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_602166",
@@ -253,7 +284,8 @@
     "listing_id": "lst_462948",
     "booking_status": "completed",
     "total_cost": 43.83,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_279808",
@@ -261,7 +293,8 @@
     "listing_id": "lst_021964",
     "booking_status": "confirmed",
     "total_cost": 112.14,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_608194",
@@ -269,7 +302,8 @@
     "listing_id": "lst_351396",
     "booking_status": "completed",
     "total_cost": 148.27,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_049445",
@@ -277,7 +311,8 @@
     "listing_id": "lst_571542",
     "booking_status": "confirmed",
     "total_cost": 146.75,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_351880",
@@ -285,7 +320,8 @@
     "listing_id": "lst_648949",
     "booking_status": "completed",
     "total_cost": 73.7,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_497285",
@@ -293,7 +329,8 @@
     "listing_id": "lst_133260",
     "booking_status": "completed",
     "total_cost": 144.2,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_217888",
@@ -301,7 +338,8 @@
     "listing_id": "lst_512141",
     "booking_status": "completed",
     "total_cost": 70.84,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_172579",
@@ -309,7 +347,8 @@
     "listing_id": "lst_362174",
     "booking_status": "confirmed",
     "total_cost": 42.57,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_862284",
@@ -317,7 +356,8 @@
     "listing_id": "lst_243549",
     "booking_status": "confirmed",
     "total_cost": 33.42,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_103930",
@@ -325,7 +365,8 @@
     "listing_id": "lst_942108",
     "booking_status": "pending",
     "total_cost": 114.96,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_517714",
@@ -333,7 +374,8 @@
     "listing_id": "lst_512141",
     "booking_status": "confirmed",
     "total_cost": 69.61,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_057987",
@@ -341,7 +383,8 @@
     "listing_id": "lst_483733",
     "booking_status": "draft",
     "total_cost": 127.69,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_728315",
@@ -349,7 +392,8 @@
     "listing_id": "lst_582775",
     "booking_status": "draft",
     "total_cost": 24.22,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_945546",
@@ -357,7 +401,8 @@
     "listing_id": "lst_870685",
     "booking_status": "completed",
     "total_cost": 89.77,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_719802",
@@ -365,7 +410,8 @@
     "listing_id": "lst_750016",
     "booking_status": "completed",
     "total_cost": 75.18,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_660643",
@@ -373,7 +419,8 @@
     "listing_id": "lst_675304",
     "booking_status": "confirmed",
     "total_cost": 89.39,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_272042",
@@ -381,7 +428,8 @@
     "listing_id": "lst_333840",
     "booking_status": "pending",
     "total_cost": 149.37,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_649208",
@@ -389,7 +437,8 @@
     "listing_id": "lst_812685",
     "booking_status": "confirmed",
     "total_cost": 149.51,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_418801",
@@ -397,7 +446,8 @@
     "listing_id": "lst_582775",
     "booking_status": "confirmed",
     "total_cost": 26.08,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_876716",
@@ -405,7 +455,8 @@
     "listing_id": "lst_065933",
     "booking_status": "pending",
     "total_cost": 145.65,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_729856",
@@ -413,7 +464,8 @@
     "listing_id": "lst_845474",
     "booking_status": "confirmed",
     "total_cost": 153.38,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_466188",
@@ -421,7 +473,8 @@
     "listing_id": "lst_589443",
     "booking_status": "draft",
     "total_cost": 27.88,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_544173",
@@ -429,7 +482,8 @@
     "listing_id": "lst_942108",
     "booking_status": "draft",
     "total_cost": 109.58,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_564388",
@@ -437,7 +491,8 @@
     "listing_id": "lst_333840",
     "booking_status": "confirmed",
     "total_cost": 157.6,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_467172",
@@ -445,7 +500,8 @@
     "listing_id": "lst_362174",
     "booking_status": "completed",
     "total_cost": 43.0,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_619347",
@@ -453,7 +509,8 @@
     "listing_id": "lst_870685",
     "booking_status": "pending",
     "total_cost": 89.18,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_985746",
@@ -461,7 +518,8 @@
     "listing_id": "lst_598284",
     "booking_status": "completed",
     "total_cost": 125.61,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": null
   },
   {
     "booking_id": "bkg_900001",
@@ -469,7 +527,8 @@
     "listing_id": "lst_343432",
     "booking_status": "pending",
     "total_cost": 93.54,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-10-03T15:00:00Z"
   },
   {
     "booking_id": "bkg_900002",
@@ -477,7 +536,8 @@
     "listing_id": "lst_402426",
     "booking_status": "confirmed",
     "total_cost": 60.58,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-10-05T11:00:00Z"
   },
   {
     "booking_id": "bkg_900003",
@@ -485,7 +545,8 @@
     "listing_id": "lst_379617",
     "booking_status": "completed",
     "total_cost": 69.96,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-08-28T13:00:00Z"
   },
   {
     "booking_id": "bkg_900004",
@@ -493,7 +554,8 @@
     "listing_id": "lst_102439",
     "booking_status": "confirmed",
     "total_cost": 44.52,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-09-08T09:00:00Z"
   },
   {
     "booking_id": "bkg_900005",
@@ -501,7 +563,8 @@
     "listing_id": "lst_448936",
     "booking_status": "completed",
     "total_cost": 106.44,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-08-20T15:00:00Z"
   },
   {
     "booking_id": "bkg_900006",
@@ -509,7 +572,8 @@
     "listing_id": "lst_227746",
     "booking_status": "pending",
     "total_cost": 44.88,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-10-11T11:00:00Z"
   },
   {
     "booking_id": "bkg_900007",
@@ -517,7 +581,8 @@
     "listing_id": "lst_589443",
     "booking_status": "confirmed",
     "total_cost": 27.8,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-10-02T09:00:00Z"
   },
   {
     "booking_id": "bkg_900008",
@@ -525,7 +590,8 @@
     "listing_id": "lst_571542",
     "booking_status": "completed",
     "total_cost": 145.98,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-09-15T15:00:00Z"
   },
   {
     "booking_id": "bkg_900009",
@@ -533,7 +599,8 @@
     "listing_id": "lst_433945",
     "booking_status": "pending",
     "total_cost": 87.54,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-09-02T13:00:00Z"
   },
   {
     "booking_id": "bkg_900010",
@@ -541,6 +608,7 @@
     "listing_id": "lst_594619",
     "booking_status": "confirmed",
     "total_cost": 167.45,
-    "rating": null
+    "rating": null,
+    "scheduled_slot": "2026-09-20T13:00:00Z"
   }
 ]

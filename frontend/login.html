@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <noscript>
+    <div class="container">
+      <p>TaskLocal Home-Service requires JavaScript to be enabled in your browser.</p>
+    </div>
+  </noscript>
   <div class="auth-shell">
     <div class="auth-card">
       <h1>TaskLocal Home-Service</h1>
@@ -14,10 +19,13 @@
 
       <form id="login-form" novalidate>
         <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="username" required />
+        <!-- No `name` attribute on purpose: the JS reads these by id, and a
+             `name` here would let a native (no-JS) form submission leak the
+             password into the URL query string via a GET fallback. -->
+        <input id="email" type="email" autocomplete="username" required />
 
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required />
+        <input id="password" type="password" autocomplete="current-password" required />
 
         <button class="primary" type="submit">Log in</button>
         <p class="error-text" id="error-text" aria-live="polite"></p>

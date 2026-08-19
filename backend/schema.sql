@@ -33,7 +33,6 @@ create table if not exists bookings (
 create table if not exists chatbot_requests (
   id               bigint generated always as identity primary key,
   job_request_text text not null,
-  customer_id      text references customers (customer_id),
   created_at       timestamptz not null default now()
 );
 
@@ -81,15 +80,70 @@ create trigger bookings_set_total_cost
   for each row
   execute function set_booking_total_cost();
 
--- ── Product B-only table ────────────────────────────────────────────────────
--- Links a Supabase Auth user to a row in the shared `customers` table.
--- Kept separate from `customers` on purpose: auth/display concerns are local to
--- this product and must never change the shared table's contract with A/C/D.
+-- A customer-authenticated request must never be able to set a new booking to
+-- anything but 'pending' (e.g. self-inserting as 'completed' to unlock rating
+-- without a real service happening). auth.role() is null/'service_role' for
+-- the SQL Editor and the seed scripts, so backend/seed_data.sql and
+-- backend/seed_demo_bookings.sql's explicit historical statuses are untouched.
+create or replace function enforce_new_booking_status()
+returns trigger as $$
+begin
+  if auth.role() = 'authenticated' then
+    new.booking_status := 'pending';
+  end if;
+  return new;
+end;
+$$ language plpgsql;
 
+create trigger bookings_enforce_new_status
+  before insert on bookings
+  for each row
+  execute function enforce_new_booking_status();
+
+-- A customer may update ONLY the rating on their own booking. Without this,
+-- the RLS update policy below (USING with no per-column restriction) would
+-- let a signed-in customer rewrite their own booking's price, status, or
+-- listing via a direct API call, bypassing the app UI entirely.
+create or replace function protect_booking_update()
+returns trigger as $$
+begin
+  if auth.role() = 'authenticated' then
+    if new.customer_id is distinct from old.customer_id
+       or new.listing_id is distinct from old.listing_id
+       or new.total_cost is distinct from old.total_cost
+       or new.booking_status is distinct from old.booking_status
+    then
+      raise exception 'Customers may only update the rating on an existing booking.';
+    end if;
+  end if;
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger bookings_protect_update
+  before update on bookings
+  for each row
+  execute function protect_booking_update();
+
+-- ── Product B-only tables ───────────────────────────────────────────────────
+-- Both kept separate from the shared tables on purpose: local-to-this-product
+-- concerns (auth linkage, which time slot a customer picked) must never
+-- change the shared contract with Products A/C/D.
+
+-- Links a Supabase Auth user to a row in the shared `customers` table.
 create table if not exists customer_profiles (
   user_id       uuid primary key references auth.users (id) on delete cascade,
   customer_id   text not null references customers (customer_id),
   display_name  text not null
+);
+
+-- The team's shared `bookings` table (see the schema doc) has no column for
+-- which availability_slot the customer picked — flagged for the team to
+-- consider adding to the shared schema. Until then, Product B records it
+-- here rather than silently discarding the customer's choice.
+create table if not exists booking_schedules (
+  booking_id      text primary key references bookings (booking_id) on delete cascade,
+  scheduled_slot  timestamptz not null
 );
 
 -- ── Row Level Security ──────────────────────────────────────────────────────
@@ -100,6 +154,7 @@ alter table bookings enable row level security;
 alter table chatbot_requests enable row level security;
 alter table trust_safety enable row level security;
 alter table customer_profiles enable row level security;
+alter table booking_schedules enable row level security;
 
 -- Listings are public read (anyone browsing can see what's on offer)
 create policy "listings are publicly readable" on listings
@@ -125,7 +180,13 @@ create policy "customer can create own booking" on bookings
   );
 
 create policy "customer can update own booking (e.g. leave a rating)" on bookings
-  for update using (
+  for update
+  using (
+    customer_id in (
+      select customer_id from customer_profiles where user_id = auth.uid()
+    )
+  )
+  with check (
     customer_id in (
       select customer_id from customer_profiles where user_id = auth.uid()
     )
@@ -136,5 +197,24 @@ create policy "customer can read own customer row" on customers
   for select using (
     customer_id in (
       select customer_id from customer_profiles where user_id = auth.uid()
+    )
+  );
+
+-- A booking's scheduled slot follows the same "own bookings only" rule
+create policy "customer can read own booking schedule" on booking_schedules
+  for select using (
+    booking_id in (
+      select booking_id from bookings where customer_id in (
+        select customer_id from customer_profiles where user_id = auth.uid()
+      )
+    )
+  );
+
+create policy "customer can set own booking schedule" on booking_schedules
+  for insert with check (
+    booking_id in (
+      select booking_id from bookings where customer_id in (
+        select customer_id from customer_profiles where user_id = auth.uid()
+      )
     )
   );

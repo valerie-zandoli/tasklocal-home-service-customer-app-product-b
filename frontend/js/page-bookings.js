@@ -7,11 +7,27 @@ if (session) {
 
   const listEl = document.getElementById("bookings-list");
   const emptyState = document.getElementById("empty-state");
+  const bookingsError = document.getElementById("bookings-error");
 
   function escapeHtml(str) {
     const div = document.createElement("div");
     div.textContent = str == null ? "" : str;
     return div.innerHTML;
+  }
+
+  function formatSlot(iso) {
+    if (!iso) return null;
+    try {
+      return new Date(iso).toLocaleString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    } catch {
+      return iso;
+    }
   }
 
   async function render() {
@@ -46,12 +62,16 @@ if (session) {
             ? `<span>Rated ${b.rating}/5</span>`
             : "";
 
+        const status = escapeHtml(b.booking_status);
+        const scheduled = formatSlot(b.scheduled_slot);
+
         return `
           <div class="booking-row">
             <div>
               <strong>${listingTitle}</strong>
-              <div><span class="status-pill status-${b.booking_status}">${b.booking_status}</span></div>
-              <div style="color:var(--text-muted);font-size:0.85rem;">$${Number(b.total_cost).toFixed(2)} total &middot; ${b.booking_id}</div>
+              <div><span class="status-pill status-${status}">${status}</span></div>
+              ${scheduled ? `<div style="color:var(--text-muted);font-size:0.85rem;">Scheduled: ${escapeHtml(scheduled)}</div>` : ""}
+              <div style="color:var(--text-muted);font-size:0.85rem;">$${Number(b.total_cost).toFixed(2)} total &middot; ${escapeHtml(b.booking_id)}</div>
             </div>
             ${ratingBlock}
           </div>
@@ -62,6 +82,7 @@ if (session) {
     listEl.querySelectorAll(".rating-form").forEach((form) => {
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
+        bookingsError.textContent = "";
         const select = form.querySelector("select");
         const rating = Number(select.value);
         if (!rating) return;
@@ -71,12 +92,16 @@ if (session) {
           await rateBooking(form.dataset.bookingId, rating);
           await render();
         } catch (err) {
-          alert(err.message);
+          bookingsError.textContent = err.message;
           btn.disabled = false;
         }
       });
     });
   }
 
-  render();
+  try {
+    await render();
+  } catch (err) {
+    bookingsError.textContent = err.message;
+  }
 }
