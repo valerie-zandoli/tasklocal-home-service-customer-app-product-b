@@ -48,7 +48,7 @@ if (session) {
         <h3>Choose a time</h3>
         <div class="slot-grid" id="slot-grid"></div>
         <button class="primary" id="book-btn" style="max-width:280px" disabled>Select a time to book</button>
-        <p class="error-text" id="booking-error"></p>
+        <p class="error-text" id="booking-error" aria-live="polite"></p>
       `;
 
       const slots = Array.isArray(listing.availability_slots) ? listing.availability_slots : [];
@@ -60,15 +60,22 @@ if (session) {
         slotGrid.innerHTML = `<p class="empty-state">No open time slots right now — check back later.</p>`;
       } else {
         slotGrid.innerHTML = slots
-          .map((s, i) => `<button type="button" class="slot-btn" data-slot="${escapeHtml(s)}" data-i="${i}">${formatSlot(s)}</button>`)
+          .map(
+            (s, i) =>
+              `<button type="button" class="slot-btn" aria-pressed="false" data-slot="${escapeHtml(s)}" data-i="${i}">${formatSlot(s)}</button>`
+          )
           .join("");
       }
 
       slotGrid.addEventListener("click", (e) => {
         const btn = e.target.closest(".slot-btn");
         if (!btn) return;
-        slotGrid.querySelectorAll(".slot-btn").forEach((b) => b.classList.remove("selected"));
+        slotGrid.querySelectorAll(".slot-btn").forEach((b) => {
+          b.classList.remove("selected");
+          b.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("selected");
+        btn.setAttribute("aria-pressed", "true");
         selectedSlot = btn.dataset.slot;
         bookBtn.disabled = false;
         bookBtn.textContent = "Book this slot";
@@ -83,11 +90,13 @@ if (session) {
         bookBtn.disabled = true;
         bookBtn.textContent = "Booking…";
         try {
-          const commission = 1.15; // matches the ~10-20% commission the team's schema calculates
+          // total_cost is computed from the real listing price — server-side
+          // in Supabase mode (bookings_set_total_cost trigger), or here in
+          // mock mode — never trusted from arbitrary client input.
           await createBooking({
             customerId: session.customerId,
             listingId: listing.listing_id,
-            totalCost: Math.round(listing.hourly_rate * commission * 100) / 100,
+            hourlyRate: listing.hourly_rate,
           });
           window.location.href = "bookings.html";
         } catch (err) {

@@ -34,6 +34,8 @@ The synthetic `bookings.csv` from the team's shared dataset references 42 `listi
 - The Supabase **service role** key (which bypasses RLS) is only ever read from an environment variable in `backend/scripts/seed-demo-users.mjs`, run locally, and is never written to a file that gets committed. `.gitignore` excludes `.env`.
 - Row Level Security means a signed-in customer can only read/write their own bookings and profile — not anyone else's.
 - All form inputs (login, search/filter, booking, rating) are validated before use so unexpected input can't break the app.
+- `total_cost` is never trusted from the client: a booking's price is computed from the listing's real `hourly_rate` by a Postgres trigger (`bookings_set_total_cost` in `backend/schema.sql`) on insert, so a tampered client request can't set an arbitrary price. Mock (local demo) mode mirrors this by computing the total in `frontend/js/api.js` rather than accepting it as a parameter.
+- Demo account passwords in `frontend/js/demo-users.js` are the **real** passwords for the matching Supabase Auth accounts once you run `seed-demo-users.mjs` — they're shipped in a public JS file by design, for a class demo with synthetic data. Rotate or remove them before this project ever holds real user data.
 
 ---
 
@@ -53,7 +55,7 @@ Open `http://localhost:8901` in a browser, and log in with one of the four demo 
 ### 2. Set up the real backend (Supabase)
 
 1. Create a free project at [supabase.com](https://supabase.com).
-2. In the Supabase dashboard, open the **SQL Editor** and run the contents of `backend/schema.sql`, then `backend/seed_data.sql`.
+2. In the Supabase dashboard, open the **SQL Editor** and run, in order: `backend/schema.sql`, then `backend/seed_data.sql`, then `backend/seed_demo_bookings.sql` (gives the 4 demo accounts a mix of pending/confirmed/completed bookings to click through instead of an empty screen).
 3. In **Project Settings → API**, copy your Project URL and `anon` `public` key.
 4. Paste them into `frontend/js/config.js`:
    ```js

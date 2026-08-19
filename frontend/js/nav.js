@@ -9,6 +9,12 @@ export async function requireSession() {
   return session;
 }
 
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str == null ? "" : str;
+  return div.innerHTML;
+}
+
 export function renderNav(session, activePage) {
   const nav = document.getElementById("app-nav");
   if (!nav) return;
@@ -28,7 +34,7 @@ export function renderNav(session, activePage) {
           .join("")}
       </div>
       <div class="nav-user">
-        <span>${session.displayName}</span>
+        <span>${escapeHtml(session.displayName)}</span>
         <button id="logout-btn" class="link-btn">Log out</button>
       </div>
     </div>

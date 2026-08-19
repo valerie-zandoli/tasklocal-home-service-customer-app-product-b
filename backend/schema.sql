@@ -47,6 +47,40 @@ create table if not exists trust_safety (
   created_at      timestamptz not null default now()
 );
 
+-- ── Server-side price integrity ─────────────────────────────────────────────
+-- A booking's price must never come from the client as-is (classic price-
+-- tampering vector). If the caller omits total_cost, compute it here from the
+-- listing's real hourly_rate with the team's documented 10-20% commission. If
+-- a caller DOES supply total_cost (e.g. backend/seed_data.sql loading the
+-- team's historical synthetic dataset), trust it rather than overwriting
+-- already-known-good historical data.
+
+create or replace function set_booking_total_cost()
+returns trigger as $$
+declare
+  rate numeric(10, 2);
+  commission numeric;
+begin
+  if new.total_cost is not null then
+    return new;
+  end if;
+
+  select hourly_rate into rate from listings where listing_id = new.listing_id;
+  if rate is null then
+    raise exception 'Unknown listing_id: %', new.listing_id;
+  end if;
+
+  commission := 0.10 + random() * 0.10; -- 10-20%, matches the team's shared schema
+  new.total_cost := round(rate * (1 + commission), 2);
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger bookings_set_total_cost
+  before insert on bookings
+  for each row
+  execute function set_booking_total_cost();
+
 -- ── Product B-only table ────────────────────────────────────────────────────
 -- Links a Supabase Auth user to a row in the shared `customers` table.
 -- Kept separate from `customers` on purpose: auth/display concerns are local to

@@ -31,7 +31,7 @@ if (session) {
           b.booking_status === "completed" && !b.rating
             ? `
               <form class="rating-form" data-booking-id="${b.booking_id}">
-                <select required>
+                <select required aria-label="Rate this booking">
                   <option value="">Rate…</option>
                   <option value="5">5 - Excellent</option>
                   <option value="4">4 - Good</option>

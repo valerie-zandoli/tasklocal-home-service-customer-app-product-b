@@ -98,11 +98,13 @@ export async function fetchListings({ serviceType, maxPrice, search } = {}) {
 export async function fetchListing(listingId) {
   if (isSupabaseConfigured()) {
     const supabase = await getSupabase();
+    // maybeSingle(), not single(): a missing listing is an expected case
+    // (removed/typo'd id), not an error — callers check for a null return.
     const { data, error } = await supabase
       .from("listings")
       .select("*")
       .eq("listing_id", listingId)
-      .single();
+      .maybeSingle();
     if (error) throw new Error(error.message);
     return data;
   }
@@ -113,36 +115,70 @@ export async function fetchListing(listingId) {
 
 // ── Bookings ─────────────────────────────────────────────────────────────
 
-export async function createBooking({ customerId, listingId, totalCost }) {
-  if (!customerId || !listingId || !(totalCost > 0)) {
+function randomBookingId() {
+  // crypto, not Math.random: still a 6-digit id (matches the team's bkg_XXXXXX
+  // format), so collisions are possible at scale — createBooking() below
+  // retries on a collision rather than relying on id-space size alone.
+  const bytes = new Uint8Array(4);
+  crypto.getRandomValues(bytes);
+  const n = (bytes[0] * 2 ** 24 + bytes[1] * 2 ** 16 + bytes[2] * 2 ** 8 + bytes[3]) >>> 0;
+  return "bkg_" + String(n % 1_000_000).padStart(6, "0");
+}
+
+function randomCommissionTotal(hourlyRate) {
+  const commission = 0.1 + Math.random() * 0.1; // 10-20%, matches the team's shared schema
+  return Math.round(hourlyRate * (1 + commission) * 100) / 100;
+}
+
+const MAX_BOOKING_ID_ATTEMPTS = 5;
+
+export async function createBooking({ customerId, listingId, hourlyRate }) {
+  if (!customerId || !listingId || !(hourlyRate > 0)) {
     throw new Error("Missing booking details.");
   }
-  const bookingId = "bkg_" + Math.random().toString().slice(2, 8);
 
   if (isSupabaseConfigured()) {
     const supabase = await getSupabase();
-    const { data, error } = await supabase
-      .from("bookings")
-      .insert({
-        booking_id: bookingId,
-        customer_id: customerId,
-        listing_id: listingId,
-        booking_status: "pending",
-        total_cost: totalCost,
-      })
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    return data;
+    for (let attempt = 1; attempt <= MAX_BOOKING_ID_ATTEMPTS; attempt++) {
+      const { data, error } = await supabase
+        .from("bookings")
+        // total_cost is intentionally omitted: the bookings_set_total_cost
+        // trigger computes it server-side from the real listing price, so a
+        // tampered client-side value can never reach the database.
+        .insert({
+          booking_id: randomBookingId(),
+          customer_id: customerId,
+          listing_id: listingId,
+          booking_status: "pending",
+        })
+        .select()
+        .single();
+      if (!error) return data;
+      if (error.code !== "23505" || attempt === MAX_BOOKING_ID_ATTEMPTS) {
+        throw new Error(error.message);
+      }
+      // 23505 = unique_violation on booking_id — retry with a fresh id.
+    }
   }
 
   const rows = await readMockBookings();
+  const existingIds = new Set(rows.map((r) => r.booking_id));
+  let bookingId = randomBookingId();
+  let attempts = 1;
+  while (existingIds.has(bookingId) && attempts < MAX_BOOKING_ID_ATTEMPTS) {
+    bookingId = randomBookingId();
+    attempts++;
+  }
+  if (existingIds.has(bookingId)) {
+    throw new Error("Could not generate a unique booking id — please try again.");
+  }
+
   const row = {
     booking_id: bookingId,
     customer_id: customerId,
     listing_id: listingId,
     booking_status: "pending",
-    total_cost: totalCost,
+    total_cost: randomCommissionTotal(hourlyRate),
     rating: null,
   };
   rows.push(row);

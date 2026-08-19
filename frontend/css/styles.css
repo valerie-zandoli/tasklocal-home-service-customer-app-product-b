@@ -3,7 +3,7 @@
   --surface: #ffffff;
   --border: #e4e1db;
   --text: #1f2320;
-  --text-muted: #6b6f6a;
+  --text-muted: #52564f; /* ~7.1:1 on --bg, passes WCAG AA (and near-AAA) for normal-size text */
   --brand: #2f6b4f;
   --brand-hover: #244f3b;
   --accent: #b5651d;
