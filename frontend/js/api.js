@@ -1,5 +1,6 @@
 import { getSupabase, isSupabaseConfigured } from "./supabaseClient.js";
 import { DEMO_USERS } from "./demo-users.js";
+import { filterListings } from "./utils.js";
 
 const SESSION_KEY = "tasklocal_session";
 const MOCK_BOOKINGS_KEY = "tasklocal_mock_bookings";
@@ -77,28 +78,20 @@ export async function getSession() {
 // ── Listings ─────────────────────────────────────────────────────────────
 
 export async function fetchListings({ serviceType, maxPrice, search } = {}) {
-  let rows;
   if (isSupabaseConfigured()) {
+    // serviceType/maxPrice are applied server-side; `search` has no index to
+    // query against yet, so it's applied client-side same as mock mode.
     const supabase = await getSupabase();
     let query = supabase.from("listings").select("*");
     if (serviceType) query = query.eq("service_type", serviceType);
     if (maxPrice) query = query.lte("hourly_rate", maxPrice);
     const { data, error } = await query;
     if (error) throw new Error(error.message);
-    rows = data;
-  } else {
-    const res = await fetch("data/listings.json");
-    rows = await res.json();
-    if (serviceType) rows = rows.filter((r) => r.service_type === serviceType);
-    if (maxPrice) rows = rows.filter((r) => r.hourly_rate <= maxPrice);
+    return filterListings(data, { search });
   }
-  if (search) {
-    const q = search.toLowerCase();
-    rows = rows.filter(
-      (r) => r.title.toLowerCase().includes(q) || r.description.toLowerCase().includes(q)
-    );
-  }
-  return rows;
+  const res = await fetch("data/listings.json");
+  const rows = await res.json();
+  return filterListings(rows, { serviceType, maxPrice, search });
 }
 
 export async function fetchListing(listingId) {

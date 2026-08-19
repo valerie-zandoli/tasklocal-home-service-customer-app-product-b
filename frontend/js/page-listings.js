@@ -1,5 +1,6 @@
 import { fetchListings } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
+import { escapeHtml } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -7,24 +8,28 @@ if (session) {
 
   const grid = document.getElementById("listing-grid");
   const emptyState = document.getElementById("empty-state");
+  const listingsError = document.getElementById("listings-error");
   const form = document.getElementById("filters-form");
   const searchInput = document.getElementById("search");
   const serviceTypeSelect = document.getElementById("service_type");
   const maxPriceInput = document.getElementById("max_price");
 
-  function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
   async function render() {
+    listingsError.textContent = "";
     const search = searchInput.value.trim();
     const serviceType = serviceTypeSelect.value;
     const maxPriceRaw = maxPriceInput.value;
     const maxPrice = maxPriceRaw ? Number(maxPriceRaw) : undefined;
 
-    const listings = await fetchListings({ search, serviceType, maxPrice });
+    let listings;
+    try {
+      listings = await fetchListings({ search, serviceType, maxPrice });
+    } catch (err) {
+      grid.innerHTML = "";
+      emptyState.hidden = true;
+      listingsError.textContent = err.message;
+      return;
+    }
 
     if (listings.length === 0) {
       grid.innerHTML = "";
