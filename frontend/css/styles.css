@@ -20,6 +20,35 @@
   --status-confirmed-text: #17509c;
   --status-completed-bg: #e2f4e5;
   --status-completed-text: #1f7a34;
+
+  /* Fixed across both themes: used only behind white button text, which a
+     dark-mode-lightened --brand would no longer have enough contrast for. */
+  --brand-solid: #2f6b4f;
+  --brand-solid-hover: #244f3b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181a;
+    --surface: #212328;
+    --border: #34373d;
+    --text: #ede9e4;
+    --text-muted: #b7bab2; /* ~8.7:1 on --bg */
+    --brand: #6bc79a;
+    --brand-hover: #86d6ac;
+    --danger: #ff8a80;
+
+    --badge-bg: #223129;
+    --selected-bg: #223129;
+    --status-draft-bg: #3a3a3a;
+    --status-draft-text: #d8d8d8;
+    --status-pending-bg: #4a3a12;
+    --status-pending-text: #ffcf75;
+    --status-confirmed-bg: #17293f;
+    --status-confirmed-text: #8ec2ff;
+    --status-completed-bg: #1c3624;
+    --status-completed-text: #85dba3;
+  }
 }
 
 * {
@@ -32,6 +61,7 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+  color-scheme: light dark;
 }
 
 a {
@@ -156,7 +186,7 @@ button.primary {
   width: 100%;
   margin-top: 1.25rem;
   padding: 0.7rem;
-  background: var(--brand);
+  background: var(--brand-solid);
   color: white;
   border: none;
   border-radius: 8px;
@@ -165,7 +195,7 @@ button.primary {
   cursor: pointer;
 }
 button.primary:hover {
-  background: var(--brand-hover);
+  background: var(--brand-solid-hover);
 }
 button.primary:disabled {
   opacity: 0.6;
@@ -346,7 +376,7 @@ button.primary:disabled {
   padding: 0.4rem 0.75rem;
   border-radius: 6px;
   border: 1px solid var(--border);
-  background: var(--brand);
+  background: var(--brand-solid);
   color: white;
   cursor: pointer;
   font-size: 0.85rem;
