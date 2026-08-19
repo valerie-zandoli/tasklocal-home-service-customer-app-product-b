@@ -6,10 +6,20 @@
   --text-muted: #52564f; /* ~7.1:1 on --bg, passes WCAG AA (and near-AAA) for normal-size text */
   --brand: #2f6b4f;
   --brand-hover: #244f3b;
-  --accent: #b5651d;
   --danger: #b3261e;
   --radius: 10px;
   --max-width: 960px;
+
+  --badge-bg: #e7f0ea;
+  --selected-bg: #e7f0ea;
+  --status-draft-bg: #eee;
+  --status-draft-text: #555;
+  --status-pending-bg: #fff2d9;
+  --status-pending-text: #8a5a00;
+  --status-confirmed-bg: #dcecff;
+  --status-confirmed-text: #17509c;
+  --status-completed-bg: #e2f4e5;
+  --status-completed-text: #1f7a34;
 }
 
 * {
@@ -243,7 +253,7 @@ button.primary:disabled {
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--brand);
-  background: #e7f0ea;
+  background: var(--badge-bg);
   padding: 0.15rem 0.5rem;
   border-radius: 100px;
 }
@@ -294,7 +304,7 @@ button.primary:disabled {
 }
 .slot-btn.selected {
   border-color: var(--brand);
-  background: #e7f0ea;
+  background: var(--selected-bg);
   color: var(--brand-hover);
   font-weight: 600;
 }
@@ -319,10 +329,10 @@ button.primary:disabled {
   padding: 0.2rem 0.55rem;
   border-radius: 100px;
 }
-.status-draft { background: #eee; color: #555; }
-.status-pending { background: #fff2d9; color: #8a5a00; }
-.status-confirmed { background: #dcecff; color: #17509c; }
-.status-completed { background: #e2f4e5; color: #1f7a34; }
+.status-draft { background: var(--status-draft-bg); color: var(--status-draft-text); }
+.status-pending { background: var(--status-pending-bg); color: var(--status-pending-text); }
+.status-confirmed { background: var(--status-confirmed-bg); color: var(--status-confirmed-text); }
+.status-completed { background: var(--status-completed-bg); color: var(--status-completed-text); }
 
 .rating-form {
   display: flex;
@@ -339,18 +349,6 @@ button.primary:disabled {
   background: var(--brand);
   color: white;
   cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.toast {
-  position: fixed;
-  bottom: 1.25rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--text);
-  color: white;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
   font-size: 0.85rem;
 }
 
