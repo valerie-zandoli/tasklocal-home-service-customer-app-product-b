@@ -146,6 +146,42 @@ create table if not exists booking_schedules (
   scheduled_slot  timestamptz not null
 );
 
+-- ── Atomic booking creation ─────────────────────────────────────────────────
+-- Creating a booking is two inserts (bookings, then booking_schedules). Doing
+-- those as two separate client round-trips risks a real, silent bug: if the
+-- first insert succeeds and the second then fails, the customer sees "booking
+-- failed" while a real, orphaned booking with no recorded time slot now sits
+-- in their account. A plpgsql function call runs inside a single transaction
+-- — if anything inside raises, the whole thing rolls back, so partial success
+-- is impossible by construction. SECURITY INVOKER (the default — deliberately
+-- not changed to DEFINER): it runs as the calling user, so every RLS policy
+-- and trigger above still applies exactly as if the client had run the two
+-- inserts directly.
+create or replace function create_booking_with_schedule(
+  p_booking_id text,
+  p_customer_id text,
+  p_listing_id text,
+  p_scheduled_slot timestamptz
+)
+returns bookings
+language plpgsql
+as $$
+declare
+  v_booking bookings;
+begin
+  insert into bookings (booking_id, customer_id, listing_id, booking_status)
+  values (p_booking_id, p_customer_id, p_listing_id, 'pending')
+  returning * into v_booking;
+
+  insert into booking_schedules (booking_id, scheduled_slot)
+  values (p_booking_id, p_scheduled_slot);
+
+  return v_booking;
+end;
+$$;
+
+grant execute on function create_booking_with_schedule(text, text, text, timestamptz) to authenticated;
+
 -- ── Row Level Security ──────────────────────────────────────────────────────
 
 alter table customers enable row level security;
