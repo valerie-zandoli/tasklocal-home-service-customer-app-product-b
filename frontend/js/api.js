@@ -143,26 +143,19 @@ export async function createBooking({ customerId, listingId, hourlyRate, schedul
     const supabase = await getSupabase();
     for (let attempt = 1; attempt <= MAX_BOOKING_ID_ATTEMPTS; attempt++) {
       const bookingId = randomBookingId();
-      const { data, error } = await supabase
-        .from("bookings")
-        // total_cost is intentionally omitted: the bookings_set_total_cost
-        // trigger computes it server-side from the real listing price, so a
-        // tampered client-side value can never reach the database.
-        .insert({
-          booking_id: bookingId,
-          customer_id: customerId,
-          listing_id: listingId,
-          booking_status: "pending",
-        })
-        .select()
-        .single();
+      // Single RPC call, not two separate inserts: create_booking_with_schedule
+      // (backend/schema.sql) runs both inserts in one transaction, so a
+      // failure partway through can't leave an orphaned booking with no
+      // recorded time slot. total_cost is omitted — the bookings_set_total_cost
+      // trigger computes it server-side, so a tampered client value can't
+      // reach the database.
+      const { data, error } = await supabase.rpc("create_booking_with_schedule", {
+        p_booking_id: bookingId,
+        p_customer_id: customerId,
+        p_listing_id: listingId,
+        p_scheduled_slot: scheduledSlot,
+      });
       if (!error) {
-        // Recorded in a Product-B-local table, not the shared `bookings` row
-        // — the shared schema has no column for it (see backend/schema.sql).
-        const { error: scheduleError } = await supabase
-          .from("booking_schedules")
-          .insert({ booking_id: bookingId, scheduled_slot: scheduledSlot });
-        if (scheduleError) throw new Error(scheduleError.message);
         return { ...data, scheduled_slot: scheduledSlot };
       }
       if (error.code !== "23505" || attempt === MAX_BOOKING_ID_ATTEMPTS) {
