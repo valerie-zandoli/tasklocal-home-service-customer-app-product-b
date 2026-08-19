@@ -19,7 +19,10 @@ export function renderNav(session, activePage) {
   ];
   nav.innerHTML = `
     <div class="nav-inner">
-      <a class="brand" href="listings.html">TaskLocal <span>Home-Service</span></a>
+      <a class="brand" href="listings.html">
+        <img class="brand-logo" src="assets/logo.svg" alt="" width="28" height="28" />
+        TaskLocal <span>Home-Service</span>
+      </a>
       <div class="nav-links">
         ${links
           .map((l) => {

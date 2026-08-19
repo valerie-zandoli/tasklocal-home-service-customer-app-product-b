@@ -93,12 +93,19 @@ a:hover {
   flex-wrap: wrap;
 }
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 700;
   color: var(--text);
   text-decoration: none;
 }
 .brand span {
   color: var(--brand);
+}
+.brand-logo {
+  display: block;
+  flex-shrink: 0;
 }
 .nav-links {
   display: flex;
