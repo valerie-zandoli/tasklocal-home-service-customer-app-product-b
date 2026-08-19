@@ -24,6 +24,7 @@ All four products share a common data schema (customers, listings, providers, bo
 - **Backend** (`backend/`): PostgreSQL via Supabase. `backend/schema.sql` defines the tables (matching the team's shared data schema exactly) and Row Level Security policies. `backend/seed_data.sql` loads the team's synthetic dataset. JSON copies of the same data live in `backend/data/` and `frontend/data/` (the frontend copies are used as a local fallback — see "Run it locally" below).
 - Auth is Supabase Auth (email + password). Four demo accounts (Valerie, Joan, Lady D, Sarah) are seeded via `backend/scripts/seed-demo-users.mjs` so the whole team can log in and click through without setting up their own accounts.
 - Shared pure logic (HTML-escaping, listing filters) lives in `frontend/js/utils.js` rather than being copy-pasted per page, and is unit-tested in `frontend/js/utils.test.mjs`.
+- Branding: `frontend/assets/logo.svg` — a simple, colorful NYC brownstone mark — is the favicon (with a `favicon-32.png` fallback for browsers that don't support SVG favicons) on every page, and appears in the nav bar and on the login screen. One SVG source; edit it there if the mark ever changes.
 - **Current status: this project is presented in local demo mode, not deployed against a live Supabase project** — there's no current intention to load live data. Section 2 below is written for if/when that changes; skip straight to Section 1 for how this actually runs today.
 
 ## Data quality note
