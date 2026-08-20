@@ -1,6 +1,6 @@
 import { fetchListing, createBooking, randomBookingId } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
-import { escapeHtml } from "./utils.js";
+import { escapeHtml, formatCurrency } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -44,7 +44,7 @@ if (session) {
           <span class="badge">${escapeHtml(listing.service_type)}</span>
           <h1>${escapeHtml(listing.title)}</h1>
           <p>${escapeHtml(listing.description)}</p>
-          <p class="detail-price">$${Number(listing.hourly_rate).toFixed(2)} <span style="font-weight:400;color:var(--text-muted);font-size:0.9rem;">/ hr</span></p>
+          <p class="detail-price">${formatCurrency(listing.hourly_rate)} <span style="font-weight:400;color:var(--text-muted);font-size:0.9rem;">/ hr</span></p>
         </div>
         <h3>Choose a time</h3>
         <div class="slot-grid" id="slot-grid"></div>

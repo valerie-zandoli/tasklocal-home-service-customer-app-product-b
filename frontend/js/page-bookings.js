@@ -1,6 +1,6 @@
 import { fetchMyBookings, rateBooking } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
-import { escapeHtml } from "./utils.js";
+import { escapeHtml, formatCurrency } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -66,7 +66,7 @@ if (session) {
               <strong>${listingTitle}</strong>
               <div><span class="status-pill status-${status}">${status}</span></div>
               ${scheduled ? `<div style="color:var(--text-muted);font-size:0.85rem;">Scheduled: ${escapeHtml(scheduled)}</div>` : ""}
-              <div style="color:var(--text-muted);font-size:0.85rem;">$${Number(b.total_cost).toFixed(2)} total &middot; ${escapeHtml(b.booking_id)}</div>
+              <div style="color:var(--text-muted);font-size:0.85rem;">${formatCurrency(b.total_cost)} total &middot; ${escapeHtml(b.booking_id)}</div>
             </div>
             ${ratingBlock}
           </div>

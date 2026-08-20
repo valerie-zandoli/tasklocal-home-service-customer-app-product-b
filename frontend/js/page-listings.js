@@ -1,6 +1,6 @@
 import { fetchListings } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
-import { escapeHtml } from "./utils.js";
+import { escapeHtml, formatCurrency } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -45,7 +45,7 @@ if (session) {
           <span class="badge">${escapeHtml(l.service_type)}</span>
           <h3>${escapeHtml(l.title)}</h3>
           <p class="desc">${escapeHtml(l.description)}</p>
-          <p class="price">$${Number(l.hourly_rate).toFixed(2)} <span>/ hr</span></p>
+          <p class="price">${formatCurrency(l.hourly_rate)} <span>/ hr</span></p>
         </a>
       `
       )
