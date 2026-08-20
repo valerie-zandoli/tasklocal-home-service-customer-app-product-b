@@ -101,7 +101,7 @@ Reload the frontend and it will now talk to your real Supabase database instead 
 ```bash
 node --test frontend/js/*.test.mjs
 ```
-Covers the pricing/booking-id logic and the shared `escapeHtml`/`filterListings` helpers (Node 20+; see the note at the top of each test file). This does **not** cover the RLS policies or triggers — those need a real Supabase project (see "Known limitations" above).
+Covers the pricing/booking-id logic and the shared `escapeHtml`/`filterListings` helpers (Node 20+; see the note at the top of each test file). This does **not** cover `backend/schema.sql`'s RLS policies, triggers, or functions — those need a real Supabase project (see "Known limitations" above).
 
 ### 5. Testing checklist before you call it done
 
