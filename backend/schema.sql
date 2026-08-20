@@ -182,12 +182,31 @@ as $$
 declare
   v_booking bookings;
 begin
+  -- Idempotent on booking_id, which is generated client-side and reused
+  -- across a manual retry (see frontend/js/page-listing.js) rather than
+  -- regenerated every click. Covers the case where this call already
+  -- committed once but the client never saw the response (dropped
+  -- connection, timeout) and retried: return the existing booking instead
+  -- of erroring or creating a real duplicate for the same slot. Only treat
+  -- it as "the same retry" when customer_id and listing_id also match —
+  -- otherwise this is a genuine, if astronomically unlikely, collision with
+  -- someone else's booking_id, and should fail so the caller regenerates a
+  -- fresh id (see the 23505 retry loop in api.js).
+  select * into v_booking from bookings where booking_id = p_booking_id;
+  if found then
+    if v_booking.customer_id = p_customer_id and v_booking.listing_id = p_listing_id then
+      return v_booking;
+    end if;
+    raise exception 'booking_id % already in use', p_booking_id using errcode = '23505';
+  end if;
+
   insert into bookings (booking_id, customer_id, listing_id, booking_status)
   values (p_booking_id, p_customer_id, p_listing_id, 'pending')
   returning * into v_booking;
 
   insert into booking_schedules (booking_id, scheduled_slot)
-  values (p_booking_id, p_scheduled_slot);
+  values (p_booking_id, p_scheduled_slot)
+  on conflict (booking_id) do nothing;
 
   return v_booking;
 end;
