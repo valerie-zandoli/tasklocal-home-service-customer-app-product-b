@@ -21,16 +21,6 @@
   </div>
 
   <script src="js/config.js"></script>
-  <script type="module">
-    import { getSession } from "./js/api.js";
-    try {
-      const session = await getSession();
-      window.location.replace(session ? "listings.html" : "login.html");
-    } catch (err) {
-      document.getElementById("loading-state").innerHTML =
-        `<p class="error-text">Something went wrong loading TaskLocal Home-Service. Please refresh the page.</p>`;
-      console.error(err);
-    }
-  </script>
+  <script type="module" src="js/page-index.js"></script>
 </body>
 </html>
