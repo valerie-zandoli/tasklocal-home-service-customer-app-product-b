@@ -1,4 +1,4 @@
--- TaskLocal Home-Service — Product B (Customer Web & Mobile / Demand)
+-- Product B, Customer (demand) Web and Mobile Application for TaskLocal Home-Service
 -- Postgres schema for Supabase, matching the team's shared data-schema doc exactly
 -- (see: Copy of 20260807_Data schema template). Column names/types here must stay in
 -- sync with Products A, C, and D — do not rename or retype without a team sign-off.
