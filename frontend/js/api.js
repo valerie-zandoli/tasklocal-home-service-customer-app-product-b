@@ -131,7 +131,7 @@ export function randomCommissionTotal(hourlyRate) {
 
 const MAX_BOOKING_ID_ATTEMPTS = 5;
 
-export async function createBooking({ customerId, listingId, hourlyRate, scheduledSlot }) {
+export async function createBooking({ customerId, listingId, hourlyRate, scheduledSlot, bookingId }) {
   if (!customerId) {
     throw new Error("Your account isn't linked to a customer profile yet — contact support.");
   }
@@ -141,8 +141,12 @@ export async function createBooking({ customerId, listingId, hourlyRate, schedul
 
   if (isSupabaseConfigured()) {
     const supabase = await getSupabase();
+    // A caller-supplied bookingId (see page-listing.js) is reused across a
+    // manual retry so create_booking_with_schedule's idempotency check can
+    // recognize it as the same attempt, not a new booking. Only regenerate
+    // on an actual 23505 collision below.
+    let id = bookingId || randomBookingId();
     for (let attempt = 1; attempt <= MAX_BOOKING_ID_ATTEMPTS; attempt++) {
-      const bookingId = randomBookingId();
       // Single RPC call, not two separate inserts: create_booking_with_schedule
       // (backend/schema.sql) runs both inserts in one transaction, so a
       // failure partway through can't leave an orphaned booking with no
@@ -150,7 +154,7 @@ export async function createBooking({ customerId, listingId, hourlyRate, schedul
       // trigger computes it server-side, so a tampered client value can't
       // reach the database.
       const { data, error } = await supabase.rpc("create_booking_with_schedule", {
-        p_booking_id: bookingId,
+        p_booking_id: id,
         p_customer_id: customerId,
         p_listing_id: listingId,
         p_scheduled_slot: scheduledSlot,
@@ -161,24 +165,36 @@ export async function createBooking({ customerId, listingId, hourlyRate, schedul
       if (error.code !== "23505" || attempt === MAX_BOOKING_ID_ATTEMPTS) {
         throw new Error(error.message);
       }
-      // 23505 = unique_violation on booking_id — retry with a fresh id.
+      // 23505 = unique_violation on booking_id — a genuine collision with an
+      // unrelated booking (create_booking_with_schedule already ruled out
+      // "this is my own retry"). Try a fresh id.
+      id = randomBookingId();
     }
   }
 
   const rows = await readMockBookings();
+  let id = bookingId;
+  const existing = id ? rows.find((r) => r.booking_id === id) : null;
+  if (existing) {
+    // Mirrors the real-mode idempotency check: a retry with the same id for
+    // the same customer/listing returns the existing row.
+    if (existing.customer_id === customerId && existing.listing_id === listingId) {
+      return existing;
+    }
+    id = null; // collided with someone else's mock booking — regenerate below
+  }
   const existingIds = new Set(rows.map((r) => r.booking_id));
-  let bookingId = randomBookingId();
-  let attempts = 1;
-  while (existingIds.has(bookingId) && attempts < MAX_BOOKING_ID_ATTEMPTS) {
-    bookingId = randomBookingId();
+  let attempts = 0;
+  while ((!id || existingIds.has(id)) && attempts < MAX_BOOKING_ID_ATTEMPTS) {
+    id = randomBookingId();
     attempts++;
   }
-  if (existingIds.has(bookingId)) {
+  if (existingIds.has(id)) {
     throw new Error("Could not generate a unique booking id — please try again.");
   }
 
   const row = {
-    booking_id: bookingId,
+    booking_id: id,
     customer_id: customerId,
     listing_id: listingId,
     booking_status: "pending",
