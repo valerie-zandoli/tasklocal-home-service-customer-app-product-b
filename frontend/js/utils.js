@@ -16,6 +16,12 @@ export function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (ch) => HTML_ESCAPES[ch]);
 }
 
+const CURRENCY_FORMATTER = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+
+export function formatCurrency(amount) {
+  return CURRENCY_FORMATTER.format(Number(amount));
+}
+
 export function filterListings(rows, { serviceType, maxPrice, search } = {}) {
   let result = rows;
   if (serviceType) {

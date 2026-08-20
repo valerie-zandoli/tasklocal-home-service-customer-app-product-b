@@ -3,7 +3,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { escapeHtml, filterListings } from "./utils.js";
+import { escapeHtml, filterListings, formatCurrency } from "./utils.js";
 
 test("escapeHtml neutralizes HTML-significant characters", () => {
   assert.equal(escapeHtml('<script>alert("hi")</script>'), "&lt;script&gt;alert(&quot;hi&quot;)&lt;/script&gt;");
@@ -17,6 +17,19 @@ test("escapeHtml treats null/undefined as empty string", () => {
 
 test("escapeHtml passes plain text through unchanged", () => {
   assert.equal(escapeHtml("Deep Apartment Cleaning"), "Deep Apartment Cleaning");
+});
+
+test("formatCurrency formats a USD amount with the $ sign and 2 decimals", () => {
+  assert.equal(formatCurrency(83.52), "$83.52");
+  assert.equal(formatCurrency(20), "$20.00");
+});
+
+test("formatCurrency inserts a thousands separator", () => {
+  assert.equal(formatCurrency(1234.5), "$1,234.50");
+});
+
+test("formatCurrency rounds to the nearest cent", () => {
+  assert.equal(formatCurrency(83.526), "$83.53");
 });
 
 const LISTINGS = [
