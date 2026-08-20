@@ -86,22 +86,29 @@ a:hover {
 .nav-inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0.9rem 1.25rem;
+  padding: 0.75rem 1.25rem;
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  gap: 1.25rem;
 }
 .brand {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 700;
   color: var(--text);
   text-decoration: none;
+  /* Flex items default to min-width: auto, which blocks shrinking below the
+     text's natural width and would force the whole nav to wrap instead of
+     letting the long product name truncate. This opts back into shrinking. */
+  min-width: 0;
+  flex-shrink: 1;
 }
-.brand span {
-  color: var(--brand);
+.brand-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .brand-logo {
   display: block;
@@ -110,7 +117,7 @@ a:hover {
 .nav-links {
   display: flex;
   gap: 1rem;
-  flex: 1;
+  flex-shrink: 0;
 }
 .nav-links a {
   color: var(--text-muted);
@@ -126,6 +133,8 @@ a:hover {
   gap: 0.75rem;
   font-size: 0.9rem;
   color: var(--text-muted);
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .link-btn {
@@ -409,7 +418,17 @@ button.primary:disabled {
 
 @media (max-width: 560px) {
   .nav-inner {
-    gap: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  /* Below this width, the logo + links + user info no longer fit next to
+     even a fully-truncated brand on one line — give the brand its own row
+     instead of letting it get squeezed to nothing. */
+  .brand {
+    flex: 1 0 100%;
+  }
+  .nav-user {
+    margin-left: 0;
   }
   .filters {
     flex-direction: column;

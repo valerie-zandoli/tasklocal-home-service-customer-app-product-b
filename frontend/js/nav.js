@@ -1,5 +1,5 @@
 import { getSession, logout } from "./api.js";
-import { escapeHtml } from "./utils.js";
+import { escapeHtml, PRODUCT_NAME } from "./utils.js";
 
 export async function requireSession() {
   const session = await getSession();
@@ -19,9 +19,9 @@ export function renderNav(session, activePage) {
   ];
   nav.innerHTML = `
     <div class="nav-inner">
-      <a class="brand" href="listings.html">
-        <img class="brand-logo" src="assets/logo.svg" alt="" width="28" height="28" />
-        Product B, Customer (demand) Web and Mobile Application for <span>TaskLocal Home-Service</span>
+      <a class="brand" href="listings.html" title="${PRODUCT_NAME}">
+        <img class="brand-logo" src="assets/logo.svg" alt="" width="24" height="24" />
+        <span class="brand-name">${PRODUCT_NAME}</span>
       </a>
       <div class="nav-links">
         ${links
