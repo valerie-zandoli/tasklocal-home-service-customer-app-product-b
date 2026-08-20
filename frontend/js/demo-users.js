@@ -3,8 +3,8 @@
 // Supabase project set up yet. In real (Supabase-configured) mode, these same
 // email/password pairs are the ones created by backend/scripts/seed-demo-users.mjs.
 export const DEMO_USERS = [
-  { email: "valerie.zandoli@pursuit.org", password: "tasklocal-valerie", displayName: "Valerie Zandoli", customerId: "cust_60227" },
-  { email: "joan.albayrak@pursuit.org", password: "tasklocal-joan", displayName: "Joan Albayrak", customerId: "cust_04025" },
-  { email: "ladydstukes@pursuit.org", password: "tasklocal-ladyd", displayName: "Lady D Stukes", customerId: "cust_57744" },
-  { email: "sarah.dykes@pursuit.org", password: "tasklocal-sarah", displayName: "Sarah Dykes", customerId: "cust_80863" },
+  { email: "valerie.zandoli@pursuit.org", password: "demo-valerie-a4c809", displayName: "Valerie Zandoli", customerId: "cust_60227" },
+  { email: "joan.albayrak@pursuit.org", password: "demo-joan-65d91a", displayName: "Joan Albayrak", customerId: "cust_04025" },
+  { email: "ladydstukes@pursuit.org", password: "demo-ladyd-f2b3e9", displayName: "Lady D Stukes", customerId: "cust_57744" },
+  { email: "sarah.dykes@pursuit.org", password: "demo-sarah-817756", displayName: "Sarah Dykes", customerId: "cust_80863" },
 ];

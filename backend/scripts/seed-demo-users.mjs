@@ -30,10 +30,10 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 // teammate on the demo Supabase project. Never reuse these passwords anywhere
 // real, and rotate/remove this data before the project holds real users.
 const DEMO_ACCOUNTS = [
-  { email: "valerie.zandoli@pursuit.org", password: "tasklocal-valerie", display_name: "Valerie Zandoli", customer_id: "cust_60227" },
-  { email: "joan.albayrak@pursuit.org", password: "tasklocal-joan", display_name: "Joan Albayrak", customer_id: "cust_04025" },
-  { email: "ladydstukes@pursuit.org", password: "tasklocal-ladyd", display_name: "Lady D Stukes", customer_id: "cust_57744" },
-  { email: "sarah.dykes@pursuit.org", password: "tasklocal-sarah", display_name: "Sarah Dykes", customer_id: "cust_80863" },
+  { email: "valerie.zandoli@pursuit.org", password: "demo-valerie-a4c809", display_name: "Valerie Zandoli", customer_id: "cust_60227" },
+  { email: "joan.albayrak@pursuit.org", password: "demo-joan-65d91a", display_name: "Joan Albayrak", customer_id: "cust_04025" },
+  { email: "ladydstukes@pursuit.org", password: "demo-ladyd-f2b3e9", display_name: "Lady D Stukes", customer_id: "cust_57744" },
+  { email: "sarah.dykes@pursuit.org", password: "demo-sarah-817756", display_name: "Sarah Dykes", customer_id: "cust_80863" },
 ];
 
 for (const account of DEMO_ACCOUNTS) {
