@@ -3,6 +3,11 @@
 // — see utils.test.mjs. Previously escapeHtml() was copy-pasted into four
 // different page modules; this is the one copy.
 
+// Single source of truth for the product's full name, so nav.js and
+// page-index.js can't drift out of sync with each other on a future rename.
+export const PRODUCT_NAME =
+  "Product B, Customer (demand) Web and Mobile Application for TaskLocal Home-Service";
+
 const HTML_ESCAPES = {
   "&": "&amp;",
   "<": "&lt;",
