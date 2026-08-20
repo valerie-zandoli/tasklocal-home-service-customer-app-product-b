@@ -1,9 +1,9 @@
-# Product B: Customer Web & Mobile (Demand)
+# Product B, Customer (demand) Web and Mobile Application for TaskLocal Home-Service
 
 [![Tests](https://github.com/valerie-zandoli/tasklocal-home-service-customer-app-product-b/actions/workflows/test.yml/badge.svg)](https://github.com/valerie-zandoli/tasklocal-home-service-customer-app-product-b/actions/workflows/test.yml)
 
 ## Overview
-**TaskLocal Customer App** is the demand-side interface for TaskLocal, a two-sided local marketplace connecting independent home-service providers (house cleaning, handyman work, moving help) with local customers who need that work done. TaskLocal takes a commission on each booking made through the platform.
+**Product B, Customer (demand) Web and Mobile Application for TaskLocal Home-Service** is the demand-side interface for TaskLocal, a two-sided local marketplace connecting independent home-service providers (house cleaning, handyman work, moving help) with local customers who need that work done. TaskLocal takes a commission on each booking made through the platform.
 
 ## Target User
 This product is built for **busy local residents booking home services** — for example, a working professional or renter who needs to find, compare, and book a trustworthy provider for a one-off or recurring job (a deep apartment cleaning, a small repair, help moving) without cold-calling or texting multiple providers to compare price and availability.
