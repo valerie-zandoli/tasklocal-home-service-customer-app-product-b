@@ -21,7 +21,7 @@ export function renderNav(session, activePage) {
     <div class="nav-inner">
       <a class="brand" href="listings.html">
         <img class="brand-logo" src="assets/logo.svg" alt="" width="28" height="28" />
-        TaskLocal <span>Home-Service</span>
+        Product B, Customer (demand) Web and Mobile Application for <span>TaskLocal Home-Service</span>
       </a>
       <div class="nav-links">
         ${links
