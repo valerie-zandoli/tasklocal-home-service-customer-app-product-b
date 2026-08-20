@@ -55,7 +55,11 @@ create table if not exists trust_safety (
 -- already-known-good historical data.
 
 create or replace function set_booking_total_cost()
-returns trigger as $$
+returns trigger
+language plpgsql
+security invoker
+set search_path = public, pg_temp
+as $$
 declare
   rate numeric(10, 2);
   commission numeric;
@@ -73,7 +77,7 @@ begin
   new.total_cost := round(rate * (1 + commission), 2);
   return new;
 end;
-$$ language plpgsql;
+$$;
 
 create trigger bookings_set_total_cost
   before insert on bookings
@@ -86,14 +90,18 @@ create trigger bookings_set_total_cost
 -- the SQL Editor and the seed scripts, so backend/seed_data.sql and
 -- backend/seed_demo_bookings.sql's explicit historical statuses are untouched.
 create or replace function enforce_new_booking_status()
-returns trigger as $$
+returns trigger
+language plpgsql
+security invoker
+set search_path = public, pg_temp
+as $$
 begin
   if auth.role() = 'authenticated' then
     new.booking_status := 'pending';
   end if;
   return new;
 end;
-$$ language plpgsql;
+$$;
 
 create trigger bookings_enforce_new_status
   before insert on bookings
@@ -105,7 +113,11 @@ create trigger bookings_enforce_new_status
 -- let a signed-in customer rewrite their own booking's price, status, or
 -- listing via a direct API call, bypassing the app UI entirely.
 create or replace function protect_booking_update()
-returns trigger as $$
+returns trigger
+language plpgsql
+security invoker
+set search_path = public, pg_temp
+as $$
 begin
   if auth.role() = 'authenticated' then
     if new.customer_id is distinct from old.customer_id
@@ -118,7 +130,7 @@ begin
   end if;
   return new;
 end;
-$$ language plpgsql;
+$$;
 
 create trigger bookings_protect_update
   before update on bookings
@@ -153,10 +165,9 @@ create table if not exists booking_schedules (
 -- failed" while a real, orphaned booking with no recorded time slot now sits
 -- in their account. A plpgsql function call runs inside a single transaction
 -- — if anything inside raises, the whole thing rolls back, so partial success
--- is impossible by construction. SECURITY INVOKER (the default — deliberately
--- not changed to DEFINER): it runs as the calling user, so every RLS policy
--- and trigger above still applies exactly as if the client had run the two
--- inserts directly.
+-- is impossible by construction. security invoker (not changed to definer):
+-- it runs as the calling user, so every RLS policy and trigger above still
+-- applies exactly as if the client had run the two inserts directly.
 create or replace function create_booking_with_schedule(
   p_booking_id text,
   p_customer_id text,
@@ -165,6 +176,8 @@ create or replace function create_booking_with_schedule(
 )
 returns bookings
 language plpgsql
+security invoker
+set search_path = public, pg_temp
 as $$
 declare
   v_booking bookings;
