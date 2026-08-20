@@ -65,8 +65,8 @@ if (session) {
             <div>
               <strong>${listingTitle}</strong>
               <div><span class="status-pill status-${status}">${status}</span></div>
-              ${scheduled ? `<div style="color:var(--text-muted);font-size:0.85rem;">Scheduled: ${escapeHtml(scheduled)}</div>` : ""}
-              <div style="color:var(--text-muted);font-size:0.85rem;">${formatCurrency(b.total_cost)} total &middot; ${escapeHtml(b.booking_id)}</div>
+              ${scheduled ? `<div class="booking-meta">Scheduled: ${escapeHtml(scheduled)}</div>` : ""}
+              <div class="booking-meta">${formatCurrency(b.total_cost)} total &middot; ${escapeHtml(b.booking_id)}</div>
             </div>
             ${ratingBlock}
           </div>

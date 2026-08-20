@@ -44,11 +44,11 @@ if (session) {
           <span class="badge">${escapeHtml(listing.service_type)}</span>
           <h1>${escapeHtml(listing.title)}</h1>
           <p>${escapeHtml(listing.description)}</p>
-          <p class="detail-price">${formatCurrency(listing.hourly_rate)} <span style="font-weight:400;color:var(--text-muted);font-size:0.9rem;">/ hr</span></p>
+          <p class="detail-price">${formatCurrency(listing.hourly_rate)} <span>/ hr</span></p>
         </div>
         <h3>Choose a time</h3>
         <div class="slot-grid" id="slot-grid"></div>
-        <button class="primary" id="book-btn" style="max-width:280px" disabled>Select a time to book</button>
+        <button class="primary" id="book-btn" disabled>Select a time to book</button>
         <p class="error-text" id="booking-error" aria-live="polite"></p>
       `;
 
