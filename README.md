@@ -2,6 +2,8 @@
 
 [![Tests](https://github.com/valerie-zandoli/tasklocal-home-service-customer-app-product-b/actions/workflows/test.yml/badge.svg)](https://github.com/valerie-zandoli/tasklocal-home-service-customer-app-product-b/actions/workflows/test.yml)
 
+**Live demo:** [tasklocal-home-service-customer-app.vercel.app](https://tasklocal-home-service-customer-app.vercel.app) — running in local demo mode (bundled JSON + `localStorage`, no live Supabase project behind it). Log in with one of the four demo accounts on the login screen.
+
 ## Overview
 **Product B, Customer (demand) Web and Mobile Application for TaskLocal Home-Service** is the demand-side interface for TaskLocal, a two-sided local marketplace connecting independent home-service providers (house cleaning, handyman work, moving help) with local customers who need that work done. TaskLocal takes a commission on each booking made through the platform.
 
@@ -28,11 +30,11 @@ All four products share a common data schema (customers, listings, providers, bo
 - Shared pure logic (HTML-escaping, listing filters, currency formatting via `Intl.NumberFormat`) lives in `frontend/js/utils.js` rather than being copy-pasted per page, and is unit-tested in `frontend/js/utils.test.mjs`.
 - Branding: `frontend/assets/logo.svg` — a simple, colorful NYC brownstone mark — is the favicon (with a `favicon-32.png` fallback for browsers that don't support SVG favicons) on every page, and appears in the nav bar and on the login screen. One SVG source; edit it there if the mark ever changes.
 - Each page sets light/dark `<meta name="theme-color">` tags (matching `styles.css`'s `--bg` values) so supported mobile browsers tint their own chrome/status bar to match instead of defaulting to white or black.
-- `frontend/robots.txt` disallows all crawling — irrelevant in local demo mode, but keeps this login-gated synthetic-data app out of search results if it's ever deployed to a real, public Vercel URL (see Section 3 below).
+- `frontend/robots.txt` disallows all crawling — keeps this login-gated synthetic-data app out of search results now that it's deployed to a real, public Vercel URL (see Section 3 below).
 - `frontend/manifest.json` (linked from every page) makes the app installable — "Add to Home Screen" / standalone window — with `assets/logo.svg` plus 192×192 and 512×512 PNG fallbacks (Chrome's install criteria specifically want a PNG, not just an SVG marked `sizes="any"`), plus a separate `purpose: "maskable"` icon pair (`logo-maskable.svg` → `icon-maskable-*.png`) scaled down and centered with padding so Android's adaptive-icon mask can't clip the house's roofline.
-- `vercel.json` sets a strict Content-Security-Policy (`script-src`/`style-src 'self'`, no `'unsafe-inline'` — the app has zero inline `<script>` or `style="..."` left anywhere, on purpose; `connect-src` is scoped to just `*.supabase.co`, since ES module loading like the `esm.sh` import is a `script-src` concern, not `connect-src`) plus `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and a `Permissions-Policy` disabling camera/mic/geolocation/payment/USB/FLoC. **This only takes effect on an actual Vercel deployment** — it's not read by local demo mode's `python3 -m http.server`, and there's no live deployment to verify it against (see Known Limitations).
+- `vercel.json` sets a strict Content-Security-Policy (`script-src`/`style-src 'self'`, no `'unsafe-inline'` — the app has zero inline `<script>` or `style="..."` left anywhere, on purpose; `connect-src` is scoped to just `*.supabase.co`, since ES module loading like the `esm.sh` import is a `script-src` concern, not `connect-src`) plus `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and a `Permissions-Policy` disabling camera/mic/geolocation/payment/USB/FLoC. **This only takes effect on an actual Vercel deployment** — it's not read by local demo mode's `python3 -m http.server`. Confirmed live via response headers on the deployed URL above.
 - `.github/workflows/test.yml` runs `node --test frontend/js/*.test.mjs` on every push/PR — no dependency install needed, since the tests only use Node's built-in test runner.
-- **Current status: this project is presented in local demo mode, not deployed against a live Supabase project** — there's no current intention to load live data. Section 2 below is written for if/when that changes; skip straight to Section 1 for how this actually runs today.
+- **Current status: the frontend is deployed to Vercel in local demo mode, not against a live Supabase project** — there's no current intention to load live data. Section 2 below is written for if/when that changes; skip straight to Section 1 for how this actually runs today.
 
 ## Data quality note
 
@@ -57,7 +59,7 @@ The synthetic `bookings.csv` from the team's shared dataset references 42 `listi
 - `backend/schema.sql`'s RLS policies, triggers, and functions (including `create_booking_with_schedule`'s atomicity/idempotency behavior) are written for a real Supabase/Postgres deployment but haven't been exercised against one — there's no live Supabase project for this presentation, so `frontend/js/api.test.mjs` and `utils.test.mjs` (pure logic only) are the tests that actually run today. If this project is ever deployed for real, run the "Real Supabase mode only" checklist item below first.
 - No slot-locking: booking a time doesn't remove it from a listing's `availability_slots`, so two customers could still pick the same slot. `booking_schedules` (see `backend/schema.sql`) now at least *records* which slot each customer picked — it previously wasn't stored anywhere at all.
 - `booking_schedules` and the removal of `chatbot_requests.customer_id` are decisions Product B made locally, not yet confirmed with Products A/C/D — worth a quick team sync before the joint presentation, since integration is coming up.
-- `vercel.json`'s Content-Security-Policy is unverified against a real deployment (no live Vercel URL exists for this presentation). Reviewed by hand for what would break it — zero inline scripts/styles remain anywhere in the app, which is why the policy can be `'self'`-only with no `'unsafe-inline'` — but that's manual review, not a CSP report-only run against real traffic. Worth a `Content-Security-Policy-Report-Only` pass first if this is ever actually deployed.
+- `vercel.json`'s Content-Security-Policy has been confirmed live (response headers checked, and the full login → browse → book → My Bookings flow walked end-to-end with zero console errors on the deployed URL), but only by manual review and a single pass through the core flow — not a `Content-Security-Policy-Report-Only` run against varied real traffic.
 
 ---
 
@@ -100,9 +102,13 @@ Reload the frontend and it will now talk to your real Supabase database instead 
 
 ### 3. Deploy to Vercel
 
-1. Push this repo to GitHub (already done — see the repo link).
-2. In Vercel, "Add New Project" → import this repo. `vercel.json` already points Vercel at the `frontend/` folder, so no extra config is needed.
-3. Deploy. Your live URL will serve `frontend/index.html`.
+Already done — see the live demo link at the top of this README. To redeploy after a change:
+
+```bash
+vercel --prod
+```
+
+(or, from a fresh clone: push this repo to GitHub, then in Vercel "Add New Project" → import it — `vercel.json` already points Vercel at the `frontend/` folder, so no extra config is needed.)
 
 ### 4. Run the automated tests
 
