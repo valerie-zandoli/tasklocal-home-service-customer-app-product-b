@@ -1,4 +1,4 @@
-import { fetchListing, createBooking } from "./api.js";
+import { fetchListing, createBooking, randomBookingId } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
 import { escapeHtml } from "./utils.js";
 
@@ -32,6 +32,12 @@ if (session) {
       container.innerHTML = `<p class="error-text">That listing could not be found. It may have been removed.</p>`;
     } else {
       let selectedSlot = null;
+      // Generated once per slot selection and reused across a manual retry
+      // (see createBooking's bookingId param) so a "Book" click after a lost
+      // response doesn't create a second, duplicate booking for the same
+      // slot. Cleared whenever the customer picks a different slot, since
+      // that's a genuinely new booking intent.
+      let pendingBookingId = null;
 
       container.innerHTML = `
         <div class="detail-header">
@@ -72,6 +78,7 @@ if (session) {
         btn.classList.add("selected");
         btn.setAttribute("aria-pressed", "true");
         selectedSlot = btn.dataset.slot;
+        pendingBookingId = null;
         bookBtn.disabled = false;
         bookBtn.textContent = "Book this slot";
       });
@@ -84,11 +91,15 @@ if (session) {
         }
         bookBtn.disabled = true;
         bookBtn.textContent = "Booking…";
+        if (!pendingBookingId) {
+          pendingBookingId = randomBookingId();
+        }
         try {
           // total_cost is computed from the real listing price — server-side
           // in Supabase mode (bookings_set_total_cost trigger), or here in
           // mock mode — never trusted from arbitrary client input.
           await createBooking({
+            bookingId: pendingBookingId,
             customerId: session.customerId,
             listingId: listing.listing_id,
             hourlyRate: listing.hourly_rate,
