@@ -23,8 +23,10 @@ All four products share a common data schema (customers, listings, providers, bo
 - **Frontend** (`frontend/`): plain HTML/CSS/JavaScript (no build step), deployed on Vercel. Works on both desktop and mobile browsers — it's a responsive site, not two separate codebases. Supports light and dark mode automatically via `prefers-color-scheme`.
 - **Backend** (`backend/`): PostgreSQL via Supabase. `backend/schema.sql` defines the tables (matching the team's shared data schema exactly) and Row Level Security policies. `backend/seed_data.sql` loads the team's synthetic dataset. JSON copies of the same data live in `backend/data/` and `frontend/data/` (the frontend copies are used as a local fallback — see "Run it locally" below).
 - Auth is Supabase Auth (email + password). Four demo accounts (Valerie, Joan, Lady D, Sarah) are seeded via `backend/scripts/seed-demo-users.mjs` so the whole team can log in and click through without setting up their own accounts.
-- Shared pure logic (HTML-escaping, listing filters) lives in `frontend/js/utils.js` rather than being copy-pasted per page, and is unit-tested in `frontend/js/utils.test.mjs`.
+- Shared pure logic (HTML-escaping, listing filters, currency formatting via `Intl.NumberFormat`) lives in `frontend/js/utils.js` rather than being copy-pasted per page, and is unit-tested in `frontend/js/utils.test.mjs`.
 - Branding: `frontend/assets/logo.svg` — a simple, colorful NYC brownstone mark — is the favicon (with a `favicon-32.png` fallback for browsers that don't support SVG favicons) on every page, and appears in the nav bar and on the login screen. One SVG source; edit it there if the mark ever changes.
+- Each page sets light/dark `<meta name="theme-color">` tags (matching `styles.css`'s `--bg` values) so supported mobile browsers tint their own chrome/status bar to match instead of defaulting to white or black.
+- `frontend/robots.txt` disallows all crawling — irrelevant in local demo mode, but keeps this login-gated synthetic-data app out of search results if it's ever deployed to a real, public Vercel URL (see Section 3 below).
 - **Current status: this project is presented in local demo mode, not deployed against a live Supabase project** — there's no current intention to load live data. Section 2 below is written for if/when that changes; skip straight to Section 1 for how this actually runs today.
 
 ## Data quality note
@@ -111,6 +113,6 @@ Covers the pricing/booking-id logic and the shared `escapeHtml`/`filterListings`
 - [ ] Confirm a completed booking can be rated 1–5 and the rating persists.
 - [ ] Log out and confirm you're redirected to the login screen, and that visiting `listings.html` directly while logged out redirects you back to login.
 - [ ] Resize the browser to a phone width and confirm the layout still reads cleanly.
-- [ ] Switch your OS/browser to dark mode and confirm text stays readable (status pills, badges, buttons all have dark-mode colors defined in `frontend/css/styles.css`).
+- [ ] Switch your OS/browser to dark mode and confirm text stays readable (status pills, badges, buttons all have dark-mode colors defined in `frontend/css/styles.css`), and — on a supported mobile browser — that the address bar/status bar tints to match.
 - [ ] (Real Supabase mode only) As a signed-in customer, try updating a booking's `total_cost` or `booking_status` via a direct `supabase.from('bookings').update(...)` call in the browser console — it should be rejected by `bookings_protect_update`.
 
