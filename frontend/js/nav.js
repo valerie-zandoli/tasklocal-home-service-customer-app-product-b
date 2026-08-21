@@ -10,11 +10,15 @@ export async function requireSession() {
   // Module scripts don't re-run when a page is restored from the browser's
   // back/forward cache, so without this, clicking Back after "Log out" could
   // briefly show this page's last-rendered state (real booking data still in
-  // the DOM) before anything re-checks auth. Force a full reload on restore
-  // so the auth check above actually runs again.
-  window.addEventListener("pageshow", (event) => {
-    if (event.persisted) {
-      window.location.reload();
+  // the DOM) before anything re-checks auth. Re-check on restore, but only
+  // redirect if the session is actually gone — a still-logged-in user going
+  // Back shouldn't eat an unnecessary full reload (lost scroll position, any
+  // in-progress filter typing) when there's nothing to protect against.
+  window.addEventListener("pageshow", async (event) => {
+    if (!event.persisted) return;
+    const stillValid = await getSession();
+    if (!stillValid) {
+      window.location.href = "login.html";
     }
   });
   return session;
