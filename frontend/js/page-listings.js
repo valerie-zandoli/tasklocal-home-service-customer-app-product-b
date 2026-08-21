@@ -1,6 +1,6 @@
 import { fetchListings } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
-import { escapeHtml, formatCurrency } from "./utils.js";
+import { escapeHtml, formatCurrency, formatServiceType } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -42,7 +42,7 @@ if (session) {
       .map(
         (l) => `
         <a class="listing-card" href="listing.html?id=${encodeURIComponent(l.listing_id)}">
-          <span class="badge">${escapeHtml(l.service_type)}</span>
+          <span class="badge">${escapeHtml(formatServiceType(l.service_type))}</span>
           <h3>${escapeHtml(l.title)}</h3>
           <p class="desc">${escapeHtml(l.description)}</p>
           <p class="price">${formatCurrency(l.hourly_rate)} <span>/ hr</span></p>

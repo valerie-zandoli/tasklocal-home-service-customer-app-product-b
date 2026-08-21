@@ -3,7 +3,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { escapeHtml, filterListings, formatCurrency } from "./utils.js";
+import { escapeHtml, filterListings, formatCurrency, formatServiceType } from "./utils.js";
 
 test("escapeHtml neutralizes HTML-significant characters", () => {
   assert.equal(escapeHtml('<script>alert("hi")</script>'), "&lt;script&gt;alert(&quot;hi&quot;)&lt;/script&gt;");
@@ -30,6 +30,15 @@ test("formatCurrency inserts a thousands separator", () => {
 
 test("formatCurrency rounds to the nearest cent", () => {
   assert.equal(formatCurrency(83.526), "$83.53");
+});
+
+test("formatServiceType maps the stored handyman category key to its display label", () => {
+  assert.equal(formatServiceType("handyman"), "Handy People");
+});
+
+test("formatServiceType passes through an unmapped value unchanged", () => {
+  assert.equal(formatServiceType("cleaning"), "Cleaning");
+  assert.equal(formatServiceType("unknown_type"), "unknown_type");
 });
 
 const LISTINGS = [

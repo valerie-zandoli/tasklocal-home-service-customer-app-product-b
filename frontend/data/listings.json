@@ -40,7 +40,7 @@
   {
     "listing_id": "lst_102439",
     "provider_id": "prov_28104",
-    "title": "General Handyman Repairs",
+    "title": "General Handy People Repairs",
     "service_type": "handyman",
     "description": "Small repairs including drywall patching and furniture assembly.",
     "hourly_rate": 39.4,
@@ -130,7 +130,7 @@
     "provider_id": "prov_57107",
     "title": "Small Home Repairs",
     "service_type": "handyman",
-    "description": "General handyman services for minor home repairs.",
+    "description": "General Handy People services for minor home repairs.",
     "hourly_rate": 126.67,
     "availability_slots": [
       "2026-10-05T13:00:00Z",
@@ -155,9 +155,9 @@
   {
     "listing_id": "lst_845474",
     "provider_id": "prov_61493",
-    "title": "General Handyman Repairs",
+    "title": "General Handy People Repairs",
     "service_type": "handyman",
-    "description": "General handyman services for minor home repairs.",
+    "description": "General Handy People services for minor home repairs.",
     "hourly_rate": 130.8,
     "availability_slots": [
       "2026-09-13T13:00:00Z",
@@ -264,7 +264,7 @@
   {
     "listing_id": "lst_065933",
     "provider_id": "prov_11846",
-    "title": "General Handyman Repairs",
+    "title": "General Handy People Repairs",
     "service_type": "handyman",
     "description": "Small repairs including drywall patching and furniture assembly.",
     "hourly_rate": 122.28,
@@ -417,7 +417,7 @@
     "provider_id": "prov_03269",
     "title": "Small Home Repairs",
     "service_type": "handyman",
-    "description": "General handyman services for minor home repairs.",
+    "description": "General Handy People services for minor home repairs.",
     "hourly_rate": 80.15,
     "availability_slots": [
       "2026-10-09T09:00:00Z",
@@ -496,7 +496,7 @@
   {
     "listing_id": "lst_889433",
     "provider_id": "prov_30230",
-    "title": "General Handyman Repairs",
+    "title": "General Handy People Repairs",
     "service_type": "handyman",
     "description": "Small repairs including drywall patching and furniture assembly.",
     "hourly_rate": 24.98,
@@ -510,9 +510,9 @@
   {
     "listing_id": "lst_021964",
     "provider_id": "prov_72126",
-    "title": "General Handyman Repairs",
+    "title": "General Handy People Repairs",
     "service_type": "handyman",
-    "description": "General handyman services for minor home repairs.",
+    "description": "General Handy People services for minor home repairs.",
     "hourly_rate": 97.58,
     "availability_slots": [
       "2026-09-29T11:00:00Z"
@@ -523,7 +523,7 @@
     "provider_id": "prov_65395",
     "title": "Furniture Assembly & Mounting",
     "service_type": "handyman",
-    "description": "General handyman services for minor home repairs.",
+    "description": "General Handy People services for minor home repairs.",
     "hourly_rate": 25.66,
     "availability_slots": [
       "2026-09-12T13:00:00Z",
@@ -535,7 +535,7 @@
   {
     "listing_id": "lst_767730",
     "provider_id": "prov_58174",
-    "title": "General Handyman Repairs",
+    "title": "General Handy People Repairs",
     "service_type": "handyman",
     "description": "Small repairs including drywall patching and furniture assembly.",
     "hourly_rate": 28.2,
@@ -663,9 +663,9 @@
   {
     "listing_id": "lst_403425",
     "provider_id": "prov_02586",
-    "title": "General Handyman Repairs",
+    "title": "General Handy People Repairs",
     "service_type": "handyman",
-    "description": "General handyman services for minor home repairs.",
+    "description": "General Handy People services for minor home repairs.",
     "hourly_rate": 37.41,
     "availability_slots": []
   },

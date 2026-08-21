@@ -27,6 +27,21 @@ export function formatCurrency(amount) {
   return CURRENCY_FORMATTER.format(Number(amount));
 }
 
+// The stored service_type value ("handyman", etc.) is the shared cross-team
+// category key from the team's data schema — it can't be renamed without a
+// team sign-off. This maps it to the label actually shown to customers, so
+// the display name can change independently of that shared key.
+const SERVICE_TYPE_LABELS = {
+  cleaning: "Cleaning",
+  handyman: "Handy People",
+  moving: "Moving",
+  custom: "Custom",
+};
+
+export function formatServiceType(serviceType) {
+  return SERVICE_TYPE_LABELS[serviceType] || serviceType;
+}
+
 export function filterListings(rows, { serviceType, maxPrice, search } = {}) {
   let result = rows;
   if (serviceType) {

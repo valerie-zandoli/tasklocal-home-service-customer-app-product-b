@@ -5,7 +5,7 @@
 **Live demo:** [tasklocal-home-service-customer-app.vercel.app](https://tasklocal-home-service-customer-app.vercel.app) — running in local demo mode (bundled JSON + `localStorage`, no live Supabase project behind it). Log in with one of the four demo accounts on the login screen.
 
 ## Overview
-**Product B, Customer (demand) Web and Mobile Application for TaskLocal Home-Service** is the demand-side interface for TaskLocal, a two-sided local marketplace connecting independent home-service providers (house cleaning, handyman work, moving help) with local customers who need that work done. TaskLocal takes a commission on each booking made through the platform.
+**Product B, Customer (demand) Web and Mobile Application for TaskLocal Home-Service** is the demand-side interface for TaskLocal, a two-sided local marketplace connecting independent home-service providers (house cleaning, Handy People services, moving help) with local customers who need that work done. TaskLocal takes a commission on each booking made through the platform.
 
 ## Target User
 This product is built for **busy local residents booking home services** — for example, a working professional or renter who needs to find, compare, and book a trustworthy provider for a one-off or recurring job (a deep apartment cleaning, a small repair, help moving) without cold-calling or texting multiple providers to compare price and availability.
