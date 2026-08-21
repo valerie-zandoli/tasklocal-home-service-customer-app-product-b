@@ -7,6 +7,16 @@ export async function requireSession() {
     window.location.href = "login.html";
     return null;
   }
+  // Module scripts don't re-run when a page is restored from the browser's
+  // back/forward cache, so without this, clicking Back after "Log out" could
+  // briefly show this page's last-rendered state (real booking data still in
+  // the DOM) before anything re-checks auth. Force a full reload on restore
+  // so the auth check above actually runs again.
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+      window.location.reload();
+    }
+  });
   return session;
 }
 
