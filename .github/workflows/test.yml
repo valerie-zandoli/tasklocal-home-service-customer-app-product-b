@@ -20,15 +20,30 @@ jobs:
       # frontend/js/api.test.mjs and utils.test.mjs).
       - run: node --test frontend/js/*.test.mjs
 
-  # Runs only after `test` succeeds, and only for a real push to main (never
-  # for a pull_request event) — this is what makes deployment CI-gated. It
-  # replaces Vercel's own Git-integration auto-deploy, which fired on every
-  # push regardless of test outcome; see the README for that history and why
-  # this exists. VERCEL_ORG_ID/VERCEL_PROJECT_ID are plain identifiers (not
-  # secrets, per Vercel's own docs) — only VERCEL_TOKEN is sensitive.
-  deploy:
+  # DELIBERATELY DEPLOYS TO PREVIEW, NOT PRODUCTION. Do not add --prod back
+  # to the three vercel commands below without reading this comment fully.
+  #
+  # An earlier version of this job used --prod and broke the live site: the
+  # root path (/) 404'd for several minutes for real visitors. `vercel build`
+  # + `vercel deploy --prebuilt` (the officially documented CI pattern)
+  # generates a different routing config than Vercel's own managed build
+  # pipeline does, and that difference broke root-path routing in a way that
+  # wasn't caught by `node --test` (there's no test that loads the actual
+  # deployed site). It was fixed by reverting to a direct `vercel --prod`
+  # deploy, not by finding the actual root cause in the CI build path.
+  #
+  # So this job now targets preview on every push to main instead — it
+  # keeps exercising the pull/build/deploy mechanics and proving (or
+  # disproving) itself safely, with zero risk to the live site, since a
+  # preview URL is disposable. Once several consecutive preview runs are
+  # clean AND the root-path routing difference above is actually understood
+  # (not just proven "went away this time"), deliberately flip these three
+  # commands to --prod, change the `if` condition below back to gating real
+  # deploys, and only then follow through on disabling Vercel's own
+  # Git-integration auto-deploy in the dashboard — see README.
+  deploy-preview:
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,6 +53,6 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - run: npm install --global vercel@59.1.3
-      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
