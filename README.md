@@ -64,6 +64,7 @@ The synthetic `bookings.csv` from the team's shared dataset references 42 `listi
 - In real Supabase mode, `fetchListings()`'s `search` filter is applied client-side after fetching all rows matching `serviceType`/`maxPrice` (`frontend/js/api.js`) — fine at this dataset's size, but it isn't a server-side/indexed text search, so it wouldn't scale to a large catalog as-is.
 - `booking_schedules` and the removal of `chatbot_requests.customer_id` are decisions Product B made locally, not yet confirmed with Products A/C/D — worth a quick team sync before the joint presentation, since integration is coming up.
 - `vercel.json`'s Content-Security-Policy has been confirmed live (response headers checked, and the full login → browse → book → My Bookings flow walked end-to-end with zero console errors on the deployed URL), but only by manual review and a single pass through the core flow — not a `Content-Security-Policy-Report-Only` run against varied real traffic.
+- CI and deployment are independent (see Section 3 above) — a failing test does not block Vercel from deploying, because nothing currently connects the two. Closing this gap means moving the deploy step into `.github/workflows/test.yml` itself (running only after the test job succeeds) and turning off Vercel's automatic Git-push deploy so that GitHub Actions becomes the only path to production. That requires a Vercel API token stored as a GitHub Actions secret — not done yet, since it means generating and handling a real credential, which isn't something to do casually.
 
 ---
 
@@ -106,13 +107,11 @@ Reload the frontend and it will now talk to your real Supabase database instead 
 
 ### 3. Deploy to Vercel
 
-Already done — see the live demo link at the top of this README. To redeploy after a change:
+Already done — see the live demo link at the top of this README, and this repo is Git-connected to that Vercel project. **A push to `main` deploys it automatically** — don't also run `vercel --prod` by hand after pushing; that creates a second, redundant production deployment for the same commit instead of doing anything useful. (Found out the hard way: several rounds of this project's history did exactly that.)
 
-```bash
-vercel --prod
-```
+**This means CI does not currently gate deployment.** `.github/workflows/test.yml` running tests and Vercel deploying to production are two independent systems that both react to the same `git push` — Vercel's deploy fires immediately, regardless of whether the test job passes or fails afterward. Seeing the CI badge go green is not confirmation that what's live is what passed; it just happens to usually be the same commit. See "Known limitations" below for what closing that gap would take.
 
-(or, from a fresh clone: push this repo to GitHub, then in Vercel "Add New Project" → import it — `vercel.json` already points Vercel at the `frontend/` folder, so no extra config is needed.)
+(From a fresh clone: push this repo to GitHub, then in Vercel "Add New Project" → import it — `vercel.json` already points Vercel at the `frontend/` folder, so no extra config is needed. That one-time setup is what wires up the auto-deploy-on-push behavior described above.)
 
 ### 4. Run the automated tests
 
