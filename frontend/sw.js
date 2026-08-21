@@ -63,8 +63,15 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(req)
       .then((res) => {
-        const resClone = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+        // Only cache a genuinely good response. Caching a transient 4xx/5xx
+        // here would silently overwrite the last known-good cached copy,
+        // and that broken response would then be what a later offline visit
+        // gets served by the catch() fallback below — defeating the point
+        // of having a fallback at all.
+        if (res.ok) {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+        }
         return res;
       })
       .catch(() => caches.match(req))
