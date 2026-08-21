@@ -19,3 +19,25 @@ jobs:
       # assert module, zero external dependencies, by design (see
       # frontend/js/api.test.mjs and utils.test.mjs).
       - run: node --test frontend/js/*.test.mjs
+
+  # Runs only after `test` succeeds, and only for a real push to main (never
+  # for a pull_request event) — this is what makes deployment CI-gated. It
+  # replaces Vercel's own Git-integration auto-deploy, which fired on every
+  # push regardless of test outcome; see the README for that history and why
+  # this exists. VERCEL_ORG_ID/VERCEL_PROJECT_ID are plain identifiers (not
+  # secrets, per Vercel's own docs) — only VERCEL_TOKEN is sensitive.
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      VERCEL_ORG_ID: team_cNKzyJkeUUeKDhhr8dG471Hx
+      VERCEL_PROJECT_ID: prj_UsLkJbtLe1tjrKkWoUCeiqF9aBhi
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: npm install --global vercel@59.1.3
+      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
