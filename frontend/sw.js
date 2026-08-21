@@ -7,7 +7,7 @@
 // network, or offline). Bump CACHE_NAME when the app shell's file list
 // below changes, so clients pick up the new set instead of serving a stale
 // mix of old and new files.
-const CACHE_NAME = "tasklocal-shell-v1";
+const CACHE_NAME = "tasklocal-shell-v2";
 
 const APP_SHELL = [
   "index.html",
@@ -30,11 +30,14 @@ const APP_SHELL = [
   "js/page-bookings.js",
   "data/listings.json",
   "data/bookings.json",
-  "data/customers.json",
+  // data/customers.json deliberately excluded: nothing in frontend/js/ ever
+  // fetches it, so precaching it was wasted work at install time.
   "assets/logo.svg",
   "assets/favicon-32.png",
   "assets/icon-192.png",
   "assets/icon-512.png",
+  "assets/icon-maskable-192.png",
+  "assets/icon-maskable-512.png",
   "manifest.json",
 ];
 
