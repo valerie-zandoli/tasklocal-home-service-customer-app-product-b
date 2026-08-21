@@ -1,9 +1,6 @@
 {
   "outputDirectory": "frontend",
   "routes": [
-    { "src": "^/(?:(.+)/)?index(?:\\.html)?/?$", "headers": { "Location": "/$1" }, "status": 308 },
-    { "src": "^/(.*)\\.html/?$", "headers": { "Location": "/$1" }, "status": 308 },
-    { "src": "^/(login|listings|listing|bookings)/$", "headers": { "Location": "/$1" }, "status": 308 },
     {
       "src": "^(?:/(.*))$",
       "headers": {
@@ -15,6 +12,9 @@
       },
       "continue": true
     },
+    { "src": "^/(?:(.+)/)?index(?:\\.html)?/?$", "headers": { "Location": "/$1" }, "status": 308 },
+    { "src": "^/(.*)\\.html/?$", "headers": { "Location": "/$1" }, "status": 308 },
+    { "src": "^/(login|listings|listing|bookings)/$", "headers": { "Location": "/$1" }, "status": 308 },
     { "src": "^/sw\\.js$", "headers": { "Cache-Control": "no-cache" }, "continue": true },
     { "handle": "filesystem" },
     { "src": "^/$", "dest": "/index.html" },
