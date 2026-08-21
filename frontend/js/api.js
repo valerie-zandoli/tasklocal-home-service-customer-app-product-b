@@ -5,6 +5,19 @@ import { filterListings } from "./utils.js";
 const SESSION_KEY = "tasklocal_session";
 const MOCK_BOOKINGS_KEY = "tasklocal_mock_bookings";
 
+// Cached per page load (a fresh navigation always gets fresh data): without
+// this, typing in the search box re-fetched and re-parsed listings.json on
+// every debounced keystroke, and fetchMyBookings() re-fetched it on every
+// render() call (e.g. after submitting a rating).
+let _mockListingsCache = null;
+
+async function readMockListings() {
+  if (_mockListingsCache) return _mockListingsCache;
+  const res = await fetch("data/listings.json");
+  _mockListingsCache = await res.json();
+  return _mockListingsCache;
+}
+
 async function readMockBookings() {
   const stored = localStorage.getItem(MOCK_BOOKINGS_KEY);
   if (stored) return JSON.parse(stored);
@@ -89,8 +102,7 @@ export async function fetchListings({ serviceType, maxPrice, search } = {}) {
     if (error) throw new Error(error.message);
     return filterListings(data, { search });
   }
-  const res = await fetch("data/listings.json");
-  const rows = await res.json();
+  const rows = await readMockListings();
   return filterListings(rows, { serviceType, maxPrice, search });
 }
 
@@ -107,8 +119,7 @@ export async function fetchListing(listingId) {
     if (error) throw new Error(error.message);
     return data;
   }
-  const res = await fetch("data/listings.json");
-  const rows = await res.json();
+  const rows = await readMockListings();
   return rows.find((r) => r.listing_id === listingId) || null;
 }
 
@@ -230,8 +241,7 @@ export async function fetchMyBookings(customerId) {
   }
 
   const rows = await readMockBookings();
-  const listingsRes = await fetch("data/listings.json");
-  const listings = await listingsRes.json();
+  const listings = await readMockListings();
   const byId = Object.fromEntries(listings.map((l) => [l.listing_id, l]));
   return rows
     .filter((r) => r.customer_id === customerId)
