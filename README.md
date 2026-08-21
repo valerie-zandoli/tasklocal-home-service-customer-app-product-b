@@ -130,5 +130,7 @@ Covers the pricing/booking-id logic and the shared `escapeHtml`/`filterListings`
 - [ ] Log out and confirm you're redirected to the login screen, and that visiting `listings.html` directly while logged out redirects you back to login.
 - [ ] Resize the browser to a phone width and confirm the layout still reads cleanly.
 - [ ] Switch your OS/browser to dark mode and confirm text stays readable (status pills, badges, buttons all have dark-mode colors defined in `frontend/css/styles.css`), and — on a supported mobile browser — that the address bar/status bar tints to match.
+- [ ] Open DevTools → Application → Service Workers and confirm `sw.js` shows as activated, then reload with the network throttled to "Offline" and confirm the app shell still loads. (Claude Code's own sandboxed preview can't register service workers at all — this needs a real browser tab.)
+- [ ] Log out, then click the browser's Back button: confirm you land on (or stay on) the login screen rather than briefly seeing a previous page's real data.
 - [ ] (Real Supabase mode only) As a signed-in customer, try updating a booking's `total_cost` or `booking_status` via a direct `supabase.from('bookings').update(...)` call in the browser console — it should be rejected by `bookings_protect_update`.
 
