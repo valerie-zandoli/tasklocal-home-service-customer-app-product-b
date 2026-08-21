@@ -1,24 +1,27 @@
 {
   "outputDirectory": "frontend",
-  "cleanUrls": true,
-  "rewrites": [{ "source": "/", "destination": "/index.html" }],
-  "headers": [
+  "routes": [
+    { "src": "^/(?:(.+)/)?index(?:\\.html)?/?$", "headers": { "Location": "/$1" }, "status": 308 },
+    { "src": "^/(.*)\\.html/?$", "headers": { "Location": "/$1" }, "status": 308 },
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://esm.sh; style-src 'self'; img-src 'self'; connect-src 'self' https://*.supabase.co; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
-        },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()" }
-      ]
+      "src": "^(?:/(.*))$",
+      "headers": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' https://esm.sh; style-src 'self'; img-src 'self'; connect-src 'self' https://*.supabase.co; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+      },
+      "continue": true
     },
-    {
-      "source": "/sw.js",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
-    }
+    { "src": "^/sw\\.js$", "headers": { "Cache-Control": "no-cache" }, "continue": true },
+    { "handle": "filesystem" },
+    { "src": "^/$", "dest": "/index.html" },
+    { "src": "^/login$", "dest": "/login.html" },
+    { "src": "^/listings$", "dest": "/listings.html" },
+    { "src": "^/listing$", "dest": "/listing.html" },
+    { "src": "^/bookings$", "dest": "/bookings.html" },
+    { "handle": "error" },
+    { "status": 404, "src": "^(?!/api).*$", "dest": "/404" }
   ]
 }
