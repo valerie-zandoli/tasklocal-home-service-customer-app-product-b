@@ -28,19 +28,19 @@ jobs:
   # + `vercel deploy --prebuilt` (the officially documented CI pattern)
   # generates a different routing config than Vercel's own managed build
   # pipeline does, and that difference broke root-path routing in a way that
-  # wasn't caught by `node --test` (there's no test that loads the actual
-  # deployed site). It was fixed by reverting to a direct `vercel --prod`
-  # deploy, not by finding the actual root cause in the CI build path.
+  # `node --test` couldn't catch (it never loaded the actual deployed site).
+  # Restored at the time by reverting to a direct `vercel --prod` deploy, not
+  # by finding the root cause.
   #
-  # So this job now targets preview on every push to main instead — it
-  # keeps exercising the pull/build/deploy mechanics and proving (or
-  # disproving) itself safely, with zero risk to the live site, since a
-  # preview URL is disposable. Once several consecutive preview runs are
-  # clean AND the root-path routing difference above is actually understood
-  # (not just proven "went away this time"), deliberately flip these three
-  # commands to --prod, change the `if` condition below back to gating real
-  # deploys, and only then follow through on disabling Vercel's own
-  # Git-integration auto-deploy in the dashboard — see README.
+  # The root cause is understood and fixed now (see README) — plus two more
+  # rounds of routing/header bugs found and fixed the same way — and every
+  # one of those checks is now the smoke-test step below, so a future
+  # vercel.json regression fails this job instead of needing to be caught by
+  # hand again. This job still targets preview, not production: the
+  # remaining condition for flipping these three commands to --prod is a
+  # run of consecutive clean runs on real pushes (the smoke test passing
+  # counts as "clean" now, not just "the job didn't error"), then disabling
+  # Vercel's own Git-integration auto-deploy in the dashboard.
   deploy-preview:
     needs: test
     if: github.event_name == 'push'
@@ -50,9 +50,31 @@ jobs:
     env:
       VERCEL_ORG_ID: team_cNKzyJkeUUeKDhhr8dG471Hx
       VERCEL_PROJECT_ID: prj_UsLkJbtLe1tjrKkWoUCeiqF9aBhi
+      # Job-level, not per-command: scripts/smoke-test-deployment.sh's own
+      # `vercel curl` calls need to authenticate too, and the CLI picks this
+      # env var up automatically without needing --token threaded through.
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - run: npm install --global vercel@59.1.3
       - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
       - run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to preview
+        id: deploy
+        run: |
+          # vercel deploy also prints a full JSON summary block when not
+          # attached to a TTY (as in CI) -- `| tail -1` alone grabs that
+          # block's closing brace, not a URL. Extract it properly instead.
+          out=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} 2>&1)
+          echo "$out"
+          url=$(echo "$out" | grep -oE 'https://[a-z0-9.-]*\.vercel\.app' | tail -1)
+          if [ -z "$url" ]; then
+            echo "::error::Could not extract a deployment URL from vercel deploy's output"
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      # Written after three consecutive rounds of routing/header bugs that
+      # only ever got caught by manually re-running these checks by hand —
+      # see the script itself and the README for why this exists.
+      - name: Smoke-test the deployed routing/headers
+        run: ./scripts/smoke-test-deployment.sh "${{ steps.deploy.outputs.url }}"
