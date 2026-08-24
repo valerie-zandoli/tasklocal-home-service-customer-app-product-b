@@ -11,6 +11,11 @@ code change from a stale cache. This adds Cache-Control: no-store to
 every response so what's on disk is always what the browser shows,
 without adding a build step or a dependency.
 
+Bound to 127.0.0.1, not all interfaces: `python3 -m http.server`'s
+default ("" as the bind host) listens on every network interface, so
+anyone else on the same WiFi/LAN could reach it while it's running --
+not what "Open http://localhost:8901" in the README implies.
+
 Usage: python3 scripts/dev-server.py [port]   (default: 8901)
 """
 import http.server
@@ -31,7 +36,7 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    with http.server.ThreadingHTTPServer(("", PORT), NoCacheHandler) as httpd:
+    with http.server.ThreadingHTTPServer(("127.0.0.1", PORT), NoCacheHandler) as httpd:
         print(f"Serving {FRONTEND_DIR} at http://localhost:{PORT} (Cache-Control: no-store)")
         try:
             httpd.serve_forever()
