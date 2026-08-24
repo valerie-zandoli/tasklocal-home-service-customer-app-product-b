@@ -398,6 +398,32 @@ button.primary:disabled {
 .status-confirmed { background: var(--status-confirmed-bg); color: var(--status-confirmed-text); }
 .status-completed { background: var(--status-completed-bg); color: var(--status-completed-text); }
 
+.status-guide {
+  margin: 0.75rem 0 1.25rem;
+  font-size: 0.85rem;
+}
+.status-guide summary {
+  cursor: pointer;
+  color: var(--brand);
+  font-weight: 600;
+  width: fit-content;
+}
+.status-guide dl {
+  margin: 0.75rem 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+}
+.status-guide dt {
+  grid-column: 1;
+}
+.status-guide dd {
+  grid-column: 2;
+  margin: 0;
+  color: var(--text-muted);
+}
+
 .rating-form {
   display: flex;
   gap: 0.4rem;

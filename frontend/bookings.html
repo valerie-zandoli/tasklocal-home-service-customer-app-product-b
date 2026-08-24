@@ -16,6 +16,19 @@
 
   <main class="container">
     <h1>My bookings</h1>
+    <details class="status-guide">
+      <summary>What do these statuses mean?</summary>
+      <dl>
+        <dt><span class="status-pill status-draft">draft</span></dt>
+        <dd>Started but not submitted to the provider yet.</dd>
+        <dt><span class="status-pill status-pending">pending</span></dt>
+        <dd>Submitted and waiting for the provider to accept.</dd>
+        <dt><span class="status-pill status-confirmed">confirmed</span></dt>
+        <dd>The provider has accepted — the appointment is locked in.</dd>
+        <dt><span class="status-pill status-completed">completed</span></dt>
+        <dd>The service has been finished. You can leave a rating.</dd>
+      </dl>
+    </details>
     <p class="error-text" id="bookings-error" aria-live="polite"></p>
     <div id="bookings-list"></div>
     <p id="empty-state" class="empty-state" hidden>
