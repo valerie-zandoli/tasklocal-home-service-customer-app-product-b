@@ -69,6 +69,7 @@ check_status "/bookings" 200
 check_status "/bookings/" 308
 check_status "/index" 308
 check_status "/manifest.json" 200
+check_status "/manifest-dark.json" 200
 check_status "/sw.js" 200
 check_status "/css/styles.css" 200
 # One representative file per static-asset directory the app actually

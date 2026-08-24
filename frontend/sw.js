@@ -7,7 +7,7 @@
 // network, or offline). Bump CACHE_NAME when the app shell's file list
 // below changes, so clients pick up the new set instead of serving a stale
 // mix of old and new files.
-const CACHE_NAME = "tasklocal-shell-v2";
+const CACHE_NAME = "tasklocal-shell-v3";
 
 const APP_SHELL = [
   "index.html",
@@ -18,6 +18,7 @@ const APP_SHELL = [
   "css/styles.css",
   "js/config.js",
   "js/register-sw.js",
+  "js/set-manifest-theme.js",
   "js/api.js",
   "js/nav.js",
   "js/utils.js",
@@ -39,6 +40,7 @@ const APP_SHELL = [
   "assets/icon-maskable-192.png",
   "assets/icon-maskable-512.png",
   "manifest.json",
+  "manifest-dark.json",
 ];
 
 self.addEventListener("install", (event) => {
