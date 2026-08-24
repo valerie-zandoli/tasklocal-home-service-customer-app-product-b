@@ -51,6 +51,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    # Without this, two pushes landing close together could run two deploys
+    # in parallel with no ordering guarantee — whichever `vercel deploy
+    # --prod` call happens to finish last wins the production alias, not
+    # whichever commit is newest. `cancel-in-progress` means a newer push
+    # cancels an older push's still-running deploy rather than racing it.
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: true
     env:
       VERCEL_ORG_ID: team_cNKzyJkeUUeKDhhr8dG471Hx
       VERCEL_PROJECT_ID: prj_UsLkJbtLe1tjrKkWoUCeiqF9aBhi
