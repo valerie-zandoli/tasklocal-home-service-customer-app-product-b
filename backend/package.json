@@ -1,6 +1,7 @@
 {
   "name": "tasklocal-product-b-backend",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "seed:users": "node scripts/seed-demo-users.mjs"

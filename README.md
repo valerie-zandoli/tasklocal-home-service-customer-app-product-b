@@ -137,3 +137,7 @@ node --test frontend/js/*.test.mjs
 - [ ] Log out, then click the browser's Back button: confirm you land on (or stay on) the login screen rather than briefly seeing a previous page's real data.
 - [ ] (Real Supabase mode only) As a signed-in customer, try updating a booking's `total_cost` or `booking_status` via a direct `supabase.from('bookings').update(...)` call in the browser console — it should be rejected by `bookings_protect_update`.
 
+## License
+
+MIT — see [LICENSE](LICENSE).
+
