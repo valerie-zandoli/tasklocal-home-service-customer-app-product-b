@@ -4,7 +4,7 @@ import { escapeHtml, PRODUCT_NAME } from "./utils.js";
 export async function requireSession() {
   const session = await getSession();
   if (!session) {
-    window.location.href = "login.html";
+    window.location.href = "login";
     return null;
   }
   // Module scripts don't re-run when a page is restored from the browser's
@@ -18,7 +18,7 @@ export async function requireSession() {
     if (!event.persisted) return;
     const stillValid = await getSession();
     if (!stillValid) {
-      window.location.href = "login.html";
+      window.location.href = "login";
     }
   });
   return session;
@@ -28,12 +28,12 @@ export function renderNav(session, activePage) {
   const nav = document.getElementById("app-nav");
   if (!nav) return;
   const links = [
-    { href: "listings.html", label: "Browse" },
-    { href: "bookings.html", label: "My Bookings" },
+    { href: "listings", label: "Browse" },
+    { href: "bookings", label: "My Bookings" },
   ];
   nav.innerHTML = `
     <div class="nav-inner">
-      <a class="brand" href="listings.html" title="${PRODUCT_NAME}">
+      <a class="brand" href="listings" title="${PRODUCT_NAME}">
         <img class="brand-logo" src="assets/logo.svg" alt="" width="24" height="24" />
         <span class="brand-name">${PRODUCT_NAME}</span>
       </a>
@@ -53,6 +53,6 @@ export function renderNav(session, activePage) {
   `;
   document.getElementById("logout-btn").addEventListener("click", async () => {
     await logout();
-    window.location.href = "login.html";
+    window.location.href = "login";
   });
 }

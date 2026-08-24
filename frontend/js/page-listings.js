@@ -4,7 +4,7 @@ import { escapeHtml, formatCurrency, formatServiceType } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
-  renderNav(session, "listings.html");
+  renderNav(session, "listings");
 
   const grid = document.getElementById("listing-grid");
   const emptyState = document.getElementById("empty-state");
@@ -41,7 +41,7 @@ if (session) {
     grid.innerHTML = listings
       .map(
         (l) => `
-        <a class="listing-card" href="listing.html?id=${encodeURIComponent(l.listing_id)}">
+        <a class="listing-card" href="listing?id=${encodeURIComponent(l.listing_id)}">
           <span class="badge">${escapeHtml(formatServiceType(l.service_type))}</span>
           <h3>${escapeHtml(l.title)}</h3>
           <p class="desc">${escapeHtml(l.description)}</p>

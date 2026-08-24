@@ -4,7 +4,7 @@ import { escapeHtml, formatCurrency } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
-  renderNav(session, "bookings.html");
+  renderNav(session, "bookings");
 
   const listEl = document.getElementById("bookings-list");
   const emptyState = document.getElementById("empty-state");
