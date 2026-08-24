@@ -36,21 +36,21 @@ lst_183751,prov_24451,Garage Cleanout,custom,Garage cleanout and organization.,1
 lst_351396,prov_35933,Truck Loading Help,moving,Loading and unloading moving trucks.,127.76,"[""2026-08-25T15:00:00Z"", ""2026-09-21T13:00:00Z"", ""2026-08-21T13:00:00Z"", ""2026-09-08T11:00:00Z"", ""2026-09-02T13:00:00Z""]"
 lst_942108,prov_17880,Miscellaneous Task Help,custom,Custom job tailored to specific customer needs.,97.64,"[""2026-08-30T11:00:00Z"", ""2026-10-12T11:00:00Z""]"
 lst_703796,prov_77229,Custom Home Project,custom,Garage cleanout and organization.,108.18,"[""2026-09-17T15:00:00Z"", ""2026-10-08T13:00:00Z"", ""2026-10-08T15:00:00Z"", ""2026-09-21T15:00:00Z"", ""2026-08-30T11:00:00Z""]"
-lst_812685,prov_18827,Small Home Repairs,handyman,Small repairs including drywall patching and furniture assembly.,128.04,"[""2026-10-17T11:00:00Z"]""
+lst_812685,prov_18827,Small Home Repairs,handyman,Small repairs including drywall patching and furniture assembly.,128.04,[]
 lst_889433,prov_30230,General Handy People Repairs,handyman,Small repairs including drywall patching and furniture assembly.,24.98,"[""2026-10-03T11:00:00Z"", ""2026-10-07T15:00:00Z"", ""2026-09-17T09:00:00Z"", ""2026-10-16T09:00:00Z""]"
 lst_021964,prov_72126,General Handy People Repairs,handyman,General Handy People services for minor home repairs.,97.58,"[""2026-09-29T11:00:00Z""]"
 lst_720351,prov_65395,Furniture Assembly & Mounting,handyman,General Handy People services for minor home repairs.,25.66,"[""2026-09-12T13:00:00Z"", ""2026-10-06T09:00:00Z"", ""2026-09-11T09:00:00Z"", ""2026-09-11T11:00:00Z""]"
 lst_767730,prov_58174,General Handy People Repairs,handyman,Small repairs including drywall patching and furniture assembly.,28.2,"[""2026-08-22T13:00:00Z"", ""2026-09-01T09:00:00Z"", ""2026-10-09T11:00:00Z"", ""2026-10-15T09:00:00Z""]"
-lst_333840,prov_62806,Weekly House Cleaning,cleaning,Standard weekly house cleaning service.,135.63,"[""2026-10-16T15:00:00Z"", ""2026-09-10T11:00:00Z"", ""2026-09-20T15:00:00Z"", ""2026-09-12T13:00:00Z"]""
+lst_333840,prov_62806,Weekly House Cleaning,cleaning,Standard weekly house cleaning service.,135.63,[]
 lst_870685,prov_30636,Weekly House Cleaning,cleaning,Standard weekly house cleaning service.,78.13,"[""2026-09-28T15:00:00Z"", ""2026-09-06T09:00:00Z"", ""2026-08-24T15:00:00Z""]"
 lst_386916,prov_70073,Custom Home Project,custom,Miscellaneous home project support.,39.95,"[""2026-09-12T13:00:00Z"", ""2026-09-17T09:00:00Z"", ""2026-09-25T11:00:00Z"", ""2026-09-22T13:00:00Z""]"
-lst_362174,prov_35224,Weekly House Cleaning,cleaning,Full apartment deep clean including kitchen and bathrooms.,35.94,"[""2026-09-17T11:00:00Z"]""
+lst_362174,prov_35224,Weekly House Cleaning,cleaning,Full apartment deep clean including kitchen and bathrooms.,35.94,[]
 lst_840683,prov_30588,Truck Loading Help,moving,Loading and unloading moving trucks.,42.63,"[""2026-09-21T11:00:00Z"", ""2026-08-27T11:00:00Z"", ""2026-10-09T11:00:00Z""]"
 lst_243549,prov_18037,Furniture Moving Assistance,moving,Loading and unloading moving trucks.,29.59,"[""2026-09-30T09:00:00Z"", ""2026-09-17T15:00:00Z"", ""2026-10-02T13:00:00Z""]"
-lst_185571,prov_58853,Move-Out Cleaning,cleaning,Full apartment deep clean including kitchen and bathrooms.,64.98,"[""2026-10-16T13:00:00Z"", ""2026-10-13T09:00:00Z"", ""2026-09-05T11:00:00Z"", ""2026-09-29T13:00:00Z"", ""2026-08-28T13:00:00Z"]""
+lst_185571,prov_58853,Move-Out Cleaning,cleaning,Full apartment deep clean including kitchen and bathrooms.,64.98,[]
 lst_606551,prov_69390,Move-Out Cleaning,cleaning,Move-out cleaning for rental apartments.,54.41,"[""2026-10-08T15:00:00Z"", ""2026-09-28T09:00:00Z""]"
 lst_462948,prov_62004,Furniture Moving Assistance,moving,Loading and unloading moving trucks.,38.68,"[""2026-10-05T13:00:00Z"", ""2026-09-14T11:00:00Z"", ""2026-10-07T13:00:00Z""]"
-lst_512141,prov_09849,Truck Loading Help,moving,Loading and unloading moving trucks.,60.65,"[""2026-09-20T15:00:00Z"", ""2026-09-20T13:00:00Z"]""
-lst_403425,prov_02586,General Handy People Repairs,handyman,General Handy People services for minor home repairs.,37.41,"[""2026-10-05T13:00:00Z"", ""2026-10-07T15:00:00Z"", ""2026-09-12T09:00:00Z"]""
-lst_451505,prov_72961,Furniture Assembly & Mounting,handyman,TV mounting and shelf installation.,142.06,"[""2026-09-01T15:00:00Z"", ""2026-09-21T09:00:00Z"]""
-lst_013446,prov_53619,Truck Loading Help,moving,Furniture moving and heavy lifting assistance.,85.95,"[""2026-09-23T15:00:00Z"", ""2026-10-04T13:00:00Z"", ""2026-09-19T09:00:00Z"", ""2026-09-12T13:00:00Z"", ""2026-10-02T09:00:00Z"]""
+lst_512141,prov_09849,Truck Loading Help,moving,Loading and unloading moving trucks.,60.65,[]
+lst_403425,prov_02586,General Handy People Repairs,handyman,General Handy People services for minor home repairs.,37.41,[]
+lst_451505,prov_72961,Furniture Assembly & Mounting,handyman,TV mounting and shelf installation.,142.06,[]
+lst_013446,prov_53619,Truck Loading Help,moving,Furniture moving and heavy lifting assistance.,85.95,[]
