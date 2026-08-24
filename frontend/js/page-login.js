@@ -3,7 +3,7 @@ import { DEMO_USERS } from "./demo-users.js";
 
 const existing = await getSession();
 if (existing) {
-  window.location.replace("listings");
+  window.location.replace("listings.html");
 }
 
 const form = document.getElementById("login-form");
@@ -35,7 +35,7 @@ form.addEventListener("submit", async (e) => {
   submitBtn.disabled = true;
   try {
     await login(emailInput.value.trim(), passwordInput.value);
-    window.location.href = "listings";
+    window.location.href = "listings.html";
   } catch (err) {
     errorText.textContent = err.message;
   } finally {

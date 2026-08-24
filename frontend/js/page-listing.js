@@ -4,7 +4,7 @@ import { escapeHtml, formatCurrency, formatServiceType } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
-  renderNav(session, "listings");
+  renderNav(session, "listings.html");
 
   const container = document.getElementById("listing-detail");
   const params = new URLSearchParams(window.location.search);
@@ -105,7 +105,7 @@ if (session) {
             hourlyRate: listing.hourly_rate,
             scheduledSlot: selectedSlot,
           });
-          window.location.href = "bookings";
+          window.location.href = "bookings.html";
         } catch (err) {
           bookingError.textContent = err.message;
           bookBtn.disabled = false;
