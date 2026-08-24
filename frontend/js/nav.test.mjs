@@ -39,7 +39,7 @@ function navigationWasAttempted(jsdomErrors) {
 test("renderNav marks the current page's link active and leaves the other one alone", async () => {
   setupDom();
   const { renderNav } = await import("./nav.js");
-  renderNav({ displayName: "Valerie Zandoli", customerId: "cust_1" }, "listings.html");
+  renderNav({ displayName: "Alex Rivera", customerId: "cust_1" }, "listings.html");
 
   const active = document.querySelector(".nav-links a.active");
   assert.equal(active.textContent, "Browse");
@@ -75,7 +75,7 @@ test("renderNav does nothing if #app-nav isn't on the page", async () => {
 test("renderNav's logout button calls logout() and attempts to navigate away", async () => {
   const { jsdomErrors } = setupDom();
   const { renderNav } = await import("./nav.js");
-  renderNav({ displayName: "Valerie Zandoli", customerId: "cust_1" }, "listings.html");
+  renderNav({ displayName: "Alex Rivera", customerId: "cust_1" }, "listings.html");
 
   document.getElementById("logout-btn").click();
   // logout() clears sessionStorage synchronously before the (async, fire-
@@ -91,12 +91,12 @@ test("requireSession returns the session unchanged when one exists in storage", 
   setupDom();
   sessionStorage.setItem(
     SESSION_KEY,
-    JSON.stringify({ email: "valerie.zandoli@pursuit.org", displayName: "Valerie Zandoli", customerId: "cust_60227" })
+    JSON.stringify({ email: "alex.rivera@example.com", displayName: "Alex Rivera", customerId: "cust_60227" })
   );
   const { requireSession } = await import("./nav.js");
 
   const session = await requireSession();
-  assert.equal(session.displayName, "Valerie Zandoli");
+  assert.equal(session.displayName, "Alex Rivera");
   assert.equal(session.customerId, "cust_60227");
 });
 
