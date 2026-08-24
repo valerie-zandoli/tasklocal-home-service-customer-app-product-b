@@ -31,7 +31,6 @@
     "hourly_rate": 59.29,
     "availability_slots": [
       "2026-08-28T13:00:00Z",
-      "2026-08-22T09:00:00Z",
       "2026-09-24T13:00:00Z",
       "2026-10-03T11:00:00Z",
       "2026-09-29T15:00:00Z"
@@ -60,7 +59,6 @@
     "description": "Full apartment deep clean including kitchen and bathrooms.",
     "hourly_rate": 91.76,
     "availability_slots": [
-      "2026-08-20T15:00:00Z",
       "2026-09-17T15:00:00Z"
     ]
   },
@@ -73,7 +71,6 @@
     "hourly_rate": 39.37,
     "availability_slots": [
       "2026-10-11T11:00:00Z",
-      "2026-08-24T09:00:00Z",
       "2026-08-30T13:00:00Z"
     ]
   },
@@ -229,7 +226,6 @@
     "availability_slots": [
       "2026-10-13T13:00:00Z",
       "2026-08-25T15:00:00Z",
-      "2026-08-20T13:00:00Z",
       "2026-09-23T09:00:00Z"
     ]
   },
@@ -242,8 +238,7 @@
     "hourly_rate": 127.1,
     "availability_slots": [
       "2026-09-30T15:00:00Z",
-      "2026-08-27T11:00:00Z",
-      "2026-08-22T09:00:00Z"
+      "2026-08-27T11:00:00Z"
     ]
   },
   {
@@ -255,7 +250,6 @@
     "hourly_rate": 128.38,
     "availability_slots": [
       "2026-09-15T13:00:00Z",
-      "2026-08-22T13:00:00Z",
       "2026-09-02T15:00:00Z",
       "2026-09-17T11:00:00Z",
       "2026-10-13T13:00:00Z"
@@ -269,8 +263,7 @@
     "description": "Small repairs including drywall patching and furniture assembly.",
     "hourly_rate": 122.28,
     "availability_slots": [
-      "2026-08-28T11:00:00Z",
-      "2026-08-24T11:00:00Z"
+      "2026-08-28T11:00:00Z"
     ]
   },
   {
@@ -281,8 +274,7 @@
     "description": "Local moving help for apartments and small homes.",
     "hourly_rate": 21.93,
     "availability_slots": [
-      "2026-09-26T13:00:00Z",
-      "2026-08-21T11:00:00Z"
+      "2026-09-26T13:00:00Z"
     ]
   },
   {
@@ -292,9 +284,7 @@
     "service_type": "moving",
     "description": "Loading and unloading moving trucks.",
     "hourly_rate": 59.21,
-    "availability_slots": [
-      "2026-08-23T15:00:00Z"
-    ]
+    "availability_slots": []
   },
   {
     "listing_id": "lst_841748",
@@ -372,8 +362,7 @@
     "description": "Local moving help for apartments and small homes.",
     "hourly_rate": 69.43,
     "availability_slots": [
-      "2026-09-21T13:00:00Z",
-      "2026-08-24T15:00:00Z"
+      "2026-09-21T13:00:00Z"
     ]
   },
   {
@@ -423,8 +412,7 @@
       "2026-10-09T09:00:00Z",
       "2026-09-17T11:00:00Z",
       "2026-09-09T15:00:00Z",
-      "2026-09-21T11:00:00Z",
-      "2026-08-23T15:00:00Z"
+      "2026-09-21T11:00:00Z"
     ]
   },
   {
@@ -435,8 +423,6 @@
     "description": "Garage cleanout and organization.",
     "hourly_rate": 120.68,
     "availability_slots": [
-      "2026-08-23T13:00:00Z",
-      "2026-08-24T13:00:00Z",
       "2026-08-26T15:00:00Z",
       "2026-09-07T13:00:00Z",
       "2026-10-05T11:00:00Z"
@@ -452,7 +438,6 @@
     "availability_slots": [
       "2026-08-25T15:00:00Z",
       "2026-09-21T13:00:00Z",
-      "2026-08-21T13:00:00Z",
       "2026-09-08T11:00:00Z",
       "2026-09-02T13:00:00Z"
     ]
@@ -540,7 +525,6 @@
     "description": "Small repairs including drywall patching and furniture assembly.",
     "hourly_rate": 28.2,
     "availability_slots": [
-      "2026-08-22T13:00:00Z",
       "2026-09-01T09:00:00Z",
       "2026-10-09T11:00:00Z",
       "2026-10-15T09:00:00Z"
@@ -564,8 +548,7 @@
     "hourly_rate": 78.13,
     "availability_slots": [
       "2026-09-28T15:00:00Z",
-      "2026-09-06T09:00:00Z",
-      "2026-08-24T15:00:00Z"
+      "2026-09-06T09:00:00Z"
     ]
   },
   {

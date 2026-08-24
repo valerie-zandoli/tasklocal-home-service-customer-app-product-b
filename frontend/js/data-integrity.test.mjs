@@ -211,3 +211,21 @@ test("rating is always null or an integer from 1 to 5", () => {
     );
   }
 });
+
+// availability_slots is static seed data (generated once), but the app
+// presents it to customers as open, bookable time slots on every visit --
+// "today" keeps moving forward in a way this data never does. Caught 15
+// listings with slots that had already passed by the time this test was
+// written, letting a real visitor "book" an appointment for a date already
+// gone. Deliberately compares against Date.now() at whatever moment this
+// test actually runs, not a hardcoded date, so a slot that's future-dated
+// today but ages into the past before the next push gets caught on that
+// next CI run rather than silently sitting there indefinitely.
+test("every open availability slot is still in the future as of whenever this test runs", () => {
+  const now = new Date();
+  for (const l of feListings) {
+    for (const slot of l.availability_slots) {
+      assert.ok(new Date(slot) >= now, `${l.listing_id} has a past availability slot: ${slot}`);
+    }
+  }
+});
