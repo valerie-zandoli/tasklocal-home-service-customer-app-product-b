@@ -11,7 +11,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
-import { _setClientForTesting } from "./supabaseClient.js";
+import { _setClientForTesting, getSupabase } from "./supabaseClient.js";
 import * as api from "./api.js";
 
 function setupDom() {
@@ -40,6 +40,33 @@ function makeChain(result, calls) {
   };
   return chain;
 }
+
+test("_setClientForTesting() is a no-op when `process` isn't defined (i.e. a real browser, not Node)", async () => {
+  setupDom();
+  const sentinelClient = { marker: "sentinel" };
+  const shouldBeBlockedClient = { marker: "should-never-be-set" };
+
+  // Establish a known baseline with process visible (the normal case).
+  _setClientForTesting(sentinelClient);
+
+  // Hide `process` to simulate a real browser, then attempt the injection
+  // that should now be blocked.
+  const realProcess = globalThis.process;
+  // @ts-ignore -- deliberately simulating an environment with no `process`
+  globalThis.process = undefined;
+  try {
+    _setClientForTesting(shouldBeBlockedClient);
+  } finally {
+    globalThis.process = realProcess;
+  }
+
+  // getSupabase() returns _client immediately if it's already truthy,
+  // without ever reaching the real esm.sh import -- true whether the guard
+  // above worked or not, so this stays fully offline either way. Which
+  // object comes back is what actually proves the guard worked.
+  const result = await getSupabase();
+  assert.equal(result, sentinelClient, "the process-hidden call should not have overwritten the client");
+});
 
 test("login() in real mode calls supabase auth and returns the session email", async () => {
   setupDom();

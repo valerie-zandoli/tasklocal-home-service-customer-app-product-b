@@ -22,6 +22,16 @@ export async function getSupabase() {
 // isSupabaseConfigured() === true code paths with a fake client - no real
 // network call to esm.sh or a real Supabase project, and no experimental
 // Node module-mocking flag. No production code path calls this.
+//
+// This file ships to production as-is (no build/bundling step strips test
+// code), so this export is reachable from any real browser too - and
+// without a guard, anyone with devtools open on the live site could swap
+// out the app's real Supabase client for their own. `process` is a real
+// Node global no actual browser defines (jsdom runs inside Node, so it's
+// still present there), which reliably tells "running under `node --test`"
+// apart from "running in a real browser" - the no-op below makes this a
+// dead function outside the former.
 export function _setClientForTesting(client) {
+  if (typeof process === "undefined") return;
   _client = client;
 }
