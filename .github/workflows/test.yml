@@ -21,7 +21,37 @@ jobs:
       # else still uses only Node's built-in test runner and assert module.
       - run: npm install
         working-directory: frontend
-      - run: node --test frontend/js/*.test.mjs
+      # @supabase/supabase-js (backend/package.json), used by
+      # scripts/seed-demo-users.mjs. Backend has no tests of its own to run
+      # here, just this audit — installed only so the audit has a lockfile
+      # to check.
+      - run: npm install
+        working-directory: backend
+      # npm audit exits non-zero on any known vulnerability, so this fails
+      # the build rather than just reporting — a one-off manual run found 0
+      # vulnerabilities in both packages, but that was a single check done
+      # by hand, not something that would ever notice a vulnerability
+      # disclosed later against an already-pinned version.
+      - run: npm audit
+        working-directory: frontend
+      - run: npm audit
+        working-directory: backend
+      # --experimental-test-coverage: page-index.js/page-login.js/
+      # page-listing.js/page-listings.js's own DOM tests import their entry
+      # module with a fresh cache-busting query string per test (see those
+      # test files' own comments for why — the modules run entirely as a
+      # top-level side effect on import, so a second plain import would
+      # return Node's already-executed cached module and silently no-op).
+      # That confirmed-via-repro breaks coverage *attribution* for those
+      # four files specifically: V8 only reports the last-loaded instance's
+      # counters, silently discarding what earlier cache-busted imports in
+      # the same file covered. Their reported numbers are real but
+      # understate actual coverage — treat a low number there as
+      # inconclusive, not as a gap to chase, unless you've confirmed a
+      # specific line really is untested. api.js and every other file don't
+      # have this problem (imported normally, not cache-busted), so their
+      # numbers are trustworthy as reported.
+      - run: node --test --experimental-test-coverage frontend/js/*.test.mjs
 
   # DEPLOYS TO PRODUCTION. This job spent a long stretch of this project's
   # history deploying to preview only, on purpose — an earlier version used
