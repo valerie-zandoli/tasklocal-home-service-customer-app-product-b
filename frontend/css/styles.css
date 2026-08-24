@@ -199,7 +199,9 @@ select {
   color: var(--text);
 }
 input:focus,
-select:focus {
+select:focus,
+button:focus,
+a:focus {
   outline: 2px solid var(--brand);
   outline-offset: 1px;
 }
