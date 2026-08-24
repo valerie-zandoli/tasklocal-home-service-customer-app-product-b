@@ -1,6 +1,6 @@
 import { fetchListing, createBooking, randomBookingId } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
-import { escapeHtml, formatCurrency, formatServiceType } from "./utils.js";
+import { escapeHtml, formatCurrency, formatServiceType, formatSlot } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -9,20 +9,6 @@ if (session) {
   const container = document.getElementById("listing-detail");
   const params = new URLSearchParams(window.location.search);
   const listingId = params.get("id");
-
-  function formatSlot(iso) {
-    try {
-      return new Date(iso).toLocaleString(undefined, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-      });
-    } catch {
-      return iso;
-    }
-  }
 
   if (!listingId) {
     container.innerHTML = `<p class="error-text">No listing specified.</p>`;

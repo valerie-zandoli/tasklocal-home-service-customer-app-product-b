@@ -3,7 +3,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { escapeHtml, filterListings, formatCurrency, formatServiceType, getRatingDisplayState } from "./utils.js";
+import { escapeHtml, filterListings, formatCurrency, formatServiceType, formatSlot, getRatingDisplayState } from "./utils.js";
 
 test("escapeHtml neutralizes HTML-significant characters", () => {
   assert.equal(escapeHtml('<script>alert("hi")</script>'), "&lt;script&gt;alert(&quot;hi&quot;)&lt;/script&gt;");
@@ -39,6 +39,30 @@ test("formatServiceType maps the stored handyman category key to its display lab
 test("formatServiceType passes through an unmapped value unchanged", () => {
   assert.equal(formatServiceType("cleaning"), "Cleaning");
   assert.equal(formatServiceType("unknown_type"), "unknown_type");
+});
+
+test("formatSlot returns null for a falsy input instead of formatting it", () => {
+  assert.equal(formatSlot(null), null);
+  assert.equal(formatSlot(undefined), null);
+  assert.equal(formatSlot(""), null);
+});
+
+test("formatSlot formats a valid ISO string, not the raw string itself", () => {
+  const result = formatSlot("2026-08-24T14:00:00.000Z");
+  assert.equal(typeof result, "string");
+  assert.notEqual(result, "2026-08-24T14:00:00.000Z");
+  // weekday/month/day/hour/minute, no year in the display format -- just
+  // confirm it's the expected shape, not the raw ISO string leaking through.
+  assert.match(result, /^[A-Za-z]{3}, [A-Za-z]{3} \d{1,2}, \d{1,2}:\d{2}\s?[AP]M$/);
+});
+
+test("formatSlot escapes an unparseable value instead of returning it raw", () => {
+  // Availability-slot data comes from the supply side of the marketplace,
+  // not this app's own input validation -- an unparseable value has to be
+  // treated as untrusted, not assumed safe to render directly.
+  const malicious = '<img src=x onerror="alert(1)">';
+  assert.equal(formatSlot(malicious), escapeHtml(malicious));
+  assert.doesNotMatch(formatSlot(malicious), /<img/);
 });
 
 const LISTINGS = [

@@ -1,6 +1,6 @@
 import { fetchMyBookings, rateBooking } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
-import { escapeHtml, formatCurrency, getRatingDisplayState } from "./utils.js";
+import { escapeHtml, formatCurrency, getRatingDisplayState, formatSlot } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -9,21 +9,6 @@ if (session) {
   const listEl = document.getElementById("bookings-list");
   const emptyState = document.getElementById("empty-state");
   const bookingsError = document.getElementById("bookings-error");
-
-  function formatSlot(iso) {
-    if (!iso) return null;
-    try {
-      return new Date(iso).toLocaleString(undefined, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-      });
-    } catch {
-      return iso;
-    }
-  }
 
   async function render() {
     const bookings = await fetchMyBookings(session.customerId);
@@ -66,7 +51,7 @@ if (session) {
             <div>
               <strong>${listingTitle}</strong>
               <div><span class="status-pill status-${status}">${status}</span></div>
-              ${scheduled ? `<div class="booking-meta">Scheduled: ${escapeHtml(scheduled)}</div>` : ""}
+              ${scheduled ? `<div class="booking-meta">Scheduled: ${scheduled}</div>` : ""}
               <div class="booking-meta">${formatCurrency(b.total_cost)} total &middot; ${escapeHtml(b.booking_id)}</div>
             </div>
             ${ratingBlock}

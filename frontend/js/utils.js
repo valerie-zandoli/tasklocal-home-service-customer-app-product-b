@@ -42,6 +42,32 @@ export function formatServiceType(serviceType) {
   return SERVICE_TYPE_LABELS[serviceType] || serviceType;
 }
 
+const SLOT_FORMAT_OPTIONS = {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+};
+
+// `iso` is availability_slots/scheduled_slot data written by the supply
+// side of the marketplace (a different product in this capstone), not
+// validated by this app's own input handling — so an unparseable value is
+// a real possibility, not just a hypothetical. `new Date(iso)` never
+// throws on bad input (it silently produces an Invalid Date, which
+// toLocaleString then renders as the literal string "Invalid Date"), so a
+// try/catch around it can't actually catch anything; checking
+// `Number.isNaN(date.getTime())` is what actually detects it. Escaping the
+// raw fallback — rather than assuming it's safe to render as-is — is what
+// makes this safe to interpolate directly at every call site, without each
+// caller having to remember to escape it themselves.
+export function formatSlot(iso) {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return escapeHtml(String(iso));
+  return date.toLocaleString(undefined, SLOT_FORMAT_OPTIONS);
+}
+
 // Decides what the rating UI should show for a booking, independent of the
 // actual HTML — was three-way ternary logic buried inline in
 // page-bookings.js, untestable without a DOM. A customer can only rate a
