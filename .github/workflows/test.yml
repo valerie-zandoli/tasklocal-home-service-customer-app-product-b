@@ -10,6 +10,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -38,10 +39,25 @@ jobs:
   # just pass today. Flipped to --prod after a long run of consecutive clean
   # deploy-preview executions across several unrelated later changes.
   #
+  # Deploy and promote are deliberately separate steps (--skip-domain, then
+  # `vercel promote`), not `vercel deploy --prod` doing both at once. That
+  # used to alias the production domain to the new deployment immediately,
+  # *before* the smoke test below had run — meaning a bad deployment was
+  # already live for however long the smoke test took to fail. Building the
+  # concurrency group below surfaced that this could get worse, not just
+  # stay narrow: cancel-in-progress can kill a still-running smoke-test step
+  # outright if a newer push arrives mid-test, leaving production on
+  # never-verified code with the run showing as merely "cancelled" in CI
+  # history — easy to read as "superseded, nothing to see" rather than as
+  # the warning it actually is. Deploying with the domain unaliased and only
+  # promoting after the smoke test exits 0 means neither failure nor
+  # cancellation can ever leave unverified code live: the alias simply isn't
+  # touched until verification has actually finished and passed.
+  #
   # Vercel's own Git-integration auto-deploy is STILL ENABLED in the
-  # dashboard as of this flip — deliberately, as a redundant safety net
-  # while this path proves itself against production for real. Once this
-  # has run clean a few times for real, disable it (Settings → Git →
+  # dashboard as of the --prod flip — deliberately, as a redundant safety
+  # net while this path proves itself against production for real. Once
+  # this has run clean a few times for real, disable it (Settings → Git →
   # Ignored Build Step) so this job is the only path to production, per the
   # original point of doing any of this: making deployment actually
   # CI-gated, not decorative.
@@ -49,13 +65,16 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
-    # Without this, two pushes landing close together could run two deploys
-    # in parallel with no ordering guarantee — whichever `vercel deploy
-    # --prod` call happens to finish last wins the production alias, not
-    # whichever commit is newest. `cancel-in-progress` means a newer push
-    # cancels an older push's still-running deploy rather than racing it.
+    # Two pushes landing close together would otherwise run two deploys in
+    # parallel with no ordering guarantee. `cancel-in-progress` means a
+    # newer push cancels an older push's still-running deploy rather than
+    # racing it — safe now that promotion (see below) only happens after a
+    # deploy's own smoke test has already passed, so a cancelled run can
+    # only ever leave the *previous* good deployment live, never a
+    # half-verified one.
     concurrency:
       group: production-deploy
       cancel-in-progress: true
@@ -71,13 +90,20 @@ jobs:
       - run: npm install --global vercel@59.1.3
       - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
       - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy to production
+      - name: Deploy (production build, domain not yet aliased)
         id: deploy
         run: |
+          # --skip-domain: still a production-target deployment (matches the
+          # production env `vercel build --prod` just built with), but the
+          # production domain isn't aliased to it yet — that only happens in
+          # the explicit `vercel promote` step below, after the smoke test
+          # passes. See the comment above the `deploy:` job for why this is
+          # split instead of letting `--prod` alias immediately.
+          #
           # vercel deploy also prints a full JSON summary block when not
           # attached to a TTY (as in CI) -- `| tail -1` alone grabs that
           # block's closing brace, not a URL. Extract it properly instead.
-          out=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} 2>&1)
+          out=$(vercel deploy --prebuilt --prod --skip-domain --token=${{ secrets.VERCEL_TOKEN }} 2>&1)
           echo "$out"
           url=$(echo "$out" | grep -oE 'https://[a-z0-9.-]*\.vercel\.app' | tail -1)
           if [ -z "$url" ]; then
@@ -87,6 +113,11 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
       # Written after three consecutive rounds of routing/header bugs that
       # only ever got caught by manually re-running these checks by hand —
-      # see the script itself and the README for why this exists.
+      # see the script itself and the README for why this exists. Runs
+      # against the unaliased deployment URL from above, so a failure here
+      # (non-zero exit) stops the job and skips the promote step next —
+      # the production domain never moves toward code that failed this.
       - name: Smoke-test the deployed routing/headers
         run: ./scripts/smoke-test-deployment.sh "${{ steps.deploy.outputs.url }}"
+      - name: Promote to production
+        run: vercel promote "${{ steps.deploy.outputs.url }}" --yes --token=${{ secrets.VERCEL_TOKEN }}
