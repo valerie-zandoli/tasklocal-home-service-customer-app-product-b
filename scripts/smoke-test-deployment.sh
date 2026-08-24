@@ -51,6 +51,16 @@ check_status "/index" 308
 check_status "/manifest.json" 200
 check_status "/sw.js" 200
 check_status "/css/styles.css" 200
+# One representative file per static-asset directory the app actually
+# depends on at runtime (relative fetch("data/...") and <script src="js/...">
+# calls resolve to these). Catches a routes rule that shadows a whole
+# directory, not just the three specific files checked below -- js/api.js
+# and js/nav.js are separate imports from separate pages, not the same file
+# under two names.
+check_status "/js/api.js" 200
+check_status "/js/nav.js" 200
+check_status "/data/listings.json" 200
+check_status "/assets/logo.svg" 200
 check_status "/this-path-should-not-exist-smoketest" 404
 
 check_header "/" "content-security-policy"
