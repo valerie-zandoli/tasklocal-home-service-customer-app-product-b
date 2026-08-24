@@ -22,30 +22,32 @@ jobs:
         working-directory: frontend
       - run: node --test frontend/js/*.test.mjs
 
-  # DELIBERATELY DEPLOYS TO PREVIEW, NOT PRODUCTION. Do not add --prod back
-  # to the three vercel commands below without reading this comment fully.
+  # DEPLOYS TO PRODUCTION. This job spent a long stretch of this project's
+  # history deploying to preview only, on purpose — an earlier version used
+  # --prod directly and broke the live site (root path 404ing for real
+  # visitors) because `vercel build` + `vercel deploy --prebuilt` generates a
+  # different routing config than Vercel's own managed build pipeline, in a
+  # way `node --test` had no way to catch. That was restored at the time by
+  # reverting to a manual `vercel --prod` deploy, not by understanding why.
   #
-  # An earlier version of this job used --prod and broke the live site: the
-  # root path (/) 404'd for several minutes for real visitors. `vercel build`
-  # + `vercel deploy --prebuilt` (the officially documented CI pattern)
-  # generates a different routing config than Vercel's own managed build
-  # pipeline does, and that difference broke root-path routing in a way that
-  # `node --test` couldn't catch (it never loaded the actual deployed site).
-  # Restored at the time by reverting to a direct `vercel --prod` deploy, not
-  # by finding the root cause.
+  # The actual root cause (a `check: true` rewrite re-running the whole
+  # route table and self-redirecting) is understood and fixed now, two more
+  # rounds of routing/header bugs turned up and got fixed the same way, and
+  # every one of those checks is what scripts/smoke-test-deployment.sh runs
+  # below — proven to actually fail on the historical broken configs, not
+  # just pass today. Flipped to --prod after a long run of consecutive clean
+  # deploy-preview executions across several unrelated later changes.
   #
-  # The root cause is understood and fixed now (see README) — plus two more
-  # rounds of routing/header bugs found and fixed the same way — and every
-  # one of those checks is now the smoke-test step below, so a future
-  # vercel.json regression fails this job instead of needing to be caught by
-  # hand again. This job still targets preview, not production: the
-  # remaining condition for flipping these three commands to --prod is a
-  # run of consecutive clean runs on real pushes (the smoke test passing
-  # counts as "clean" now, not just "the job didn't error"), then disabling
-  # Vercel's own Git-integration auto-deploy in the dashboard.
-  deploy-preview:
+  # Vercel's own Git-integration auto-deploy is STILL ENABLED in the
+  # dashboard as of this flip — deliberately, as a redundant safety net
+  # while this path proves itself against production for real. Once this
+  # has run clean a few times for real, disable it (Settings → Git →
+  # Ignored Build Step) so this job is the only path to production, per the
+  # original point of doing any of this: making deployment actually
+  # CI-gated, not decorative.
+  deploy:
     needs: test
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -59,15 +61,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: npm install --global vercel@59.1.3
-      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy to preview
+      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to production
         id: deploy
         run: |
           # vercel deploy also prints a full JSON summary block when not
           # attached to a TTY (as in CI) -- `| tail -1` alone grabs that
           # block's closing brace, not a URL. Extract it properly instead.
-          out=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} 2>&1)
+          out=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} 2>&1)
           echo "$out"
           url=$(echo "$out" | grep -oE 'https://[a-z0-9.-]*\.vercel\.app' | tail -1)
           if [ -z "$url" ]; then
