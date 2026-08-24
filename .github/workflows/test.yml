@@ -19,13 +19,20 @@ jobs:
       # jsdom (frontend/package.json) is the one external dependency the
       # suite has, needed for nav.test.mjs's DOM-level tests — everything
       # else still uses only Node's built-in test runner and assert module.
-      - run: npm install
+      #
+      # npm ci, not npm install: install fails loudly if package.json and
+      # package-lock.json have drifted, and always installs exactly what's
+      # locked rather than letting a stale lockfile silently update — the
+      # same exact-reproducibility standard already applied everywhere else
+      # in this pipeline (SHA-pinned actions, the exact-pinned esm.sh
+      # import, axe-core pinned to 4.13.0 not ^4.13.0).
+      - run: npm ci
         working-directory: frontend
       # @supabase/supabase-js (backend/package.json), used by
       # scripts/seed-demo-users.mjs. Backend has no tests of its own to run
       # here, just this audit — installed only so the audit has a lockfile
       # to check.
-      - run: npm install
+      - run: npm ci
         working-directory: backend
       # npm audit exits non-zero on any known vulnerability, so this fails
       # the build rather than just reporting — a one-off manual run found 0
