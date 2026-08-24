@@ -118,6 +118,33 @@ test("getSession() in real mode joins auth session with the customer_profiles ro
   assert.deepEqual(calls.eq[0], ["user_id", "auth-uid-1"]);
 });
 
+test("getSession() in real mode logs but does not throw when the profile query errors", async () => {
+  setupDom();
+  const originalConsoleError = console.error;
+  const loggedArgs = [];
+  console.error = (...args) => loggedArgs.push(args);
+  try {
+    _setClientForTesting({
+      auth: {
+        getSession: async () => ({ data: { session: { user: { id: "auth-uid-3", email: "flaky@example.com" } } } }),
+      },
+      from: () => makeChain({ data: null, error: { message: "connection reset" } }, { select: [], eq: [], lte: [], order: [], update: [] }),
+    });
+
+    const session = await api.getSession();
+    // A profile-lookup error shouldn't be fatal -- the session itself is
+    // still valid, just without profile data to enrich it with.
+    assert.equal(session.email, "flaky@example.com");
+    assert.equal(session.customerId, null);
+    assert.ok(
+      loggedArgs.some((args) => args.some((a) => typeof a === "string" && a.includes("connection reset"))),
+      "expected the profile-lookup error to be logged, not silently swallowed"
+    );
+  } finally {
+    console.error = originalConsoleError;
+  }
+});
+
 test("getSession() in real mode falls back to the auth email when no profile row exists", async () => {
   setupDom();
   _setClientForTesting({
@@ -223,4 +250,74 @@ test("fetchMyBookings() in real mode normalizes booking_schedules whether PostgR
     result.map((r) => r.scheduled_slot),
     ["2026-10-01T10:00:00Z", "2026-10-02T10:00:00Z", null]
   );
+});
+
+test("fetchListing() in real mode returns the row, or null for a missing id, without treating either as an error", async () => {
+  setupDom();
+  const calls = { select: [], eq: [], lte: [], order: [], update: [] };
+  let requestedId;
+  _setClientForTesting({
+    from: (table) => {
+      assert.equal(table, "listings");
+      return makeChain(
+        { data: requestedId === "lst_exists" ? { listing_id: "lst_exists", title: "Real Listing" } : null, error: null },
+        calls
+      );
+    },
+  });
+
+  requestedId = "lst_exists";
+  const found = await api.fetchListing("lst_exists");
+  assert.equal(found.title, "Real Listing");
+
+  requestedId = "lst_missing";
+  const notFound = await api.fetchListing("lst_missing");
+  assert.equal(notFound, null);
+});
+
+test("fetchListing() in real mode throws the Supabase error message when the query itself fails", async () => {
+  setupDom();
+  _setClientForTesting({
+    from: () => makeChain({ data: null, error: { message: "relation does not exist" } }, { select: [], eq: [], lte: [], order: [], update: [] }),
+  });
+
+  await assert.rejects(() => api.fetchListing("lst_1"), /relation does not exist/);
+});
+
+test("logout() in real mode calls supabase.auth.signOut() before clearing the local session", async () => {
+  setupDom();
+  let signOutCalled = false;
+  _setClientForTesting({
+    auth: {
+      signOut: async () => {
+        signOutCalled = true;
+      },
+    },
+  });
+  sessionStorage.setItem("tasklocal_session", JSON.stringify({ email: "real.user@example.com" }));
+
+  await api.logout();
+
+  assert.equal(signOutCalled, true);
+  assert.equal(sessionStorage.getItem("tasklocal_session"), null);
+});
+
+test("rateBooking() in real mode updates via Supabase and throws its error message on failure", async () => {
+  setupDom();
+  const calls = { select: [], eq: [], lte: [], order: [], update: [] };
+  _setClientForTesting({
+    from: (table) => {
+      assert.equal(table, "bookings");
+      return makeChain({ error: null }, calls);
+    },
+  });
+
+  await api.rateBooking("bkg_1", 5);
+  assert.deepEqual(calls.update[0], [{ rating: 5 }]);
+  assert.deepEqual(calls.eq[0], ["booking_id", "bkg_1"]);
+
+  _setClientForTesting({
+    from: () => makeChain({ error: { message: "row-level security violation" } }, { select: [], eq: [], lte: [], order: [], update: [] }),
+  });
+  await assert.rejects(() => api.rateBooking("bkg_1", 5), /row-level security violation/);
 });
