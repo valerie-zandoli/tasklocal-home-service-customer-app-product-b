@@ -78,11 +78,10 @@ The synthetic `bookings.csv` from the team's shared dataset references 42 `listi
 The app ships with a **local demo mode**: if no Supabase project is configured, it automatically reads from the JSON files in `frontend/data/` and stores bookings in your browser's `localStorage`. This is the fastest way to see it working.
 
 ```bash
-cd frontend
-python3 -m http.server 8901
+python3 scripts/dev-server.py
 ```
 
-Open `http://localhost:8901` in a browser, and log in with one of the four demo buttons on the login screen (Alex / Jordan / Morgan / Taylor — click a name to auto-fill the email and password).
+Open `http://localhost:8901` in a browser, and log in with one of the four demo buttons on the login screen (Alex / Jordan / Morgan / Taylor — click a name to auto-fill the email and password). This is a thin wrapper around `python3 -m http.server` that adds `Cache-Control: no-store` to every response — plain `http.server` sends no cache headers at all, so the browser is free to keep serving a pre-edit version of a file after you've changed it and reloaded, with nothing indicating that's what happened. (Pass a port number to use something other than 8901.)
 
 ### 2. Set up the real backend (Supabase) — optional, not needed for the current presentation
 
