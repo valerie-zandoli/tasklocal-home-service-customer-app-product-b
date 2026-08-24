@@ -5,6 +5,14 @@
 # 404ing, trailing slashes 404ing, redirects missing security headers) that
 # only ever got caught by manually re-running these exact checks by hand.
 #
+# check_status/check_header only look at status codes and header *presence*
+# -- neither ever inspects the response body, so a routing rule that starts
+# shadowing one page with another's content (same failure family as the
+# rewrite bugs above, just one layer deeper) would sail through both
+# unnoticed as long as the status code still looked right. check_body closes
+# that: each key page is checked for an element id that only that page's own
+# HTML contains, so a page silently serving the wrong content actually fails.
+#
 # Usage: scripts/smoke-test-deployment.sh <deployment-url-or-alias>
 # Requires the Vercel CLI to be authenticated (this script shells out to
 # `vercel curl`, which handles Vercel's deployment-protection bypass so this
@@ -38,6 +46,18 @@ check_header() {
   fi
 }
 
+check_body() {
+  local path="$1" marker="$2"
+  local body
+  body=$(vercel curl "$path" --deployment "$DEP" -s 2>/dev/null)
+  if ! echo "$body" | grep -qF "$marker"; then
+    echo "FAIL: $path body missing expected marker: $marker"
+    FAIL=1
+  else
+    echo "ok:   $path body has expected content"
+  fi
+}
+
 check_status "/" 200
 check_status "/login" 200
 check_status "/login/" 308
@@ -67,5 +87,15 @@ check_header "/" "content-security-policy"
 check_header "/login.html" "content-security-policy"
 check_header "/this-path-should-not-exist-smoketest" "content-security-policy"
 check_header "/sw.js" "cache-control"
+
+# One element id unique to each page's own HTML -- catches a routing rule
+# that returns 200 with the *wrong* page's content, which check_status alone
+# can't tell apart from the right page also returning 200. "app-nav" isn't
+# used here because listings/listing/bookings all share that nav markup.
+check_body "/" 'id="loading-state"'
+check_body "/login" 'id="login-form"'
+check_body "/listings" 'id="listing-grid"'
+check_body "/listing" 'id="listing-detail"'
+check_body "/bookings" 'id="bookings-list"'
 
 exit $FAIL
