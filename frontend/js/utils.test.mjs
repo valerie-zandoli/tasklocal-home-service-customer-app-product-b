@@ -3,7 +3,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { escapeHtml, filterListings, formatCurrency, formatServiceType } from "./utils.js";
+import { escapeHtml, filterListings, formatCurrency, formatServiceType, getRatingDisplayState } from "./utils.js";
 
 test("escapeHtml neutralizes HTML-significant characters", () => {
   assert.equal(escapeHtml('<script>alert("hi")</script>'), "&lt;script&gt;alert(&quot;hi&quot;)&lt;/script&gt;");
@@ -70,4 +70,22 @@ test("filterListings search matches title or description, case-insensitively", (
 test("filterListings combines all three filters (AND, not OR)", () => {
   const result = filterListings(LISTINGS, { serviceType: "cleaning", maxPrice: 60, search: "apartment" });
   assert.deepEqual(result.map((r) => r.listing_id), ["lst_1"]);
+});
+
+test("getRatingDisplayState shows the rating form only for a completed, unrated booking", () => {
+  assert.equal(getRatingDisplayState({ booking_status: "completed", rating: null }), "form");
+});
+
+test("getRatingDisplayState shows the existing rating once one exists, regardless of status", () => {
+  assert.equal(getRatingDisplayState({ booking_status: "completed", rating: 5 }), "rated");
+  // A booking can't actually be re-opened after rating in this app, but the
+  // function shouldn't assume that invariant holds forever — a rating
+  // present should always win over showing the form.
+  assert.equal(getRatingDisplayState({ booking_status: "confirmed", rating: 3 }), "rated");
+});
+
+test("getRatingDisplayState shows nothing for a booking that isn't completed and has no rating", () => {
+  assert.equal(getRatingDisplayState({ booking_status: "pending", rating: null }), "none");
+  assert.equal(getRatingDisplayState({ booking_status: "confirmed", rating: null }), "none");
+  assert.equal(getRatingDisplayState({ booking_status: "draft", rating: null }), "none");
 });

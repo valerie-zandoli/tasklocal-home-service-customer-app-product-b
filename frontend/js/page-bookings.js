@@ -1,6 +1,6 @@
 import { fetchMyBookings, rateBooking } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
-import { escapeHtml, formatCurrency } from "./utils.js";
+import { escapeHtml, formatCurrency, getRatingDisplayState } from "./utils.js";
 
 const session = await requireSession();
 if (session) {
@@ -38,8 +38,9 @@ if (session) {
     listEl.innerHTML = bookings
       .map((b) => {
         const listingTitle = b.listings ? escapeHtml(b.listings.title) : "Listing removed";
+        const ratingState = getRatingDisplayState(b);
         const ratingBlock =
-          b.booking_status === "completed" && !b.rating
+          ratingState === "form"
             ? `
               <form class="rating-form" data-booking-id="${b.booking_id}">
                 <select required aria-label="Rate this booking">
@@ -53,7 +54,7 @@ if (session) {
                 <button type="submit">Submit</button>
               </form>
             `
-            : b.rating
+            : ratingState === "rated"
             ? `<span>Rated ${b.rating}/5</span>`
             : "";
 

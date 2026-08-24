@@ -42,6 +42,16 @@ export function formatServiceType(serviceType) {
   return SERVICE_TYPE_LABELS[serviceType] || serviceType;
 }
 
+// Decides what the rating UI should show for a booking, independent of the
+// actual HTML — was three-way ternary logic buried inline in
+// page-bookings.js, untestable without a DOM. A customer can only rate a
+// completed booking, and only once.
+export function getRatingDisplayState(booking) {
+  if (booking.booking_status === "completed" && !booking.rating) return "form";
+  if (booking.rating) return "rated";
+  return "none";
+}
+
 export function filterListings(rows, { serviceType, maxPrice, search } = {}) {
   let result = rows;
   if (serviceType) {
