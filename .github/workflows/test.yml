@@ -121,6 +121,12 @@ jobs:
       # Job-level, not per-command: scripts/smoke-test-deployment.sh's own
       # `vercel curl` calls need to authenticate too, and the CLI picks this
       # env var up automatically without needing --token threaded through.
+      #
+      # Rotated 2026-08-25 after the previous value was pasted in plaintext
+      # into a chat interface — treated as compromised on principle (not
+      # because of any confirmed misuse) and replaced immediately. If a
+      # deploy ever starts failing here with an auth error, check whether
+      # the token needs rotating again before assuming something else broke.
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
