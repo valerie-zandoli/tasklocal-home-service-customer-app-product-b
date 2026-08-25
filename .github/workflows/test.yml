@@ -124,9 +124,13 @@ jobs:
       #
       # Rotated 2026-08-25 after the previous value was pasted in plaintext
       # into a chat interface — treated as compromised on principle (not
-      # because of any confirmed misuse) and replaced immediately. If a
-      # deploy ever starts failing here with an auth error, check whether
-      # the token needs rotating again before assuming something else broke.
+      # because of any confirmed misuse) and replaced immediately. First
+      # replacement failed here with "Could not retrieve Project Settings" —
+      # created under the wrong scope (personal account, not the
+      # team_cNKzyJkeUUeKDhhr8dG471Hx team this project belongs to), the
+      # same mistake this project hit once before. If a deploy ever starts
+      # failing here with an auth error again, check the token's scope
+      # before assuming something else broke.
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
