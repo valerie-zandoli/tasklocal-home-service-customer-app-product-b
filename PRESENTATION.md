@@ -54,13 +54,13 @@ demos read as one continuous story instead of four separate ones:
 | Order | Who | What | Time |
 |---|---|---|---|
 | 1 | Whoever opens | Framing: one shared marketplace, one shared database, four products | 2 min |
-| 2 | Lady D (C) | Chatbot: customer describes a job in plain language, gets matched to a listing | 5 min |
-| 3 | Valerie (B) | Customer App: browse/filter that listing, pick a time slot, book it | 5 min |
-| 4 | Joan (A) | Provider App: the booking just made in B appears in the provider's incoming bookings | 5 min |
-| 5 | Sarah (D) | Trust & Safety Dashboard: that booking (or a flagged one) visible to the safety team | 5 min |
+| 2 | Lady D (C) | Chatbot: customer describes a job in plain language, gets matched to a listing | 4–5 min |
+| 3 | Valerie (B) | Customer App: browse/filter that listing, pick a time slot, book it | 4–5 min |
+| 4 | Joan (A) | Provider App: the booking just made in B appears in the provider's incoming bookings | 4–5 min |
+| 5 | Sarah (D) | Trust & Safety Dashboard: that booking (or a flagged one) visible to the safety team | 4–5 min |
 | 6 | Whoever closes | Wrap-up, what's shared infra vs. what's still per-product, Q&A | 5 min |
 
-**~27 minutes total** — trim per-product time if the actual slot is shorter.
+**~23–27 minutes total** — trim per-product time toward the low end if the actual slot is shorter.
 Step 2 depends on Product C being demo-ready by the 27th; see "Open items"
 below.
 
