@@ -174,7 +174,6 @@
     "availability_slots": [
       "2026-09-25T11:00:00Z",
       "2026-08-30T11:00:00Z",
-      "2026-08-25T15:00:00Z",
       "2026-09-28T11:00:00Z"
     ]
   },
@@ -225,7 +224,6 @@
     "hourly_rate": 114.15,
     "availability_slots": [
       "2026-10-13T13:00:00Z",
-      "2026-08-25T15:00:00Z",
       "2026-09-23T09:00:00Z"
     ]
   },
@@ -376,7 +374,6 @@
     "description": "Standard weekly house cleaning service.",
     "hourly_rate": 128.16,
     "availability_slots": [
-      "2026-08-25T15:00:00Z",
       "2026-10-13T09:00:00Z",
       "2026-09-04T15:00:00Z"
     ]
@@ -439,7 +436,6 @@
     "description": "Loading and unloading moving trucks.",
     "hourly_rate": 127.76,
     "availability_slots": [
-      "2026-08-25T15:00:00Z",
       "2026-09-21T13:00:00Z",
       "2026-09-08T11:00:00Z",
       "2026-09-02T13:00:00Z"
