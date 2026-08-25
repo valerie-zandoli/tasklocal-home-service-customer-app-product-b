@@ -6,6 +6,6 @@
 // Leave both blank to run in local demo mode against the sample data in
 // frontend/data/ instead of a real Supabase project.
 window.APP_CONFIG = {
-  SUPABASE_URL: "",
-  SUPABASE_ANON_KEY: "",
+  SUPABASE_URL: "https://bikimbnqtvbqzprfgzfj.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_C5VQy9h0OV5LSSCsKqoneQ_R3RaN59S",
 };
