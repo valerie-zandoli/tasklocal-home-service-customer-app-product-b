@@ -13,12 +13,12 @@ This product is built for **busy local residents booking home services** — for
 ## Role in the Four-Product Suite
 Product B is the primary, customer-facing entry point to the marketplace. It lets customers browse vetted provider listings, filter by service type, price, and availability, and securely book services. It works alongside the other three products in the team's suite as follows:
 
-* **Product A (Provider App):** Where independent service providers create listings and manage incoming bookings.
+* **Product A (Provider App):** Where independent service providers create listings and manage incoming bookings. [github.com/Joanalbayrak-111/Tasklocal-Provider-App](https://github.com/Joanalbayrak-111/Tasklocal-Provider-App)
 * **Product B (Customer App — This Repo):** Where customers discover, schedule, and pay for services.
-* **Product C (Matching Chatbot):** Helps customers describe custom jobs in their own words and matches them to relevant provider listings.
-* **Product D (Trust & Safety Dashboard):** Lets the internal team monitor flagged listings and bookings and maintain quality control across the platform.
+* **Product C (Matching Chatbot):** Helps customers describe custom jobs in their own words and matches them to relevant provider listings. Repo not yet shared with the team as of this writing.
+* **Product D (Trust & Safety Dashboard):** Lets the internal team monitor flagged listings and bookings and maintain quality control across the platform. [github.com/sarahgdykes-ux/TaskLocal-Trust-and-Safety-dashboard](https://github.com/sarahgdykes-ux/TaskLocal-Trust-and-Safety-dashboard)
 
-All four products share a common data schema (customers, listings, providers, bookings, ratings, and safety reports) agreed on by the team.
+All four products share a common data schema (customers, listings, providers, bookings, ratings, and safety reports) agreed on by the team, and — as of this round of integration work — a common live Supabase database. See [PRESENTATION.md](PRESENTATION.md) for the cross-product demo narrative and current integration status of all four.
 
 ---
 
