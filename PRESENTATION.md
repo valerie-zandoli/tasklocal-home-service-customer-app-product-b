@@ -11,7 +11,7 @@ applies to all four products, not just this one.
 |---|---|---|---|
 | A | Provider App | [Joanalbayrak-111/Tasklocal-Provider-App](https://github.com/Joanalbayrak-111/Tasklocal-Provider-App) | Providers create listings, manage availability, respond to bookings |
 | B | Customer App | this repo | Customers browse, filter, and book listings |
-| C | Matching Chatbot | not yet shared with the team | Customers describe a job in their own words; matched to a listing |
+| C | Matching Chatbot | [D-Stukes/taskLocal-chatbot](https://github.com/D-Stukes/taskLocal-chatbot) | Customers describe a job in their own words; matched to a listing |
 | D | Trust & Safety Dashboard | [sarahgdykes-ux/TaskLocal-Trust-and-Safety-dashboard](https://github.com/sarahgdykes-ux/TaskLocal-Trust-and-Safety-dashboard) | Internal team reviews flagged listings/bookings |
 
 ## Demonstration date
@@ -166,21 +166,33 @@ helped make a stranger safer to hire.
   live database's `customers`/`listings`/`bookings` tables were migrated to
   match it exactly (keys, constraints, RLS) — see this README's "Current
   status" note under Architecture.
-- **Product A (Provider App):** repo confirmed, but still an early
-  in-memory prototype as of this check (in-repo `listingStore.js` pushes to
-  a local JS array; no live Supabase calls found in its source yet). No
-  stale-table-name risk from the rename this repo did (`Customers` →
-  `customers` etc.) since A isn't querying Supabase yet — but that also means
-  A→B integration (a listing A creates showing up live in B) isn't testable
-  end-to-end today, only via the shared seed data both already use.
+- **Product A (Provider App):** now has a real, deployed, polished UI
+  (`tasklocal-provider-app.vercel.app` — My Listings, Create Listing,
+  Bookings) and a Supabase client was added to the repo (`@supabase/supabase-js`,
+  correct shared-project URL/key). Confirmed via live network inspection,
+  though, that the deployed app isn't actually issuing Supabase calls yet —
+  `listingStore.js` still pushes to a local in-memory array. So the client
+  exists but isn't wired into the real listing-creation/display flow. No
+  stale-table-name risk from the earlier rename (`Customers` → `customers`)
+  since A still isn't querying Supabase for real. A→B integration (a listing
+  A creates showing up live in B) still isn't testable end-to-end.
 - **Product B (Customer App):** connected and verified end-to-end against
   the real database — see "Current status" in the Architecture section
   above.
-- **Product C (Matching Chatbot):** no repo shared with the team as of this
-  writing, so its connection status to the shared database is unknown.
-  This is the biggest open gap for a coherent joint demo — worth asking Lady
-  D for a repo link (or at least confirming whether it's ready to demo)
-  before presentation day.
+- **Product C (Matching Chatbot):** deployed live at
+  [deploy-five-delta-62.vercel.app](https://deploy-five-delta-62.vercel.app/)
+  (posted by Lady D) — confirmed working, with a real login/create-account
+  screen. She wrote her own Supabase Auth integration directly (replacing
+  the old demo-only login) plus a `profiles` table migration, independent
+  of the PR below. That means PR #1 (server-side proxy for Claude calls +
+  live reads from the shared `listings` table) now has a **merge conflict**
+  — her subsequent commits touched overlapping files (`package.json`,
+  `README.md`), so it needs a rebase, not a straight merge. The
+  `chatbot_requests` insert policy the PR needs is already added to the
+  shared database and verified working independent of this conflict. Not
+  yet confirmed: whether her live deployment's matching feature reads real
+  listings from the shared database, or still the original hardcoded CSV —
+  that's what the still-unmerged PR would add.
 - **Product D (Trust & Safety Dashboard):** repo confirmed and its README
   describes exactly the setup this repo provides (schema, seed data, a
   separate `trust-safety-policies.sql` for safety-team RLS access) — good
@@ -190,11 +202,16 @@ helped make a stranger safer to hire.
 
 ## Open items before the demo
 
-- **Confirm Product C's status directly with Lady D** — repo link, and
-  whether it's connected to the shared database or still standalone.
-- **Get the team's sign-off on the proposed run of show above** — order,
-  presenter assignments, and per-product timing are all a first draft, not
-  yet confirmed with Joan, Lady D, or Sarah.
+- **Rebase and merge Product C's PR #1** — it now conflicts with Lady D's
+  own subsequent commits (her real Supabase Auth work). Needs conflict
+  resolution, not a straight merge; see "Current integration status" above.
+- **Confirm whether Product A's deployed UI will read live listings before
+  the demo**, or whether that segment will run on local data — the
+  Supabase client is in the repo but not wired into `listingStore.js` yet.
+- **Decide whether to open the demo from Sarah's TaskLocal Workspace hub**
+  instead of jumping straight to Product B — it already exists and links
+  all four products, which could be a stronger visual opener than the
+  spoken framing alone.
 - **Visual identity:** no unified branding decision was reached (B offered a
   shared visual identity; C has its own separate logo). Not a functional
   blocker, but worth a quick team decision so the four screens don't look
