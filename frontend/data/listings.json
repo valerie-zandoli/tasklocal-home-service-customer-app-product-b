@@ -296,7 +296,6 @@
     "hourly_rate": 58.34,
     "availability_slots": [
       "2026-09-27T15:00:00Z",
-      "2026-08-26T09:00:00Z",
       "2026-10-13T11:00:00Z",
       "2026-09-16T15:00:00Z",
       "2026-10-15T11:00:00Z"
@@ -423,7 +422,6 @@
     "description": "Garage cleanout and organization.",
     "hourly_rate": 120.68,
     "availability_slots": [
-      "2026-08-26T15:00:00Z",
       "2026-09-07T13:00:00Z",
       "2026-10-05T11:00:00Z"
     ]
