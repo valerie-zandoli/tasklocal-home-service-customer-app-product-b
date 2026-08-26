@@ -39,33 +39,126 @@ four unrelated demos back to back:
    listing gets flagged, it becomes visible in the Trust & Safety Dashboard,
    which reads the same `bookings`/`listings`/`trust_safety` tables.
 
-Products A, B, and D all point at the same live Supabase project
-(`bikimbnqtvbqzprfgzfj`), so steps 3–5 above are a real, live data flow today,
-not four separate mock demos — a booking made in B is immediately visible to
-A and D. Step 1–2 (the chatbot) can't be confirmed live yet — see below.
+Products B and D point at the same live Supabase project
+(`bikimbnqtvbqzprfgzfj`) today, so steps 3 and 5 above are a real, live data
+flow — a booking made in B is immediately visible to D. Step 4 (A reading
+that same booking live) and steps 1–2 (the chatbot matching against real
+listings) aren't confirmed live yet — see "Current integration status"
+below for exactly what's still missing on each.
 
-## Proposed run of show
+## Final storyboard and script
 
-A draft only — needs the team's sign-off, and the per-product timings are a
-starting guess to adjust once everyone knows how long their own walkthrough
-actually takes. Ordered to follow the customer journey above, so the four
-demos read as one continuous story instead of four separate ones:
+No longer a draft — timing, speakers, and every word of the actual script,
+including the handoff line between each speaker. Every transition was checked
+so it lands on a word the next speaker actually uses, not just a related idea
+(e.g. Sarah's opening ends on "browsing and booking a service," and Valerie's
+first line is "browses and filters listings" — same word, not a paraphrase).
 
-| Order | Who | What | Time |
-|---|---|---|---|
-| 1 | Whoever opens | Framing: one shared marketplace, one shared database, four products | 2 min |
-| 2 | Lady D (C) | Chatbot: customer describes a job in plain language, gets matched to a listing | 4–5 min |
-| 3 | Valerie (B) | Customer App: browse/filter that listing, pick a time slot, book it | 4–5 min |
-| 4 | Joan (A) | Provider App: the booking just made in B appears in the provider's incoming bookings | 4–5 min |
-| 5 | Sarah (D) | Trust & Safety Dashboard: that booking (or a flagged one) visible to the safety team | 4–5 min |
-| 6 | Whoever closes | Wrap-up, what's shared infra vs. what's still per-product, Q&A | 5 min |
+| Order | Speaker | Segment | Time | Running total |
+|---|---|---|---|---|
+| 1 | Sarah | Opening (client, target user, problem) | 2 min | 2 min |
+| 2 | Valerie | Customer Booking (Product B) | 4 min | 6 min |
+| 3 | Lady D | Chatbot (Product C) | 4 min | 10 min |
+| 4 | Joan | Provider (Product A) | 4 min | 14 min |
+| 5 | Sarah | Trust and Safety (Product D) | 4 min | 18 min |
+| 6 | Valerie | Closing | 2 min | 20 min |
+| — | Whole team | Q&A | 10 min | 30 min |
 
-**~23–27 minutes total** — trim per-product time toward the low end if the actual slot is shorter.
-Step 2 depends on Product C being demo-ready by the 27th; see "Open items"
-below.
+**Opening — Sarah:**
+
+Imagine that you have moved into a new apartment or that your kitchen sink is
+suddenly leaking and that you need a reliable, local, professional today, not
+next week. Right now, finding that person means scrolling through scattered
+listings, texting a few different people to compare price and availability,
+and hoping that the one that you pick shows up. TaskLocal solves that problem
+with a two-sided, local marketplace connecting independent, home-service
+providers — the cleaners, the handymen, the movers — with the customers who
+need them, earning a small commission when a booking completes. Our target
+user is a busy, local resident who wants to describe what they need in plain
+language, see vetted options, and book confidently without the back-and-forth.
+The four of us built one, connected system to make it possible, and today we
+will walk through it as one, continuous journey, not four separate apps. Let
+us start where that customer experiences it first, in browsing and booking a
+service, and I will hand it to Valerie to begin to demonstrate.
+
+**Customer Booking — Valerie (Product B):**
+- *What it does:* the demand-side web and mobile application where customers
+  browse vetted listings, filter by service type, price, and availability,
+  and securely book a time slot.
+- *How it works:* customer logs in and browses and filters listings; picks a
+  listing and an available time slot and submits a booking; the booking
+  writes to the shared database with the price computed server-side and
+  status set to pending; customer sees all their bookings and rates a
+  service once it's completed.
+- *Transition:* "A lot of the time, customers don't know the right filter
+  with which to search. They want to describe what is wrong in their own
+  words, like my sink is leaking. Our chatbot lets them do exactly that, as
+  Lady D will show us."
+
+**Chatbot — Lady D (Product C):**
+- *What it does:* allows a customer to describe a job in their own words
+  instead of hunting through filters themselves — the chatbot interprets the
+  request and matches it to live provider listings.
+- *How it works:* customer types a plain-language description ("my sink is
+  leaking, need someone this week"); the assistant classifies it into a
+  service type and pulls matching listings from the shared TaskLocal
+  database; it responds conversationally with the matches and next steps;
+  the request gets logged to the shared database, visible to the rest of the
+  team's systems.
+- *Transition:* "All of those listings, the ones that we searched now and
+  matched against, come from somewhere. Now we meet the people creating
+  them, our providers, and hand it over to Joan."
+
+**Provider — Joan (Product A):**
+- *What it does:* where independent service providers turn what they offer
+  into a clear, structured listing — a category, a title, a description, and
+  a price — solving the first, foundational piece of the trust problem: you
+  can't trust or evaluate something that isn't clearly described in the
+  first place.
+- *How it works:* a provider signs up and creates a profile, then creates a
+  listing by selecting a service category, writing a title and description,
+  and setting a price; sets availability and publishes the listing so it
+  becomes visible to customers; views and responds to incoming booking
+  requests, with confirmed jobs showing up in their bookings list.
+- *Transition:* "Not every booking goes smoothly. Sometimes a provider or a
+  customer needs to be reported or an incident needs attention. Our Trust &
+  Safety Dashboard monitors those situations and is where the team takes
+  action. Sarah, back to you."
+
+**Trust and Safety — Sarah (Product D):**
+- *What it does:* helps the team monitor provider and customer activity,
+  identify potential safety issues, and take action when something needs
+  attention — one central place to review reports instead of information
+  spread across multiple apps.
+- *How it works:* the Trust and Safety team member signs in and views the
+  dashboard; reviews reported users, requests, or incidents that need
+  attention; opens a specific report to see the relevant details and
+  activity; determines whether action is needed; takes the appropriate
+  action and updates the case status.
+- *Transition into closing:* "By bringing these safety tools into one
+  dashboard, TaskLocal can respond to issues faster and create a safer
+  experience for both customers and providers. So from the moment a customer
+  books, to how a listing gets created, to how we keep the whole platform
+  trustworthy, it is one, connected system, not four separate ones. Valerie,
+  I will hand it back to you to bring us home."
+
+**Closing — Valerie:**
+
+From a potentially scattered, stressful search, TaskLocal turns finding,
+booking, and trusting a local home-service provider into one connected,
+transparent experience for the customer, for the provider, and for the team
+that keeps it all safe. In the end, this presentation is the story of how we
+helped make a stranger safer to hire.
 
 ## Current integration status
 
+- **A live, unified entry point now exists.** Sarah's Trust & Safety repo
+  includes a "TaskLocal Workspace" hub, deployed at
+  [tasklocal-trust-and-safety-dashboar.vercel.app](https://tasklocal-trust-and-safety-dashboar.vercel.app)
+  (that's the real URL — missing the final "d" in "dashboard"), linking out
+  to all four products: Customer, Provider, Trust & Safety, and
+  Messaging/Chatbot. Confirmed live by loading it directly. Worth deciding
+  as a team whether this is the actual opening screen for the demo.
 - **Schema:** aligned across the database itself. `backend/schema.sql` in
   this repo is the schema source of truth (per agreement with the team, and
   per Product D's own README, which points back to this repo's
