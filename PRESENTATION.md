@@ -46,6 +46,35 @@ that same booking live) and steps 1–2 (the chatbot matching against real
 listings) aren't confirmed live yet — see "Current integration status"
 below for exactly what's still missing on each.
 
+## Staged example for the demo
+
+The one persistent thread to carry across all four screens (see the "one
+continuous example beats a continuous script" guidance sent to the team in
+Slack). Already created for real, live, in the shared database:
+
+- **Customer:** Alex Rivera (demo account, `alex.rivera@example.com`)
+- **Listing:** `lst_102439`, "General Handyman Repairs," $39.40/hr, service
+  type `handyman` — maps naturally to the chatbot's scripted line, "my
+  sink's leaking, need someone this week."
+- **Booking:** `bkg_543313`, $44.00 total (server-computed), scheduled Fri
+  Sep 4, status `pending`.
+
+**Confirmed working live:** logging in as Alex Rivera and viewing this
+booking under My Bookings (Product B). Trust & Safety (Product D) reads
+the same `bookings` table, so this row should already be visible there to
+an authenticated safety-team user — not independently confirmed by me
+(no safety-team login available), worth Sarah checking before the demo.
+
+**Not going to work live as scripted, found while staging this:** Joan's
+Provider App still shows local mock data in its Bookings tab (the
+deliberate scope decision from the RLS finding — see "Current integration
+status" below), not real reads from the shared database. So `bkg_543313`
+exists for real, but won't appear in her app's own Bookings view. Options
+before the demo: (a) Joan shows the real row directly in Supabase's Table
+Editor instead of her own app's Bookings tab for that one moment, or (b)
+accept that beat stays conceptual rather than literally live. Flagging
+this now specifically so it isn't discovered live on stage.
+
 ## Final storyboard and script
 
 No longer a draft — timing, speakers, and every word of the actual script,
