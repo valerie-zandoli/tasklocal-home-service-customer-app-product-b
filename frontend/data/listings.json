@@ -235,8 +235,7 @@
     "description": "Move-out cleaning for rental apartments.",
     "hourly_rate": 127.1,
     "availability_slots": [
-      "2026-09-30T15:00:00Z",
-      "2026-08-27T11:00:00Z"
+      "2026-09-30T15:00:00Z"
     ]
   },
   {
@@ -580,7 +579,6 @@
     "hourly_rate": 42.63,
     "availability_slots": [
       "2026-09-21T11:00:00Z",
-      "2026-08-27T11:00:00Z",
       "2026-10-09T11:00:00Z"
     ]
   },
