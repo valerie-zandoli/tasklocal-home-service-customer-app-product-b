@@ -195,48 +195,41 @@ helped make a stranger safer to hire.
   live database's `customers`/`listings`/`bookings` tables were migrated to
   match it exactly (keys, constraints, RLS) — see this README's "Current
   status" note under Architecture.
-- **Product A (Provider App):** now has a real, deployed, polished UI
-  (`tasklocal-provider-app.vercel.app` — My Listings, Create Listing,
-  Bookings) and a Supabase client was added to the repo (`@supabase/supabase-js`,
-  correct shared-project URL/key). Confirmed via live network inspection,
-  though, that the deployed app isn't actually issuing Supabase calls yet —
-  `listingStore.js` still pushes to a local in-memory array. So the client
-  exists but isn't wired into the real listing-creation/display flow. No
-  stale-table-name risk from the earlier rename (`Customers` → `customers`)
-  since A still isn't querying Supabase for real. A→B integration (a listing
-  A creates showing up live in B) still isn't testable end-to-end.
+- **Product A (Provider App):** PR #1 merged by Joan, and **confirmed
+  actually deployed** — fetched the live bundle at
+  `tasklocal-provider-app.vercel.app` directly and confirmed it now loads
+  `@supabase/supabase-js` via esm.sh and reads real listings. Fully live,
+  not just merged. Listing creation and bookings remain local mock data by
+  design (the RLS/real-auth gap already documented).
 - **Product B (Customer App):** connected and verified end-to-end against
   the real database — see "Current status" in the Architecture section
   above.
-- **Product C (Matching Chatbot):** deployed live at
-  [deploy-five-delta-62.vercel.app](https://deploy-five-delta-62.vercel.app/)
-  (posted by Lady D) — confirmed working, with a real login/create-account
-  screen. She wrote her own Supabase Auth integration directly (replacing
-  the old demo-only login) plus a `profiles` table migration, independent
-  of the PR below. That means PR #1 (server-side proxy for Claude calls +
-  live reads from the shared `listings` table) now has a **merge conflict**
-  — her subsequent commits touched overlapping files (`package.json`,
-  `README.md`), so it needs a rebase, not a straight merge. The
-  `chatbot_requests` insert policy the PR needs is already added to the
-  shared database and verified working independent of this conflict. Not
-  yet confirmed: whether her live deployment's matching feature reads real
-  listings from the shared database, or still the original hardcoded CSV —
-  that's what the still-unmerged PR would add.
-- **Product D (Trust & Safety Dashboard):** repo confirmed and its README
-  describes exactly the setup this repo provides (schema, seed data, a
-  separate `trust-safety-policies.sql` for safety-team RLS access) — good
-  sign the two repos already agree on how they're supposed to connect, but
-  not independently confirmed live (would need a safety-team login to
-  verify, which this repo doesn't have credentials for).
+- **Product C (Matching Chatbot):** PR #1 (server-side proxy for Claude
+  calls + live reads from `listings`) is **merged on GitHub**, but **not
+  actually live yet** — checked the deployed JS bundle directly at
+  `deploy-five-delta-62.vercel.app` and it's still the pre-merge build: it
+  still calls `api.anthropic.com` directly with no key (found zero
+  references to the new `/api/chat` proxy). So the chat feature is still
+  broken in production right now, same as before the fix, even though the
+  code fix itself is merged. Lady D needs to (1) set `ANTHROPIC_API_KEY` in
+  Vercel as already messaged to her, and (2) trigger an actual redeploy —
+  merging alone didn't do it, likely because her Vercel project isn't
+  Git-connected the same way the other products' are, or a build is
+  failing silently. Worth her checking the Vercel dashboard directly.
+- **Product D (Trust & Safety Dashboard):** Sarah set her Supabase env vars
+  — confirmed live: the dashboard now shows a real "sign in to the safety
+  workspace" login screen instead of falling back to CSV demo data, which
+  only happens once Supabase is actually configured. Not independently
+  confirmed: that an actual safety-team login can read data through it
+  (no safety-team credentials available here) — worth Sarah doing one real
+  login-and-look before the demo.
 
 ## Open items before the demo
 
-- **Rebase and merge Product C's PR #1** — it now conflicts with Lady D's
-  own subsequent commits (her real Supabase Auth work). Needs conflict
-  resolution, not a straight merge; see "Current integration status" above.
-- **Confirm whether Product A's deployed UI will read live listings before
-  the demo**, or whether that segment will run on local data — the
-  Supabase client is in the repo but not wired into `listingStore.js` yet.
+- **Get Product C's merged fix actually deployed** — the PR is merged on
+  GitHub, but the live site is still serving the old, broken build. Lady D
+  needs to set `ANTHROPIC_API_KEY` in Vercel and trigger a real redeploy;
+  see "Current integration status" above for what was actually verified.
 - **Decide whether to open the demo from Sarah's TaskLocal Workspace hub**
   instead of jumping straight to Product B — it already exists and links
   all four products, which could be a stronger visual opener than the
