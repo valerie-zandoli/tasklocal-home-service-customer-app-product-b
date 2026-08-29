@@ -165,9 +165,24 @@ create table if not exists booking_schedules (
 -- failed" while a real, orphaned booking with no recorded time slot now sits
 -- in their account. A plpgsql function call runs inside a single transaction
 -- — if anything inside raises, the whole thing rolls back, so partial success
--- is impossible by construction. security invoker (not changed to definer):
--- it runs as the calling user, so every RLS policy and trigger above still
--- applies exactly as if the client had run the two inserts directly.
+-- is impossible by construction.
+--
+-- security definer (changed from invoker): this function now has to check
+-- whether *any* customer has already claimed a given listing's slot, not
+-- just the caller's own — and RLS's "customer can read own bookings" policy
+-- deliberately hides every other customer's rows from a plain select, which
+-- would blind exactly the check that matters (two different customers
+-- racing for the same slot). Bypassing RLS for that reason means this
+-- function has to enforce "you can only book as yourself" itself now,
+-- rather than leaning on the insert policy below to catch it — see the
+-- explicit ownership check first thing in the body.
+--
+-- Concurrent claims on the identical (listing_id, scheduled_slot) are
+-- serialized with a transaction-scoped advisory lock rather than a new
+-- table or unique constraint — booking_schedules is keyed by booking_id,
+-- not listing_id, so there's nothing to put a uniqueness constraint on
+-- without a schema change. The lock is released automatically on commit or
+-- rollback, so nothing to clean up if the function raises partway through.
 create or replace function create_booking_with_schedule(
   p_booking_id text,
   p_customer_id text,
@@ -176,12 +191,19 @@ create or replace function create_booking_with_schedule(
 )
 returns bookings
 language plpgsql
-security invoker
+security definer
 set search_path = public, pg_temp
 as $$
 declare
   v_booking bookings;
+  v_slot_taken boolean;
 begin
+  if p_customer_id not in (
+    select customer_id from customer_profiles where user_id = auth.uid()
+  ) then
+    raise exception 'Not authorized to book as this customer';
+  end if;
+
   -- Idempotent on booking_id, which is generated client-side and reused
   -- across a manual retry (see frontend/js/page-listing.js) rather than
   -- regenerated every click. Covers the case where this call already
@@ -198,6 +220,25 @@ begin
       return v_booking;
     end if;
     raise exception 'booking_id % already in use', p_booking_id using errcode = '23505';
+  end if;
+
+  -- Claim the (listing_id, scheduled_slot) pair. The lock guarantees only
+  -- one concurrent caller reaches the existence check below at a time for
+  -- the same slot — without it, two simultaneous calls could both pass the
+  -- check before either had inserted anything, and both would proceed.
+  perform pg_advisory_xact_lock(hashtext(p_listing_id || '|' || p_scheduled_slot::text));
+
+  select exists (
+    select 1
+    from booking_schedules bs
+    join bookings b on b.booking_id = bs.booking_id
+    where b.listing_id = p_listing_id
+      and bs.scheduled_slot = p_scheduled_slot
+      and b.booking_status <> 'draft'
+  ) into v_slot_taken;
+
+  if v_slot_taken then
+    raise exception 'That time slot is no longer available for this listing' using errcode = '23505';
   end if;
 
   insert into bookings (booking_id, customer_id, listing_id, booking_status)
