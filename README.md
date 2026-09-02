@@ -1,6 +1,8 @@
-# Product B, Customer (demand) Web and Mobile Application for TaskLocal Home-Service
+# TaskLocal | Customer Booking
 
 [![Tests](https://github.com/valerie-zandoli/tasklocal-home-service-customer-app-product-b/actions/workflows/test.yml/badge.svg)](https://github.com/valerie-zandoli/tasklocal-home-service-customer-app-product-b/actions/workflows/test.yml)
+
+Product B — the demand-side (customer) web and mobile application for TaskLocal Home-Service. Renamed to match the "TaskLocal | X" naming already used by Product A ("TaskLocal | Provider workspace") and Product D ("TaskLocal | Trust & Safety"), found during a brand audit across all four products.
 
 **Live demo:** [tasklocal-home-service-customer-app.vercel.app](https://tasklocal-home-service-customer-app.vercel.app) — now running against the team's real, shared Supabase project (see "Current status" below), not local demo mode. Log in with one of the four demo accounts on the login screen.
 

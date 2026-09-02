@@ -5,8 +5,10 @@
 
 // Single source of truth for the product's full name, so nav.js and
 // page-index.js can't drift out of sync with each other on a future rename.
-export const PRODUCT_NAME =
-  "Product B, Customer (demand) Web and Mobile Application for TaskLocal Home-Service";
+// "TaskLocal | X" matches the naming already used by Product A ("TaskLocal |
+// Provider workspace") and Product D ("TaskLocal | Trust & Safety") -- see
+// the brand-audit findings this replaced.
+export const PRODUCT_NAME = "TaskLocal | Customer Booking";
 
 const HTML_ESCAPES = {
   "&": "&amp;",
