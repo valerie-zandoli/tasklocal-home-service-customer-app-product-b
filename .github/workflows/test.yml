@@ -3,6 +3,16 @@ name: Tests
 on:
   push:
   pull_request:
+  # Catches a slot aging into the past (data-integrity.test.mjs) between
+  # pushes, not only on the next one -- this same class of bug has now
+  # recurred multiple times because static seed dates keep drifting behind
+  # whatever "today" actually is. 13:00 UTC is arbitrary; only the daily
+  # cadence matters. The `deploy` job below stays untouched by this: its
+  # own `if` already requires `github.event_name == 'push'`, which a
+  # scheduled run never satisfies, so this can never trigger a production
+  # release on its own.
+  schedule:
+    - cron: "0 13 * * *"
 
 permissions:
   contents: read
