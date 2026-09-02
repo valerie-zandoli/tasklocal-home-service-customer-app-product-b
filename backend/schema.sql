@@ -222,6 +222,16 @@ begin
     raise exception 'booking_id % already in use', p_booking_id using errcode = '23505';
   end if;
 
+  -- Belt-and-suspenders against the availability_slots data itself aging
+  -- into the past (static seed data, checked in frontend/js/page-listing.js
+  -- and frontend/js/data-integrity.test.mjs, but this is the one path that
+  -- actually creates a booking, so it's the one place that must hold even
+  -- if a stale slot ever reaches this call some other way, e.g. a direct
+  -- API call bypassing the UI's own filter).
+  if p_scheduled_slot < now() then
+    raise exception 'That time slot has already passed' using errcode = '22007';
+  end if;
+
   -- Claim the (listing_id, scheduled_slot) pair. The lock guarantees only
   -- one concurrent caller reaches the existence check below at a time for
   -- the same slot — without it, two simultaneous calls could both pass the

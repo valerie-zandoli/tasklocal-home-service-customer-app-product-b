@@ -38,7 +38,14 @@ if (session) {
         <p class="error-text" id="booking-error" aria-live="polite"></p>
       `;
 
-      const slots = Array.isArray(listing.availability_slots) ? listing.availability_slots : [];
+      // availability_slots is static seed data that ages into the past on its
+      // own — filter at render time so a stale slot can never be offered as
+      // bookable here, regardless of whether the underlying seed data has
+      // been re-curated recently (see data-integrity.test.mjs).
+      const now = new Date();
+      const slots = (Array.isArray(listing.availability_slots) ? listing.availability_slots : []).filter(
+        (s) => new Date(s) >= now
+      );
       const slotGrid = document.getElementById("slot-grid");
       const bookBtn = document.getElementById("book-btn");
       const bookingError = document.getElementById("booking-error");

@@ -69,8 +69,7 @@
     "description": "Move-out cleaning for rental apartments.",
     "hourly_rate": 39.37,
     "availability_slots": [
-      "2026-10-11T11:00:00Z",
-      "2026-08-30T13:00:00Z"
+      "2026-10-11T11:00:00Z"
     ]
   },
   {
@@ -106,7 +105,7 @@
     "description": "Loading and unloading moving trucks.",
     "hourly_rate": 77.47,
     "availability_slots": [
-      "2026-09-02T13:00:00Z"
+      "2026-09-25T13:00:00Z"
     ]
   },
   {
@@ -171,7 +170,6 @@
     "hourly_rate": 51.75,
     "availability_slots": [
       "2026-09-25T11:00:00Z",
-      "2026-08-30T11:00:00Z",
       "2026-09-28T11:00:00Z"
     ]
   },
@@ -184,7 +182,6 @@
     "hourly_rate": 145.06,
     "availability_slots": [
       "2026-09-18T13:00:00Z",
-      "2026-09-01T15:00:00Z",
       "2026-10-13T15:00:00Z"
     ]
   },
@@ -209,7 +206,6 @@
     "description": "Standard weekly house cleaning service.",
     "hourly_rate": 117.17,
     "availability_slots": [
-      "2026-09-01T11:00:00Z",
       "2026-10-09T13:00:00Z"
     ]
   },
@@ -245,7 +241,6 @@
     "hourly_rate": 128.38,
     "availability_slots": [
       "2026-09-15T13:00:00Z",
-      "2026-09-02T15:00:00Z",
       "2026-09-17T11:00:00Z",
       "2026-10-13T13:00:00Z"
     ]
@@ -332,7 +327,6 @@
     "description": "Full apartment deep clean including kitchen and bathrooms.",
     "hourly_rate": 31.93,
     "availability_slots": [
-      "2026-09-02T15:00:00Z",
       "2026-09-15T15:00:00Z",
       "2026-09-10T11:00:00Z",
       "2026-09-12T13:00:00Z",
@@ -381,8 +375,7 @@
     "description": "Small repairs including drywall patching and furniture assembly.",
     "hourly_rate": 50.71,
     "availability_slots": [
-      "2026-09-05T11:00:00Z",
-      "2026-08-31T11:00:00Z"
+      "2026-09-05T11:00:00Z"
     ]
   },
   {
@@ -431,8 +424,7 @@
     "hourly_rate": 127.76,
     "availability_slots": [
       "2026-09-21T13:00:00Z",
-      "2026-09-08T11:00:00Z",
-      "2026-09-02T13:00:00Z"
+      "2026-09-08T11:00:00Z"
     ]
   },
   {
@@ -443,7 +435,6 @@
     "description": "Custom job tailored to specific customer needs.",
     "hourly_rate": 97.64,
     "availability_slots": [
-      "2026-08-30T11:00:00Z",
       "2026-10-12T11:00:00Z"
     ]
   },
@@ -458,8 +449,7 @@
       "2026-09-17T15:00:00Z",
       "2026-10-08T13:00:00Z",
       "2026-10-08T15:00:00Z",
-      "2026-09-21T15:00:00Z",
-      "2026-08-30T11:00:00Z"
+      "2026-09-21T15:00:00Z"
     ]
   },
   {
@@ -518,7 +508,6 @@
     "description": "Small repairs including drywall patching and furniture assembly.",
     "hourly_rate": 28.2,
     "availability_slots": [
-      "2026-09-01T09:00:00Z",
       "2026-10-09T11:00:00Z",
       "2026-10-15T09:00:00Z"
     ]
