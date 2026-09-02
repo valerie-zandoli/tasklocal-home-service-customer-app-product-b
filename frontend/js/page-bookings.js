@@ -41,7 +41,7 @@ if (session) {
             `
             : ratingState === "rated"
             ? `<span>Rated ${b.rating}/5</span>`
-            : "";
+            : `<span class="booking-meta">Rating unlocks once this booking is completed</span>`;
 
         const status = escapeHtml(b.booking_status);
         const scheduled = formatSlot(b.scheduled_slot);
