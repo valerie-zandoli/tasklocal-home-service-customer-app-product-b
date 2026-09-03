@@ -101,13 +101,14 @@ jobs:
   # cancellation can ever leave unverified code live: the alias simply isn't
   # touched until verification has actually finished and passed.
   #
-  # Vercel's own Git-integration auto-deploy is STILL ENABLED in the
-  # dashboard as of the --prod flip — deliberately, as a redundant safety
-  # net while this path proves itself against production for real. Once
-  # this has run clean a few times for real, disable it (Settings → Git →
-  # Ignored Build Step) so this job is the only path to production, per the
-  # original point of doing any of this: making deployment actually
-  # CI-gated, not decorative.
+  # Vercel's own Git-integration auto-deploy is disabled (Settings → Git →
+  # Ignored Build Step is set to the "Don't build anything" / `exit 0`
+  # command) -- confirmed 2026-09-03, after an earlier version of this
+  # comment assumed it was still enabled and flagged closing it as an open
+  # gap. It wasn't open; nobody had actually checked the dashboard setting
+  # against what the comment claimed. This job is the only path to
+  # production, which was the original point of doing any of this: making
+  # deployment actually CI-gated, not decorative.
   deploy:
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
