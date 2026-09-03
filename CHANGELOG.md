@@ -10,6 +10,9 @@ Milestone-level summary, not a commit-by-commit mirror — `git log` already is 
 - Added a scheduled workflow running the live-database RLS/concurrency test suite on a real cadence, closing a gap where that suite had only ever been run by hand.
 - Extracted `attemptBookingInsert()` out of `createBooking()` in `frontend/js/api.js` — same behavior, easier to scan.
 - Added a "definition of done" checklist to `PRESENTATION.md` and a minimal support/contact pointer to the app.
+- Saved three ad-hoc Supabase SQL queries under `backend/sql/` instead of leaving them as unsaved SQL Editor tabs; running one turned up that the `safety_team` role reaches five shared tables, not the one originally documented.
+- Added weekly CI trend logging for page-weight/load-time/FCP numbers, plus a real Slow-4G-throttled Playwright test. Attempted real mutation-testing coverage (Stryker) and abandoned it — its dependency tree pulls in a vulnerable `qs` with no available fix, which would have broken this repo's own `npm audit` CI gate.
+- Fresh-eyes retest found and fixed two real gaps in this same day's own additions: the "Need help?" nav link and `error-reporter.js` both had zero test coverage; writing the latter's tests surfaced a real bug (`location.pathname` instead of `window.location.pathname`, the only place in this codebase not going through `window.location` explicitly). Visual regression baselines regenerated for the resulting mobile nav-height change.
 
 ## 2026-09-02 — Closing the peer-testing self-review's two deferred items
 
