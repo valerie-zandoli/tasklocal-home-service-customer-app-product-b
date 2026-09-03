@@ -1,0 +1,35 @@
+name: Live database tests
+
+# frontend/js/live/*.test.mjs makes real HTTP calls against the live, shared
+# Supabase project and are deliberately NOT matched by the `frontend/js/*.test.mjs`
+# glob test.yml runs on every push (see those files' own header comments) --
+# running them on every push would hammer the team's shared project on a
+# schedule nobody chose. This workflow is the "run it on a real cadence"
+# referenced there: monthly, not daily, since concurrency.test.mjs and one
+# rls-policies.test.mjs test each write a real bkg_livetest_-prefixed booking
+# row that only backend/scripts/cleanup-live-test-data.mjs (run by hand, with
+# the service role key -- not something CI holds) can remove. Monthly keeps
+# that accumulation small and bounded rather than eliminating it outright.
+#
+# No secrets needed: SUPABASE_URL/SUPABASE_ANON_KEY are read straight out of
+# the committed frontend/js/config.js (the anon key is meant to be public --
+# see that file's own comment), and the demo account passwords these tests
+# sign in with are the already-committed fictional ones in demo-users.js.
+on:
+  schedule:
+    - cron: "0 14 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - run: node --test frontend/js/live/*.test.mjs

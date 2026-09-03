@@ -47,6 +47,7 @@ export function renderNav(session, activePage) {
       </div>
       <div class="nav-user">
         <span>${escapeHtml(session.displayName)}</span>
+        <a class="link-btn" href="https://github.com/valerie-zandoli/tasklocal-home-service-customer-app-product-b/issues" target="_blank" rel="noopener">Need help?</a>
         <button id="logout-btn" class="link-btn">Log out</button>
       </div>
     </div>
