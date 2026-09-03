@@ -1,0 +1,18 @@
+version: 2
+updates:
+  # Dependabot's security-alert updates were already on; this adds routine
+  # weekly version-update PRs too, for both npm projects in this repo (each
+  # has its own package.json/package-lock.json -- see frontend/README-adjacent
+  # notes in the main README's "Architecture" section).
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

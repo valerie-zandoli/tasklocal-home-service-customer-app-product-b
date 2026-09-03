@@ -4,3 +4,10 @@ node_modules/
 .DS_Store
 *.log
 .vercel
+
+# Playwright (frontend/e2e) run output -- not the committed baseline
+# screenshots in frontend/e2e/*.spec.mjs-snapshots/, which do belong in
+# version control.
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/

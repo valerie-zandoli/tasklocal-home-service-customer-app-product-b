@@ -4,7 +4,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "seed:users": "node scripts/seed-demo-users.mjs"
+    "seed:users": "node scripts/seed-demo-users.mjs",
+    "cleanup:live-tests": "node scripts/cleanup-live-test-data.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.112.4"

@@ -3,7 +3,11 @@
   "private": true,
   "license": "MIT",
   "type": "module",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
   "devDependencies": {
+    "@playwright/test": "1.62.1",
     "axe-core": "4.13.0",
     "jsdom": "30.0.1"
   }
