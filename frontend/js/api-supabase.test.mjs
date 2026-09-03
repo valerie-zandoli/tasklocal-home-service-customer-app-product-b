@@ -215,6 +215,32 @@ test("fetchListings() escapes a search term containing PostgREST or-filter synta
   assert.deepEqual(calls.or[0], [`title.ilike."%a,\\"b%",description.ilike."%a,\\"b%"`]);
 });
 
+test("fetchListings() splits a multi-word search into a per-word OR clause, not one whole-phrase match", async () => {
+  setupDom();
+  const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };
+  _setClientForTesting({
+    from: () => makeChain({ data: [], error: null }, calls),
+  });
+
+  await api.fetchListings({ search: "apartment clean" });
+
+  assert.deepEqual(calls.or[0], [
+    `title.ilike."%apartment%",description.ilike."%apartment%",title.ilike."%clean%",description.ilike."%clean%"`,
+  ]);
+});
+
+test("fetchListings() treats a search of only whitespace the same as no search", async () => {
+  setupDom();
+  const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };
+  _setClientForTesting({
+    from: () => makeChain({ data: [], error: null }, calls),
+  });
+
+  await api.fetchListings({ search: "   " });
+
+  assert.deepEqual(calls.or, []);
+});
+
 test("fetchListings() does not call .or() when no search term is given", async () => {
   setupDom();
   const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };

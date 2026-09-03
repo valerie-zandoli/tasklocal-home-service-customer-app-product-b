@@ -98,6 +98,18 @@ function escapeOrFilterValue(value) {
   return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
 
+// A whole-phrase substring match (the previous behavior) fails realistic
+// queries -- "apartment clean this week" won't match a listing whose title
+// is just "Move-Out Cleaning" even though a customer typing that phrase
+// clearly wants it. Splitting into words and matching if ANY word appears
+// (OR, not AND -- a customer describing extra context shouldn't have to
+// match all of it) is what a real customer's phrasing needs. Empty entries
+// from repeated whitespace are dropped so trailing spaces don't produce a
+// clause matching everything.
+function searchWords(search) {
+  return search.trim().split(/\s+/).filter(Boolean);
+}
+
 // Listings render as one unbounded fetch used to mean every matching row
 // came back and got rendered in one shot -- harmless at today's dataset
 // size, but nothing capped it from growing into a huge single response and
@@ -115,9 +127,15 @@ export async function fetchListings({ serviceType, maxPrice, search, offset = 0 
     let query = supabase.from("listings").select("*");
     if (serviceType) query = query.eq("service_type", serviceType);
     if (maxPrice) query = query.lte("hourly_rate", maxPrice);
-    if (search) {
-      const pattern = `%${escapeOrFilterValue(search)}%`;
-      query = query.or(`title.ilike."${pattern}",description.ilike."${pattern}"`);
+    const words = search ? searchWords(search) : [];
+    if (words.length > 0) {
+      const clause = words
+        .map((word) => {
+          const pattern = `%${escapeOrFilterValue(word)}%`;
+          return `title.ilike."${pattern}",description.ilike."${pattern}"`;
+        })
+        .join(",");
+      query = query.or(clause);
     }
     // .range() applies after every filter above, so this paginates the
     // filtered result set, not the raw table.

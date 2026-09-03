@@ -91,6 +91,19 @@ test("filterListings search matches title or description, case-insensitively", (
   assert.deepEqual(filterListings(LISTINGS, { search: "rental" }).map((r) => r.listing_id), ["lst_3"]);
 });
 
+test("filterListings matches a realistic multi-word phrase via any shared word, not the whole phrase", () => {
+  // A real customer types context words the listing text doesn't have --
+  // "this week" here -- so requiring the whole phrase as one substring
+  // would (and, before this fix, did) return nothing despite two real
+  // cleaning listings existing.
+  const result = filterListings(LISTINGS, { search: "apartment clean this week" });
+  assert.deepEqual(result.map((r) => r.listing_id).sort(), ["lst_1", "lst_3"]);
+});
+
+test("filterListings treats a search of only whitespace as no search", () => {
+  assert.deepEqual(filterListings(LISTINGS, { search: "   " }), LISTINGS);
+});
+
 test("filterListings combines all three filters (AND, not OR)", () => {
   const result = filterListings(LISTINGS, { serviceType: "cleaning", maxPrice: 60, search: "apartment" });
   assert.deepEqual(result.map((r) => r.listing_id), ["lst_1"]);

@@ -92,11 +92,19 @@ export function filterListings(rows, { serviceType, maxPrice, search } = {}) {
   if (maxPrice) {
     result = result.filter((r) => r.hourly_rate <= maxPrice);
   }
-  if (search) {
-    const q = search.toLowerCase();
-    result = result.filter(
-      (r) => r.title.toLowerCase().includes(q) || r.description.toLowerCase().includes(q)
-    );
+  // Word-tokenized OR match, not a whole-phrase substring match --
+  // "apartment clean this week" (how a real customer types) should match a
+  // listing titled "Move-Out Cleaning" via the shared word "clean", not
+  // require the entire typed phrase to appear verbatim. Mirrors api.js's
+  // server-side .or() query, which does the same tokenization. A
+  // whitespace-only search (words.length === 0) is treated as no search,
+  // not as "match nothing" -- `search` itself is truthy for "   ".
+  const words = search ? search.toLowerCase().trim().split(/\s+/).filter(Boolean) : [];
+  if (words.length > 0) {
+    result = result.filter((r) => {
+      const haystack = `${r.title} ${r.description}`.toLowerCase();
+      return words.some((word) => haystack.includes(word));
+    });
   }
   return result;
 }
