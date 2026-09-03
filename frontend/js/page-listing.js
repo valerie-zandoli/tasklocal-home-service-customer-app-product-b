@@ -55,7 +55,11 @@ if (session) {
       const bookingError = document.getElementById("booking-error");
 
       if (slots.length === 0) {
-        slotGrid.innerHTML = `<p class="empty-state">No open time slots right now — check back later.</p>`;
+        // A "Back to browse" link already exists at the top of this page
+        // (see listing.html), but it's not co-located with this specific
+        // message -- a customer landing here from a dead listing shouldn't
+        // have to look elsewhere on the page for the next step.
+        slotGrid.innerHTML = `<p class="empty-state">No open time slots right now — check back later, or <a href="listings.html?service_type=${encodeURIComponent(listing.service_type)}">browse similar listings</a>.</p>`;
       } else {
         slotGrid.innerHTML = slots
           .map(

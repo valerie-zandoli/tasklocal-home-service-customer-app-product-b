@@ -32,11 +32,17 @@ const LISTINGS_HTML = `<!doctype html><body>
   <nav id="app-nav"></nav>
   <form class="filters" id="filters-form">
     <input id="search" type="text" />
-    <select id="service_type"><option value="">All types</option></select>
+    <select id="service_type">
+      <option value="">All types</option>
+      <option value="cleaning">Cleaning</option>
+      <option value="handyman">Handy People</option>
+      <option value="moving">Moving</option>
+      <option value="custom">Custom</option>
+    </select>
     <input id="max_price" type="number" />
   </form>
   <p class="error-text" id="listings-error"></p>
-  <div id="listing-grid" class="listing-grid"></div>
+  <div id="listing-grid" class="listing-grid"><p>Loading&hellip;</p></div>
   <p id="empty-state" class="empty-state" hidden></p>
   <button type="button" id="load-more" hidden>Load more</button>
 </body>`;
@@ -87,6 +93,53 @@ test("renders one page of cards, escapes a malicious title instead of injecting 
   assert.equal(loadMoreBtn.hidden, true, "expected Load more hidden once a partial (non-full) page comes back");
 });
 
+test("shows a loading placeholder in markup, replaced with real cards once render() completes", async () => {
+  setupDom(JSDOM, LISTINGS_HTML, { url: "http://localhost/listings.html" });
+  // Before any script runs -- the actual gap this fixes: listings.html
+  // previously rendered nothing at all here on first paint, unlike
+  // listing.html's own "Loading…" state (frontend/listing.html:20). Checked
+  // structurally (a direct-child <p>, not a .listing-card) rather than by
+  // searching for the word "Loading" in text -- a real seeded listing is
+  // literally titled "Truck Loading Help", and every card has its own
+  // nested <p class="desc">/<p class="price">, so either a loose text-regex
+  // or an unscoped "p" selector false-positives once real cards render.
+  const grid = document.getElementById("listing-grid");
+  assert.equal(grid.querySelector(":scope > p")?.textContent.includes("Loading"), true);
+
+  signIn();
+  installFetchStub();
+  await importPageListings();
+  await new Promise((r) => setTimeout(r, 50));
+
+  assert.equal(document.querySelectorAll(".listing-card").length, LISTINGS_PAGE_SIZE);
+  assert.equal(grid.querySelector(":scope > p"), null, "expected the loading placeholder <p> to be gone once real cards render");
+});
+
+test("a ?service_type= query param pre-filters the grid on load", async () => {
+  setupDom(JSDOM, LISTINGS_HTML, { url: "http://localhost/listings.html?service_type=moving" });
+  signIn();
+  installFetchStub();
+
+  await importPageListings();
+  await new Promise((r) => setTimeout(r, 50));
+
+  assert.equal(document.getElementById("service_type").value, "moving");
+  const badges = [...document.querySelectorAll(".listing-card .badge")].map((b) => b.textContent);
+  assert.ok(badges.length > 0, "expected at least one moving listing in the seed data");
+  assert.ok(badges.every((b) => b === "Moving"));
+});
+
+test("an unrecognized ?service_type= query param is ignored, not applied", async () => {
+  setupDom(JSDOM, LISTINGS_HTML, { url: "http://localhost/listings.html?service_type=not-a-real-type" });
+  signIn();
+  installFetchStub();
+
+  await importPageListings();
+  await new Promise((r) => setTimeout(r, 50));
+
+  assert.equal(document.getElementById("service_type").value, "", "expected the select to stay on its default, not an unrecognized value");
+});
+
 test("filtering by search narrows the grid to matching listings only", async () => {
   setupDom(JSDOM, LISTINGS_HTML, { url: "http://localhost/listings.html" });
   signIn();
@@ -106,13 +159,18 @@ test("filtering by search narrows the grid to matching listings only", async () 
   const filteredCards = document.querySelectorAll(".listing-card");
   assert.ok(filteredCards.length > 0, "expected at least one match for a real listing title");
   assert.ok(filteredCards.length < totalCards, "expected the search to actually narrow the results");
-  // filterListings (utils.js, already covered in utils.test.mjs) matches
-  // title OR description -- descriptions are drawn from a small shared pool
-  // independent of titles, so e.g. a "Deep Apartment Cleaning" listing can
-  // legitimately match a "Move-Out Cleaning" search via its description.
+  // filterListings (utils.js, already covered in utils.test.mjs) is a
+  // word-tokenized OR match, not a whole-phrase substring match -- a search
+  // of "Move-Out Cleaning" matches any listing containing "move-out" OR
+  // "cleaning" (e.g. "Standard weekly house cleaning service" legitimately
+  // matches via "cleaning" alone, even without "Move-Out" anywhere), not
+  // only listings containing the exact two-word phrase.
   for (const card of filteredCards) {
-    const text = card.querySelector("h3").textContent + " " + card.querySelector(".desc").textContent;
-    assert.match(text, /Move-Out Cleaning/i);
+    const text = (card.querySelector("h3").textContent + " " + card.querySelector(".desc").textContent).toLowerCase();
+    assert.ok(
+      text.includes("move-out") || text.includes("cleaning"),
+      `expected "${text}" to contain "move-out" or "cleaning"`
+    );
   }
 });
 

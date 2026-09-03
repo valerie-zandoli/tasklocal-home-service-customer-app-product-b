@@ -36,6 +36,38 @@ function signIn() {
 // that's guaranteed bookable, not empty.
 const BOOKABLE_LISTING_ID = "lst_343432";
 
+// A real listing_id used only by this test, not BOOKABLE_LISTING_ID --
+// api.js caches frontend/data/listings.json in module-level state on first
+// fetch and never re-fetches (see readMockListings()'s comment in api.js),
+// so mutating this listing's slots here permanently affects every later
+// test's view of it too. Using a listing no other test in this file reads
+// means that mutation can't corrupt BOOKABLE_LISTING_ID's own 2-slot data,
+// regardless of run order.
+const NO_SLOTS_LISTING_ID = "lst_402426";
+
+test("a listing with no open slots offers a link back to similar listings instead of a dead end", async () => {
+  setupDom(JSDOM, LISTING_HTML, { url: `http://localhost/listing.html?id=${NO_SLOTS_LISTING_ID}` });
+  signIn();
+  let serviceType;
+  installFetchStub((pathname, data) => {
+    if (pathname === "/data/listings.json") {
+      const listing = data.find((l) => l.listing_id === NO_SLOTS_LISTING_ID);
+      serviceType = listing.service_type;
+      listing.availability_slots = [];
+    }
+    return data;
+  });
+
+  await importPageListing();
+  await new Promise((r) => setTimeout(r, 50));
+
+  assert.equal(document.querySelectorAll(".slot-btn").length, 0);
+  const link = document.querySelector(".empty-state a");
+  assert.ok(link, "expected a link inside the empty-state message");
+  assert.match(link.textContent, /browse similar listings/i);
+  assert.equal(link.getAttribute("href"), `listings.html?service_type=${serviceType}`);
+});
+
 test("renders listing details and one button per real, still-open availability slot", async () => {
   setupDom(JSDOM, LISTING_HTML, { url: `http://localhost/listing.html?id=${BOOKABLE_LISTING_ID}` });
   signIn();

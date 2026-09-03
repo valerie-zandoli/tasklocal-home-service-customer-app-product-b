@@ -15,6 +15,16 @@ if (session) {
   const serviceTypeSelect = document.getElementById("service_type");
   const maxPriceInput = document.getElementById("max_price");
 
+  // Lets a link into this page pre-filter (e.g. page-listing.js's "browse
+  // similar listings" from a sold-out listing's own service type) instead
+  // of landing on an unfiltered grid the customer has to re-filter by hand.
+  // Only reads a recognized <option> value -- an unrecognized or missing
+  // query param leaves the select on its default "All types".
+  const requestedServiceType = new URLSearchParams(window.location.search).get("service_type");
+  if (requestedServiceType && [...serviceTypeSelect.options].some((o) => o.value === requestedServiceType)) {
+    serviceTypeSelect.value = requestedServiceType;
+  }
+
   function cardHtml(l) {
     return `
       <a class="listing-card" href="listing.html?id=${encodeURIComponent(l.listing_id)}">
