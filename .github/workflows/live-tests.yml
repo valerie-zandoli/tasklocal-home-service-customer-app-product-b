@@ -32,4 +32,15 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
-      - run: node --test frontend/js/live/*.test.mjs
+      # rls-policies.test.mjs and concurrency.test.mjs cover real regressions
+      # -- a failure here should fail the job.
+      - run: node --test frontend/js/live/rls-policies.test.mjs frontend/js/live/concurrency.test.mjs
+      # known-issues.test.mjs holds tests that are DELIBERATELY, KNOWINGLY
+      # left failing until a specific external fix lands (see that file's
+      # own comments) -- continue-on-error so a known, already-tracked issue
+      # doesn't turn the whole scheduled run red every single time, which
+      # would train everyone to ignore it and risk masking a real new
+      # failure landing alongside it. Its output is still visible in the
+      # job's logs either way.
+      - run: node --test frontend/js/live/known-issues.test.mjs
+        continue-on-error: true

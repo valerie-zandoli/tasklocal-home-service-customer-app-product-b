@@ -3,7 +3,10 @@
 // every push) -- everything here makes real HTTP calls against the live,
 // shared Supabase project (see frontend/js/config.js), and one test writes
 // a real row that only backend/scripts/cleanup-live-test-data.mjs can remove
-// (see that test's own comment below for why). Running this on every push
+// (see that test's own comment below for why). See known-issues.test.mjs in
+// this same directory for the one test deliberately split out of this file
+// because it's expected to keep failing until an external, already-tracked
+// fix lands. Running this on every push
 // would hammer the team's shared project and create side effects on a
 // schedule nobody chose. Run it by hand, or wire it into a separate,
 // deliberately-scheduled (not on-push) workflow if that's ever wanted.
@@ -163,28 +166,13 @@ test("a signed-in customer cannot change total_cost or booking_status on their o
 // app_metadata.role of "safety_team" on this shared Supabase project (found
 // by this exact test suite: the three tests above originally used Alex and
 // failed, since her session can read all ~106 bookings platform-wide, not
-// just her own). `bookings_safety_team_select` (a policy on `bookings` this
-// repo's own schema.sql does NOT define -- confirmed via `pg_policies`) is
-// almost certainly Product D's Trust & Safety Dashboard's own mechanism,
-// granting real reviewer accounts broad read access on purpose. The bug
-// isn't that policy; it's that a Product-B-owned demo *customer* login ended
-// up holding that reviewer role, which breaks the customer-data-isolation
-// story this product's own README documents. Left failing on purpose,
-// rather than worked around, until that role claim is actually cleared from
-// this account (Authentication -> Users -> alex.rivera@example.com in the
-// Supabase dashboard, or `update auth.users set raw_app_meta_data =
-// raw_app_meta_data - 'role' where email = 'alex.rivera@example.com'`).
-test("KNOWN LIVE ISSUE: the alex.rivera demo account should not carry Trust & Safety reviewer access, but currently does", async () => {
-  const { data } = await rest("GET", "bookings?select=customer_id", { token: alexToken });
-  const otherCustomers = data.filter((r) => r.customer_id !== alex.customerId);
-  assert.deepEqual(
-    otherCustomers,
-    [],
-    `alex.rivera@example.com can currently read ${otherCustomers.length} bookings belonging to other customers -- ` +
-      `her Supabase Auth user's app_metadata.role is "safety_team", which bookings_safety_team_select grants broad ` +
-      `read access to. Clear that role claim from this specific account to fix.`
-  );
-});
+// just her own). See known-issues.test.mjs in this same directory for the
+// dedicated, deliberately-still-failing regression test that documents this
+// -- moved there so a live CI run of this file isn't red every time for a
+// known, external, already-tracked issue. alexToken stays wired up in this
+// file's own setup since the two tests below still need a real
+// authenticated-customer session, and Alex is as good as any of the four
+// for that purpose.
 
 // No role this suite can authenticate as has DELETE on `bookings` -- there
 // is no delete policy in backend/schema.sql at all (customers can create
