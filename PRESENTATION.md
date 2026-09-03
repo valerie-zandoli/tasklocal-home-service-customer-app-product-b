@@ -16,8 +16,10 @@ applies to all four products, not just this one.
 
 ## Demonstration date
 
-**27 August 2026.** Ahead of the project's 30 August 2026 conclusion, so there's
-a few days' buffer to react to anything the demo surfaces.
+**27 August 2026** (the project's overall conclusion was 30 August 2026, leaving
+a few days' buffer to react to anything the demo surfaced). Both dates are now
+in the past — this doc is kept as the run-of-show record, not a forward-looking
+plan.
 
 ## The customer journey the demo should walk through
 
@@ -53,7 +55,7 @@ continuous example beats a continuous script" guidance sent to the team in
 Slack). Already created for real, live, in the shared database:
 
 - **Customer:** Alex Rivera (demo account, `alex.rivera@example.com`)
-- **Listing:** `lst_102439`, "General Handyman Repairs," $39.40/hr, service
+- **Listing:** `lst_102439`, "General Handy People Repairs," $39.40/hr, service
   type `handyman` — maps naturally to the chatbot's scripted line, "my
   sink's leaking, need someone this week."
 - **Booking:** `bkg_543313`, $44.00 total (server-computed), scheduled Fri
@@ -223,6 +225,18 @@ helped make a stranger safer to hire.
   confirmed: that an actual safety-team login can read data through it
   (no safety-team credentials available here) — worth Sarah doing one real
   login-and-look before the demo.
+
+## Definition of done
+
+Added retroactively (2026-09-03, after the demo) so "did the demo succeed" has a concrete, checkable answer recorded here instead of living only in memory or scattered Slack messages. Status reflects what this doc's own "Current integration status" section above already confirmed as of the demo date.
+
+- [x] Product B connects to the real shared Supabase project and completes one real, live, end-to-end booking (browse → book → server-computed price → visible under My Bookings) — the staged example above (`bkg_543313`).
+- [x] All four products' live deployments are reachable and loading real data, not a broken build — Products A, B, and D confirmed; Product C confirmed merged but not yet confirmed redeployed (see "Current integration status").
+- [ ] A booking made in Product B is independently confirmed visible in Product D's Trust & Safety view by an actual safety-team login — flagged as not independently confirmed; needed Sarah to check with real credentials.
+- [x] Every speaker has a complete, word-for-word script with a checked hand-off into the next segment (see "Final storyboard and script" above).
+- [ ] A unified visual identity across all four screens — explicitly not reached; recorded as an open item, not silently dropped.
+
+Two of five criteria remained open at demo time. Recorded honestly rather than rounded up, since the value of a "definition of done" is knowing which items didn't close, not just declaring victory.
 
 ## Open items before the demo
 
