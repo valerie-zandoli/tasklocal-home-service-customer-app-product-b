@@ -16,7 +16,7 @@ function logClientError(entry) {
   } catch {
     log = [];
   }
-  log.push({ ...entry, at: new Date().toISOString(), page: location.pathname });
+  log.push({ ...entry, at: new Date().toISOString(), page: window.location.pathname });
   if (log.length > MAX_LOGGED_ERRORS) log.shift();
   try {
     sessionStorage.setItem(ERROR_LOG_KEY, JSON.stringify(log));

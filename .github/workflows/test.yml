@@ -54,20 +54,20 @@ jobs:
       - run: npm audit
         working-directory: backend
       # --experimental-test-coverage: page-index.js/page-login.js/
-      # page-listing.js/page-listings.js's own DOM tests import their entry
-      # module with a fresh cache-busting query string per test (see those
-      # test files' own comments for why — the modules run entirely as a
-      # top-level side effect on import, so a second plain import would
-      # return Node's already-executed cached module and silently no-op).
-      # That confirmed-via-repro breaks coverage *attribution* for those
-      # four files specifically: V8 only reports the last-loaded instance's
-      # counters, silently discarding what earlier cache-busted imports in
-      # the same file covered. Their reported numbers are real but
-      # understate actual coverage — treat a low number there as
-      # inconclusive, not as a gap to chase, unless you've confirmed a
-      # specific line really is untested. api.js and every other file don't
-      # have this problem (imported normally, not cache-busted), so their
-      # numbers are trustworthy as reported.
+      # page-listing.js/page-listings.js/error-reporter.js's own tests import
+      # their entry module with a fresh cache-busting query string per test
+      # (see those test files' own comments for why — the modules run
+      # entirely as a top-level side effect on import, so a second plain
+      # import would return Node's already-executed cached module and
+      # silently no-op). That confirmed-via-repro breaks coverage
+      # *attribution* for those five files specifically: V8 only reports the
+      # last-loaded instance's counters, silently discarding what earlier
+      # cache-busted imports in the same file covered. Their reported
+      # numbers are real but understate actual coverage — treat a low number
+      # there as inconclusive, not as a gap to chase, unless you've
+      # confirmed a specific line really is untested. api.js and every other
+      # file don't have this problem (imported normally, not cache-busted),
+      # so their numbers are trustworthy as reported.
       - run: node --test --experimental-test-coverage frontend/js/*.test.mjs
 
   # DEPLOYS TO PRODUCTION. This job spent a long stretch of this project's

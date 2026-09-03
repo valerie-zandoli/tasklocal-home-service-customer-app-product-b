@@ -64,6 +64,18 @@ test("renderNav escapes the display name instead of injecting it as HTML", async
   assert.match(userSpan.textContent, /^<img/);
 });
 
+test("renderNav includes a working Need Help link pointing at the repo's issue tracker", async () => {
+  setupDom();
+  const { renderNav } = await import("./nav.js");
+  renderNav({ displayName: "Alex Rivera", customerId: "cust_1" }, "listings.html");
+
+  const helpLink = [...document.querySelectorAll(".nav-user a")].find((a) => a.textContent === "Need help?");
+  assert.ok(helpLink, "expected a 'Need help?' link in the nav");
+  assert.equal(helpLink.getAttribute("href"), "https://github.com/valerie-zandoli/tasklocal-home-service-customer-app-product-b/issues");
+  assert.equal(helpLink.getAttribute("target"), "_blank");
+  assert.equal(helpLink.getAttribute("rel"), "noopener");
+});
+
 test("renderNav does nothing if #app-nav isn't on the page", async () => {
   setupDom();
   document.getElementById("app-nav").remove();
