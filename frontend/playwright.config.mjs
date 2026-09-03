@@ -48,8 +48,14 @@ export default defineConfig({
   // functional assertions a 2nd/3rd time under a different color scheme
   // would just be padding, not new coverage.
   projects: [
-    { name: "desktop-light", use: { ...devices["Desktop Chrome"], colorScheme: "light" } },
+    // testIgnore: performance-throttled.spec.mjs only makes sense under the
+    // throttled-mobile project below -- running it here too would just be
+    // the same test unthrottled, a redundant no-op.
+    { name: "desktop-light", testIgnore: /performance-throttled\.spec\.mjs/, use: { ...devices["Desktop Chrome"], colorScheme: "light" } },
     { name: "desktop-dark", testMatch: /visual\.spec\.mjs/, use: { ...devices["Desktop Chrome"], colorScheme: "dark" } },
     { name: "mobile-light", testMatch: /visual\.spec\.mjs/, use: { ...devices["iPhone 14"], colorScheme: "light" } },
+    // Chromium-based (not iPhone 14/WebKit): performance-throttled.spec.mjs
+    // needs Chromium's CDP Network domain for real throttling.
+    { name: "throttled-mobile", testMatch: /performance-throttled\.spec\.mjs/, use: { ...devices["Pixel 7"] } },
   ],
 });

@@ -11,3 +11,8 @@ node_modules/
 frontend/test-results/
 frontend/playwright-report/
 frontend/blob-report/
+
+# Per-run performance numbers (frontend/e2e/performance.spec.mjs) -- meant
+# to be uploaded as a CI artifact each run (.github/workflows/performance.yml),
+# not committed; a committed copy would just be a stale, noisy diff.
+frontend/performance-results.json
