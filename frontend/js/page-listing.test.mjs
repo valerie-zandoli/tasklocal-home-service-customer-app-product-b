@@ -36,7 +36,7 @@ function signIn() {
 // that's guaranteed bookable, not empty.
 const BOOKABLE_LISTING_ID = "lst_343432";
 
-test("renders listing details and one button per real availability slot", async () => {
+test("renders listing details and one button per real, still-open availability slot", async () => {
   setupDom(JSDOM, LISTING_HTML, { url: `http://localhost/listing.html?id=${BOOKABLE_LISTING_ID}` });
   signIn();
   installFetchStub();
@@ -47,9 +47,44 @@ test("renders listing details and one button per real availability slot", async 
   assert.match(document.querySelector("h1").textContent, /Move-Out Cleaning/);
   assert.match(document.querySelector(".detail-price").textContent, /^\$\d/);
   const slotButtons = document.querySelectorAll(".slot-btn");
-  assert.equal(slotButtons.length, 2, "expected one button per real availability slot for lst_343432");
+  // lst_343432 has 2 real availability_slots, but frontend/data/bookings.json
+  // seeds a real, live demo booking (bkg_900001) on one of them
+  // (2026-10-03T15:00:00Z) -- that slot must not render as bookable here.
+  assert.equal(slotButtons.length, 1, "expected the already-booked demo slot to be hidden, leaving 1 open");
+  assert.equal(slotButtons[0].dataset.slot, "2026-09-30T15:00:00Z");
   const bookBtn = document.getElementById("book-btn");
   assert.equal(bookBtn.disabled, true, "nothing selected yet, so booking should start disabled");
+});
+
+test("hides a slot that's already claimed by a non-draft booking, leaving the other one bookable", async () => {
+  setupDom(JSDOM, LISTING_HTML, { url: `http://localhost/listing.html?id=${BOOKABLE_LISTING_ID}` });
+  signIn();
+  installFetchStub();
+  // lst_343432's two real availability_slots are 2026-10-03T15:00:00Z and
+  // 2026-09-30T15:00:00Z (see this file's BOOKABLE_LISTING_ID comment) --
+  // claim the first with someone else's pending booking before the page
+  // ever loads.
+  localStorage.setItem(
+    MOCK_BOOKINGS_KEY,
+    JSON.stringify([
+      {
+        booking_id: "bkg_taken",
+        customer_id: "cust_someone_else",
+        listing_id: BOOKABLE_LISTING_ID,
+        booking_status: "pending",
+        total_cost: 90,
+        rating: null,
+        scheduled_slot: "2026-10-03T15:00:00Z",
+      },
+    ])
+  );
+
+  await importPageListing();
+  await new Promise((r) => setTimeout(r, 50));
+
+  const slotButtons = document.querySelectorAll(".slot-btn");
+  assert.equal(slotButtons.length, 1, "expected the already-booked slot to be hidden");
+  assert.equal(slotButtons[0].dataset.slot, "2026-09-30T15:00:00Z", "expected the still-open slot to remain bookable");
 });
 
 test("shows 'No listing specified' when the id query param is missing", async () => {
@@ -102,8 +137,14 @@ test("selecting a slot and booking creates a real mock booking and attempts to n
   assert.ok(navigationWasAttempted(jsdomErrors), "expected an attempted redirect to bookings.html after a successful booking");
 
   const stored = JSON.parse(localStorage.getItem(MOCK_BOOKINGS_KEY));
-  const created = stored.find((b) => b.listing_id === BOOKABLE_LISTING_ID && b.customer_id === user.customerId);
-  assert.ok(created, "expected a new mock booking for this customer/listing to have been written");
+  // Matched on scheduled_slot too, not just listing/customer: seed data
+  // (frontend/data/bookings.json) already has an existing booking for this
+  // same customer/listing (bkg_900001, on the *other* slot), so matching on
+  // listing/customer alone could find that pre-existing row instead of the
+  // one this test just created.
+  const created = stored.find(
+    (b) => b.listing_id === BOOKABLE_LISTING_ID && b.customer_id === user.customerId && b.scheduled_slot === firstSlot.dataset.slot
+  );
+  assert.ok(created, "expected a new mock booking for this customer/listing/slot to have been written");
   assert.equal(created.booking_status, "pending");
-  assert.equal(created.scheduled_slot, firstSlot.dataset.slot);
 });

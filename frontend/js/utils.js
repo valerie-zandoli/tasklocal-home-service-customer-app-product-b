@@ -23,6 +23,10 @@ export function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (ch) => HTML_ESCAPES[ch]);
 }
 
+// Hardcoded to en-US/USD on purpose, not left unlocalized by oversight --
+// this product is scoped to the New York City metro area only (see
+// README.md's "Scope decisions"), and multi-language/multi-currency support
+// was reviewed and deliberately declined for now.
 const CURRENCY_FORMATTER = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 
 export function formatCurrency(amount) {

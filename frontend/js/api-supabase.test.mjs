@@ -33,6 +33,8 @@ function makeChain(result, calls) {
     select: (...args) => (calls?.select.push(args), chain),
     eq: (...args) => (calls?.eq.push(args), chain),
     lte: (...args) => (calls?.lte.push(args), chain),
+    or: (...args) => (calls?.or.push(args), chain),
+    range: (...args) => (calls?.range.push(args), chain),
     order: (...args) => (calls?.order.push(args), chain),
     update: (...args) => (calls?.update.push(args), chain),
     maybeSingle: async () => result,
@@ -98,7 +100,7 @@ test("login() in real mode throws the Supabase error message on failure", async 
 
 test("getSession() in real mode joins auth session with the customer_profiles row", async () => {
   setupDom();
-  const calls = { select: [], eq: [], lte: [], order: [], update: [] };
+  const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };
   _setClientForTesting({
     auth: {
       getSession: async () => ({ data: { session: { user: { id: "auth-uid-1", email: "real.user@example.com" } } } }),
@@ -128,7 +130,7 @@ test("getSession() in real mode logs but does not throw when the profile query e
       auth: {
         getSession: async () => ({ data: { session: { user: { id: "auth-uid-3", email: "flaky@example.com" } } } }),
       },
-      from: () => makeChain({ data: null, error: { message: "connection reset" } }, { select: [], eq: [], lte: [], order: [], update: [] }),
+      from: () => makeChain({ data: null, error: { message: "connection reset" } }, { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] }),
     });
 
     const session = await api.getSession();
@@ -151,7 +153,7 @@ test("getSession() in real mode falls back to the auth email when no profile row
     auth: {
       getSession: async () => ({ data: { session: { user: { id: "auth-uid-2", email: "orphan@example.com" } } } }),
     },
-    from: () => makeChain({ data: null, error: null }, { select: [], eq: [], lte: [], order: [], update: [] }),
+    from: () => makeChain({ data: null, error: null }, { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] }),
   });
 
   const session = await api.getSession();
@@ -159,11 +161,15 @@ test("getSession() in real mode falls back to the auth email when no profile row
   assert.equal(session.customerId, null);
 });
 
-test("fetchListings() in real mode builds .eq/.lte filters server-side and search client-side", async () => {
+test("fetchListings() in real mode builds .eq/.lte/.or filters server-side", async () => {
   setupDom();
-  const calls = { select: [], eq: [], lte: [], order: [], update: [] };
+  const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };
   const rows = [
-    { listing_id: "lst_1", title: "Deep Apartment Cleaning", description: "Full clean.", service_type: "cleaning", hourly_rate: 50 },
+    // The server is the one doing the filtering in this mode, so the fake
+    // just needs to return whatever rows it's told to -- already narrowed
+    // to what a real ilike '%shelf%' would have matched, since this test is
+    // about the *filter sent*, not filterListings' own client-side logic
+    // (that's covered separately for mock mode).
     { listing_id: "lst_2", title: "Shelf Mounting", description: "Mount shelves.", service_type: "cleaning", hourly_rate: 80 },
   ];
   _setClientForTesting({
@@ -177,9 +183,73 @@ test("fetchListings() in real mode builds .eq/.lte filters server-side and searc
 
   assert.deepEqual(calls.eq[0], ["service_type", "cleaning"]);
   assert.deepEqual(calls.lte[0], ["hourly_rate", 100]);
-  // search has no server-side index (per api.js's own comment) -- applied
-  // client-side via filterListings on whatever the server already filtered.
+  assert.deepEqual(calls.or[0], [`title.ilike."%shelf%",description.ilike."%shelf%"`]);
+  // Defaults to the first page (offset 0) when no offset is given.
+  assert.deepEqual(calls.range[0], [0, api.LISTINGS_PAGE_SIZE - 1]);
   assert.deepEqual(result.map((r) => r.listing_id), ["lst_2"]);
+});
+
+test("fetchListings() requests the next page via .range() when an offset is given", async () => {
+  setupDom();
+  const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };
+  _setClientForTesting({
+    from: () => makeChain({ data: [], error: null }, calls),
+  });
+
+  await api.fetchListings({ offset: api.LISTINGS_PAGE_SIZE });
+
+  assert.deepEqual(calls.range[0], [api.LISTINGS_PAGE_SIZE, api.LISTINGS_PAGE_SIZE * 2 - 1]);
+});
+
+test("fetchListings() escapes a search term containing PostgREST or-filter syntax characters", async () => {
+  setupDom();
+  const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };
+  _setClientForTesting({
+    from: () => makeChain({ data: [], error: null }, calls),
+  });
+
+  // A comma or double-quote in the search term must not be able to break out
+  // of the quoted ilike pattern and inject another filter clause.
+  await api.fetchListings({ search: 'a,"b' });
+
+  assert.deepEqual(calls.or[0], [`title.ilike."%a,\\"b%",description.ilike."%a,\\"b%"`]);
+});
+
+test("fetchListings() does not call .or() when no search term is given", async () => {
+  setupDom();
+  const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };
+  _setClientForTesting({
+    from: () => makeChain({ data: [], error: null }, calls),
+  });
+
+  await api.fetchListings({ serviceType: "cleaning" });
+
+  assert.deepEqual(calls.or, []);
+});
+
+test("fetchBookedSlots() in real mode calls get_booked_slots with the listing id and returns its result", async () => {
+  setupDom();
+  let seenArgs;
+  _setClientForTesting({
+    rpc: async (fn, args) => {
+      seenArgs = { fn, args };
+      return { data: ["2026-10-03T15:00:00Z", "2026-11-01T10:00:00Z"], error: null };
+    },
+  });
+
+  const slots = await api.fetchBookedSlots("lst_343432");
+
+  assert.deepEqual(seenArgs, { fn: "get_booked_slots", args: { p_listing_id: "lst_343432" } });
+  assert.deepEqual(slots, ["2026-10-03T15:00:00Z", "2026-11-01T10:00:00Z"]);
+});
+
+test("fetchBookedSlots() in real mode throws the Supabase error message on failure", async () => {
+  setupDom();
+  _setClientForTesting({
+    rpc: async () => ({ data: null, error: { message: "function get_booked_slots does not exist" } }),
+  });
+
+  await assert.rejects(() => api.fetchBookedSlots("lst_1"), /function get_booked_slots does not exist/);
 });
 
 test("createBooking() in real mode retries with a fresh id on a 23505 collision, then succeeds", async () => {
@@ -242,7 +312,7 @@ test("fetchMyBookings() in real mode normalizes booking_schedules whether PostgR
     { booking_id: "bkg_3", customer_id: "cust_1", booking_schedules: null },
   ];
   _setClientForTesting({
-    from: () => makeChain({ data: rows, error: null }, { select: [], eq: [], lte: [], order: [], update: [] }),
+    from: () => makeChain({ data: rows, error: null }, { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] }),
   });
 
   const result = await api.fetchMyBookings("cust_1");
@@ -254,7 +324,7 @@ test("fetchMyBookings() in real mode normalizes booking_schedules whether PostgR
 
 test("fetchListing() in real mode returns the row, or null for a missing id, without treating either as an error", async () => {
   setupDom();
-  const calls = { select: [], eq: [], lte: [], order: [], update: [] };
+  const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };
   let requestedId;
   _setClientForTesting({
     from: (table) => {
@@ -278,7 +348,7 @@ test("fetchListing() in real mode returns the row, or null for a missing id, wit
 test("fetchListing() in real mode throws the Supabase error message when the query itself fails", async () => {
   setupDom();
   _setClientForTesting({
-    from: () => makeChain({ data: null, error: { message: "relation does not exist" } }, { select: [], eq: [], lte: [], order: [], update: [] }),
+    from: () => makeChain({ data: null, error: { message: "relation does not exist" } }, { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] }),
   });
 
   await assert.rejects(() => api.fetchListing("lst_1"), /relation does not exist/);
@@ -304,7 +374,7 @@ test("logout() in real mode calls supabase.auth.signOut() before clearing the lo
 
 test("rateBooking() in real mode updates via Supabase and throws its error message on failure", async () => {
   setupDom();
-  const calls = { select: [], eq: [], lte: [], order: [], update: [] };
+  const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };
   _setClientForTesting({
     from: (table) => {
       assert.equal(table, "bookings");
@@ -317,7 +387,7 @@ test("rateBooking() in real mode updates via Supabase and throws its error messa
   assert.deepEqual(calls.eq[0], ["booking_id", "bkg_1"]);
 
   _setClientForTesting({
-    from: () => makeChain({ error: { message: "row-level security violation" } }, { select: [], eq: [], lte: [], order: [], update: [] }),
+    from: () => makeChain({ error: { message: "row-level security violation" } }, { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] }),
   });
   await assert.rejects(() => api.rateBooking("bkg_1", 5), /row-level security violation/);
 });

@@ -264,6 +264,78 @@ end;
 $$;
 
 grant execute on function create_booking_with_schedule(text, text, text, timestamptz) to authenticated;
+-- Two separate default grants both need revoking, not just one: Postgres
+-- itself grants EXECUTE on a new function to the PUBLIC pseudo-role, and
+-- Supabase's own project bootstrapping separately runs `alter default
+-- privileges ... grant execute on functions to anon, authenticated,
+-- service_role` for the public schema -- confirmed live via
+-- information_schema.role_routine_grants, which still listed `anon` after
+-- the `from public` revoke alone. The `to authenticated` grant above is
+-- additive either way, not exclusive, so without both revokes an
+-- unauthenticated caller could invoke this function too (its own internal
+-- auth.uid() check still blocks them from actually creating a booking, but
+-- least-privilege says neither PUBLIC nor anon should be able to reach it).
+revoke execute on function create_booking_with_schedule(text, text, text, timestamptz) from public, anon;
+
+-- Index the column both create_booking_with_schedule's existence check
+-- (above) and get_booked_slots (below) filter bookings by on every call.
+-- Postgres never auto-indexes a foreign-key column, only the primary key it
+-- references -- without this, both do a full sequential scan of bookings.
+create index if not exists bookings_listing_id_idx on bookings (listing_id);
+
+-- ── Which slots are already taken (read-only, additive) ─────────────────────
+-- create_booking_with_schedule (above) has a history of breaking production
+-- when changed without a live check standing behind it -- rather than touch
+-- it to expose availability, this is a separate, new, read-only function.
+-- Deliberately returns only timestamps, never booking_id/customer_id: a
+-- listing's open/taken slots are no more sensitive than the listing itself
+-- (already publicly readable below), but who booked which slot is.
+--
+-- security definer, same as create_booking_with_schedule and for the same
+-- reason: RLS's "customer can read own bookings"/"own booking schedule"
+-- policies deliberately hide every other customer's rows, which would blind
+-- exactly the check this function exists to do (an unrelated customer's
+-- slot must still show as taken to everyone else).
+create or replace function get_booked_slots(p_listing_id text)
+returns setof timestamptz
+language sql
+security definer
+set search_path = public, pg_temp
+stable
+as $$
+  select bs.scheduled_slot
+  from booking_schedules bs
+  join bookings b on b.booking_id = bs.booking_id
+  where b.listing_id = p_listing_id
+    and b.booking_status <> 'draft';
+$$;
+
+grant execute on function get_booked_slots(text) to authenticated;
+-- See the matching revoke on create_booking_with_schedule above -- same
+-- reasoning, same two default grants (PUBLIC and Supabase's own anon
+-- default privilege) to close.
+revoke execute on function get_booked_slots(text) from public, anon;
+
+-- ── Server-side listing search ──────────────────────────────────────────────
+-- frontend/js/api.js's fetchListings() used to filter `search` client-side
+-- after fetching every row -- fine at today's size, but not built for growth.
+-- Trigram indexes let a plain `ilike '%term%'` (no user-facing query syntax
+-- change) use an index instead of a full scan as the listings table grows.
+--
+-- pg_trgm lives in its own `extensions` schema, not `public` -- Supabase's
+-- own guidance (and its Security Advisor) flags extensions installed into
+-- `public` as namespace/security hygiene issues. `search_path` already
+-- includes `public` for every session by default, and pg_temp is appended
+-- automatically, so schema-qualifying the operator class below is all
+-- that's needed for the indexes themselves to resolve it.
+create schema if not exists extensions;
+create extension if not exists pg_trgm with schema extensions;
+
+create index if not exists listings_title_trgm_idx
+  on listings using gin (title extensions.gin_trgm_ops);
+
+create index if not exists listings_description_trgm_idx
+  on listings using gin (description extensions.gin_trgm_ops);
 
 -- ── Row Level Security ──────────────────────────────────────────────────────
 

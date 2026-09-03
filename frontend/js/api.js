@@ -90,20 +90,48 @@ export async function getSession() {
 
 // ── Listings ─────────────────────────────────────────────────────────────
 
-export async function fetchListings({ serviceType, maxPrice, search } = {}) {
+// PostgREST's .or() filter string treats `,` `.` `(` `)` as syntax -- wrap
+// the value in double quotes (its own documented escape) so a search term
+// containing any of those can't be mistaken for another filter clause. `\`
+// and `"` inside the quoted value must themselves be backslash-escaped.
+function escapeOrFilterValue(value) {
+  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
+
+// Listings render as one unbounded fetch used to mean every matching row
+// came back and got rendered in one shot -- harmless at today's dataset
+// size, but nothing capped it from growing into a huge single response and
+// DOM as the shared catalog grows. fetchListings() now returns at most one
+// page; page-listings.js's "Load more" re-calls with a growing `offset`.
+export const LISTINGS_PAGE_SIZE = 24;
+
+export async function fetchListings({ serviceType, maxPrice, search, offset = 0 } = {}) {
   if (isSupabaseConfigured()) {
-    // serviceType/maxPrice are applied server-side; `search` has no index to
-    // query against yet, so it's applied client-side same as mock mode.
+    // serviceType/maxPrice/search (title or description, case-insensitive)
+    // are all applied server-side now; listings_title_trgm_idx and
+    // listings_description_trgm_idx (backend/schema.sql) keep the ilike
+    // scans indexed as the table grows.
     const supabase = await getSupabase();
     let query = supabase.from("listings").select("*");
     if (serviceType) query = query.eq("service_type", serviceType);
     if (maxPrice) query = query.lte("hourly_rate", maxPrice);
+    if (search) {
+      const pattern = `%${escapeOrFilterValue(search)}%`;
+      query = query.or(`title.ilike."${pattern}",description.ilike."${pattern}"`);
+    }
+    // .range() applies after every filter above, so this paginates the
+    // filtered result set, not the raw table.
+    query = query.range(offset, offset + LISTINGS_PAGE_SIZE - 1);
     const { data, error } = await query;
     if (error) throw new Error(error.message);
-    return filterListings(data, { search });
+    // filterListings() is a no-op safety net here (the server already
+    // applied every one of these filters) -- kept so behavior can't silently
+    // diverge between real and mock mode.
+    return filterListings(data, { serviceType, maxPrice, search });
   }
   const rows = await readMockListings();
-  return filterListings(rows, { serviceType, maxPrice, search });
+  const filtered = filterListings(rows, { serviceType, maxPrice, search });
+  return filtered.slice(offset, offset + LISTINGS_PAGE_SIZE);
 }
 
 export async function fetchListing(listingId) {
@@ -125,6 +153,24 @@ export async function fetchListing(listingId) {
 
 // ── Bookings ─────────────────────────────────────────────────────────────
 
+// Which of a listing's slots are already claimed by *some* booking, so the
+// listing-detail page can hide them rather than let a customer pick one and
+// only find out it's taken after create_booking_with_schedule rejects it.
+// Only timestamps come back, never booking_id/customer_id — see
+// get_booked_slots (backend/schema.sql) for why that split matters.
+export async function fetchBookedSlots(listingId) {
+  if (isSupabaseConfigured()) {
+    const supabase = await getSupabase();
+    const { data, error } = await supabase.rpc("get_booked_slots", { p_listing_id: listingId });
+    if (error) throw new Error(error.message);
+    return data || [];
+  }
+  const rows = await readMockBookings();
+  return rows
+    .filter((r) => r.listing_id === listingId && r.booking_status !== "draft" && r.scheduled_slot)
+    .map((r) => r.scheduled_slot);
+}
+
 export function randomBookingId() {
   // crypto, not Math.random: still a 6-digit id (matches the team's bkg_XXXXXX
   // format), so collisions are possible at scale — createBooking() below
@@ -142,6 +188,34 @@ export function randomCommissionTotal(hourlyRate) {
 
 const MAX_BOOKING_ID_ATTEMPTS = 5;
 
+// Single RPC call, not two separate inserts: create_booking_with_schedule
+// (backend/schema.sql) runs both inserts in one transaction, so a failure
+// partway through can't leave an orphaned booking with no recorded time
+// slot. total_cost is omitted — the bookings_set_total_cost trigger computes
+// it server-side, so a tampered client value can't reach the database.
+//
+// Retries on a genuine booking_id collision (23505 = unique_violation) with
+// a fresh id, up to MAX_BOOKING_ID_ATTEMPTS times — create_booking_with_schedule
+// itself already rules out "this is my own retry" via its idempotency check,
+// so a 23505 here means the id collided with an unrelated booking.
+async function attemptBookingInsert(supabase, { id, customerId, listingId, scheduledSlot }) {
+  for (let attempt = 1; attempt <= MAX_BOOKING_ID_ATTEMPTS; attempt++) {
+    const { data, error } = await supabase.rpc("create_booking_with_schedule", {
+      p_booking_id: id,
+      p_customer_id: customerId,
+      p_listing_id: listingId,
+      p_scheduled_slot: scheduledSlot,
+    });
+    if (!error) {
+      return { ...data, scheduled_slot: scheduledSlot };
+    }
+    if (error.code !== "23505" || attempt === MAX_BOOKING_ID_ATTEMPTS) {
+      throw new Error(error.message);
+    }
+    id = randomBookingId();
+  }
+}
+
 export async function createBooking({ customerId, listingId, hourlyRate, scheduledSlot, bookingId }) {
   if (!customerId) {
     throw new Error("Your account isn't linked to a customer profile yet — contact support.");
@@ -155,32 +229,9 @@ export async function createBooking({ customerId, listingId, hourlyRate, schedul
     // A caller-supplied bookingId (see page-listing.js) is reused across a
     // manual retry so create_booking_with_schedule's idempotency check can
     // recognize it as the same attempt, not a new booking. Only regenerate
-    // on an actual 23505 collision below.
-    let id = bookingId || randomBookingId();
-    for (let attempt = 1; attempt <= MAX_BOOKING_ID_ATTEMPTS; attempt++) {
-      // Single RPC call, not two separate inserts: create_booking_with_schedule
-      // (backend/schema.sql) runs both inserts in one transaction, so a
-      // failure partway through can't leave an orphaned booking with no
-      // recorded time slot. total_cost is omitted — the bookings_set_total_cost
-      // trigger computes it server-side, so a tampered client value can't
-      // reach the database.
-      const { data, error } = await supabase.rpc("create_booking_with_schedule", {
-        p_booking_id: id,
-        p_customer_id: customerId,
-        p_listing_id: listingId,
-        p_scheduled_slot: scheduledSlot,
-      });
-      if (!error) {
-        return { ...data, scheduled_slot: scheduledSlot };
-      }
-      if (error.code !== "23505" || attempt === MAX_BOOKING_ID_ATTEMPTS) {
-        throw new Error(error.message);
-      }
-      // 23505 = unique_violation on booking_id — a genuine collision with an
-      // unrelated booking (create_booking_with_schedule already ruled out
-      // "this is my own retry"). Try a fresh id.
-      id = randomBookingId();
-    }
+    // on an actual 23505 collision inside attemptBookingInsert.
+    const id = bookingId || randomBookingId();
+    return attemptBookingInsert(supabase, { id, customerId, listingId, scheduledSlot });
   }
 
   const rows = await readMockBookings();

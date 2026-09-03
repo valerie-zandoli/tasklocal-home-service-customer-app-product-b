@@ -229,3 +229,61 @@ test("every open availability slot is still in the future as of whenever this te
     }
   }
 });
+
+test("every demo account's customerId (demo-users.js) resolves to a real row in customers.json", () => {
+  const customerIds = new Set(feCustomers.map((c) => c.customer_id));
+  for (const u of DEMO_USERS) {
+    assert.ok(customerIds.has(u.customerId), `demo user ${u.email}'s customerId ${u.customerId} has no matching row in customers.json`);
+  }
+});
+
+// The team's shared id format (prefix_NNNNN) is relied on implicitly all
+// over this codebase (randomBookingId's bkg_ prefix, URL query params, the
+// regex-shaped assumptions baked into seed data) -- a stray malformed id
+// wouldn't fail any of the checks above (which only check that ids match
+// *each other*), only ever surface as a confusing runtime bug much later.
+test("every id in the frontend data follows its expected prefix_digits format", () => {
+  const checks = [
+    [feCustomers.map((c) => c.customer_id), /^cust_\d{5}$/, "customer_id"],
+    [feListings.map((l) => l.listing_id), /^lst_\d{6}$/, "listing_id"],
+    [feListings.map((l) => l.provider_id), /^prov_\d{5}$/, "provider_id"],
+    [feBookings.map((b) => b.booking_id), /^bkg_\d{6}$/, "booking_id"],
+  ];
+  for (const [ids, pattern, label] of checks) {
+    for (const id of ids) {
+      assert.match(id, pattern, `${label} "${id}" doesn't match the team's ${pattern} format`);
+    }
+  }
+});
+
+test("no listing repeats the identical timestamp twice within its own availability_slots", () => {
+  for (const l of feListings) {
+    assert.equal(
+      new Set(l.availability_slots).size,
+      l.availability_slots.length,
+      `${l.listing_id} has a duplicate timestamp within its own availability_slots`
+    );
+  }
+});
+
+// bookings_set_total_cost (backend/schema.sql) computes total_cost as
+// hourly_rate * (1 + commission), commission always 10-20% -- so every real
+// booking's total_cost should sit inside that exact 1.10x-1.20x band
+// relative to its own listing's hourly_rate. A value outside that band
+// would mean either a listing's hourly_rate drifted after the booking was
+// priced, or a booking was seeded with a price the trigger could never
+// actually have produced.
+test("every booking's total_cost sits within the documented 10-20% commission band of its listing's hourly_rate", () => {
+  const listingsById = new Map(feListings.map((l) => [l.listing_id, l]));
+  for (const b of feBookings) {
+    const listing = listingsById.get(b.listing_id);
+    if (!listing) continue; // already covered by the FK-resolution test above
+    const rate = listing.hourly_rate;
+    const lowerBound = rate * 1.0999; // tiny float tolerance either side
+    const upperBound = rate * 1.2001;
+    assert.ok(
+      b.total_cost >= lowerBound && b.total_cost <= upperBound,
+      `${b.booking_id}'s total_cost ${b.total_cost} is outside the 10-20% commission band of listing ${listing.listing_id}'s $${rate}/hr rate`
+    );
+  }
+});

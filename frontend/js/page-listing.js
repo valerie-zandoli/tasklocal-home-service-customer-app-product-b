@@ -1,4 +1,4 @@
-import { fetchListing, createBooking, randomBookingId } from "./api.js";
+import { fetchListing, fetchBookedSlots, createBooking, randomBookingId } from "./api.js";
 import { requireSession, renderNav } from "./nav.js";
 import { escapeHtml, formatCurrency, formatServiceType, formatSlot } from "./utils.js";
 
@@ -43,8 +43,12 @@ if (session) {
       // bookable here, regardless of whether the underlying seed data has
       // been re-curated recently (see data-integrity.test.mjs).
       const now = new Date();
+      // Compared by parsed instant, not raw string equality: a real
+      // timestamptz round-tripped through PostgREST and this seed data's own
+      // strings aren't guaranteed byte-identical (e.g. "Z" vs "+00:00").
+      const bookedTimes = new Set((await fetchBookedSlots(listing.listing_id)).map((s) => new Date(s).getTime()));
       const slots = (Array.isArray(listing.availability_slots) ? listing.availability_slots : []).filter(
-        (s) => new Date(s) >= now
+        (s) => new Date(s) >= now && !bookedTimes.has(new Date(s).getTime())
       );
       const slotGrid = document.getElementById("slot-grid");
       const bookBtn = document.getElementById("book-btn");

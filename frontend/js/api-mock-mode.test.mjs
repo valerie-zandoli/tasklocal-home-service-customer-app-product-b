@@ -10,7 +10,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
-import { login, logout, createBooking, fetchMyBookings, rateBooking } from "./api.js";
+import { login, logout, createBooking, fetchMyBookings, rateBooking, fetchBookedSlots, fetchListings, LISTINGS_PAGE_SIZE } from "./api.js";
 import { DEMO_USERS } from "./demo-users.js";
 import { installFetchStub } from "./test-helpers.mjs";
 
@@ -157,6 +157,47 @@ test("fetchMyBookings() in mock mode filters by customer, joins each booking's r
 test("fetchMyBookings() returns an empty array without touching storage when there's no customerId", async () => {
   setupDom();
   assert.deepEqual(await fetchMyBookings(null), []);
+});
+
+test("fetchBookedSlots() in mock mode returns non-draft bookings' slots for the given listing only", async () => {
+  setupDom();
+  localStorage.setItem(
+    MOCK_BOOKINGS_KEY,
+    JSON.stringify([
+      { booking_id: "bkg_pending", customer_id: "cust_a", listing_id: "lst_343432", booking_status: "pending", total_cost: 90, rating: null, scheduled_slot: "2026-10-03T15:00:00Z" },
+      { booking_id: "bkg_confirmed", customer_id: "cust_b", listing_id: "lst_343432", booking_status: "confirmed", total_cost: 90, rating: null, scheduled_slot: "2026-11-01T10:00:00Z" },
+      { booking_id: "bkg_draft", customer_id: "cust_c", listing_id: "lst_343432", booking_status: "draft", total_cost: 90, rating: null, scheduled_slot: "2026-12-01T10:00:00Z" },
+      { booking_id: "bkg_other_listing", customer_id: "cust_d", listing_id: "lst_402426", booking_status: "pending", total_cost: 90, rating: null, scheduled_slot: "2026-10-03T15:00:00Z" },
+    ])
+  );
+
+  const slots = await fetchBookedSlots("lst_343432");
+
+  assert.deepEqual(
+    slots.sort(),
+    ["2026-10-03T15:00:00Z", "2026-11-01T10:00:00Z"],
+    "expected pending/confirmed slots for this listing only, excluding draft and other listings"
+  );
+});
+
+test("fetchListings() in mock mode returns one page by default and the next page when given an offset", async () => {
+  setupDom();
+  installFetchStub();
+
+  // frontend/data/listings.json has 55 real listings -- more than one page.
+  const firstPage = await fetchListings();
+  assert.equal(firstPage.length, LISTINGS_PAGE_SIZE);
+
+  const secondPage = await fetchListings({ offset: LISTINGS_PAGE_SIZE });
+  assert.equal(secondPage.length, LISTINGS_PAGE_SIZE);
+  assert.deepEqual(
+    firstPage.map((l) => l.listing_id).filter((id) => secondPage.some((l) => l.listing_id === id)),
+    [],
+    "expected no overlap between the first and second page"
+  );
+
+  const thirdPage = await fetchListings({ offset: LISTINGS_PAGE_SIZE * 2 });
+  assert.equal(thirdPage.length, 55 - LISTINGS_PAGE_SIZE * 2, "expected the remaining listings on the final, partial page");
 });
 
 test("rateBooking() rejects a rating outside 1-5", async () => {

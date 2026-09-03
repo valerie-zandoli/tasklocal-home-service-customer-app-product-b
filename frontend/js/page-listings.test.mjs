@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
 import { installFetchStub, setupDom } from "./test-helpers.mjs";
 import { DEMO_USERS } from "./demo-users.js";
+import { LISTINGS_PAGE_SIZE } from "./api.js";
 
 // page-listings.js has no exports -- it runs entirely as a top-level side
 // effect on import (requireSession, DOM wiring, initial render()). A plain
@@ -37,6 +38,7 @@ const LISTINGS_HTML = `<!doctype html><body>
   <p class="error-text" id="listings-error"></p>
   <div id="listing-grid" class="listing-grid"></div>
   <p id="empty-state" class="empty-state" hidden></p>
+  <button type="button" id="load-more" hidden>Load more</button>
 </body>`;
 
 function signIn() {
@@ -47,7 +49,7 @@ function signIn() {
   );
 }
 
-test("renders a card per real listing and escapes a malicious title instead of injecting it", async () => {
+test("renders one page of cards, escapes a malicious title instead of injecting it, then Load more appends the rest", async () => {
   setupDom(JSDOM, LISTINGS_HTML, { url: "http://localhost/listings.html" });
   signIn();
   const malicious = '<img src=x onerror="alert(1)">';
@@ -59,8 +61,9 @@ test("renders a card per real listing and escapes a malicious title instead of i
   await importPageListings();
   await new Promise((r) => setTimeout(r, 50));
 
-  const cards = document.querySelectorAll(".listing-card");
-  assert.equal(cards.length, 55, "expected one card per real listing in frontend/data/listings.json");
+  let cards = document.querySelectorAll(".listing-card");
+  // frontend/data/listings.json has 55 real listings -- more than one page.
+  assert.equal(cards.length, LISTINGS_PAGE_SIZE, "expected exactly one page of cards on first render");
   // If the title were unescaped, this would find a real <img> element instead
   // of literal text -- same technique nav.test.mjs uses to prove escapeHtml()
   // is actually applied, not just present somewhere in the codebase.
@@ -68,6 +71,20 @@ test("renders a card per real listing and escapes a malicious title instead of i
   assert.match(cards[0].querySelector("h3").textContent, /^<img/);
   assert.ok(cards[0].querySelector(".badge").textContent.length > 0);
   assert.match(cards[0].querySelector(".price").textContent, /^\$\d/);
+
+  const loadMoreBtn = document.getElementById("load-more");
+  assert.equal(loadMoreBtn.hidden, false, "expected Load more visible after a full first page");
+
+  loadMoreBtn.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 50));
+  assert.equal(document.querySelectorAll(".listing-card").length, LISTINGS_PAGE_SIZE * 2, "expected a second full page appended, not replacing the first");
+  assert.equal(loadMoreBtn.hidden, false, "still more listings left after two full pages of 55");
+
+  loadMoreBtn.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 50));
+  cards = document.querySelectorAll(".listing-card");
+  assert.equal(cards.length, 55, "expected the remaining listings on the final, partial page");
+  assert.equal(loadMoreBtn.hidden, true, "expected Load more hidden once a partial (non-full) page comes back");
 });
 
 test("filtering by search narrows the grid to matching listings only", async () => {
@@ -78,7 +95,7 @@ test("filtering by search narrows the grid to matching listings only", async () 
   await importPageListings();
   await new Promise((r) => setTimeout(r, 50));
   const totalCards = document.querySelectorAll(".listing-card").length;
-  assert.equal(totalCards, 55);
+  assert.equal(totalCards, LISTINGS_PAGE_SIZE, "expected one page of cards, unfiltered");
 
   const searchInput = document.getElementById("search");
   searchInput.value = "Move-Out Cleaning";
