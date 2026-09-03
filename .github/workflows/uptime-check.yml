@@ -1,0 +1,30 @@
+name: Production uptime check
+
+# scripts/smoke-test-deployment.sh already runs after every deploy (see
+# test.yml's deploy job) -- but only after every deploy. Nothing previously
+# checked production between deploys, so a Supabase outage, a Vercel
+# platform issue, or a slow config drift could sit unnoticed for however
+# long it took someone to look. This runs the exact same script against the
+# live production alias on a schedule, independent of whether a deploy just
+# happened.
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  uptime-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: npm install --global vercel@59.1.3
+      - name: Smoke-test the live production alias
+        env:
+          VERCEL_ORG_ID: team_cNKzyJkeUUeKDhhr8dG471Hx
+          VERCEL_PROJECT_ID: prj_UsLkJbtLe1tjrKkWoUCeiqF9aBhi
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: ./scripts/smoke-test-deployment.sh tasklocal-home-service-customer-app.vercel.app
