@@ -92,6 +92,14 @@ test("a search term containing PostgREST or-filter syntax characters doesn't err
   await page.waitForTimeout(400);
   await expect(page.getByText("No listings match your filters yet")).toBeVisible();
   await expect(page.getByText(/error/i)).toHaveCount(0);
+  // #load-more's own `display: block` (styles.css) beat the built-in
+  // [hidden] rule on specificity, so the button stayed visibly clickable
+  // on an empty result set even though page-listings.js correctly set
+  // `.hidden = true` -- found live by an independent review. Playwright's
+  // toBeHidden() checks real rendered visibility, not just the DOM
+  // attribute, so this catches a CSS regression a plain attribute check
+  // wouldn't.
+  await expect(page.getByRole("button", { name: "Load more" })).toBeHidden();
 });
 
 test("service type filter narrows results to only that category", async ({ page }) => {

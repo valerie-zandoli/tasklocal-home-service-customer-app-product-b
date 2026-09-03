@@ -290,6 +290,13 @@ button.primary:disabled {
   display: block;
   margin: 1.75rem auto 0;
 }
+#load-more[hidden] {
+  /* The #load-more ID selector above beats the browser's built-in
+     [hidden] rule on specificity alone, so setting the hidden property
+     from JS silently had no visual effect -- found live by an
+     independent review clicking through the empty-results state. */
+  display: none;
+}
 .listing-card {
   background: var(--surface);
   border: 1px solid var(--border);
