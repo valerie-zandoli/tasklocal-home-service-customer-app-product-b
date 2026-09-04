@@ -206,3 +206,50 @@ test("a signed-in customer CAN call get_booked_slots (granted to authenticated, 
   assert.equal(status, 200, `expected a signed-in customer to be allowed; got ${status}: ${JSON.stringify(data)}`);
   assert.ok(Array.isArray(data));
 });
+
+// Same permanent-row caveat and bkg_livetest_ convention as the "already
+// marked completed" test above -- this is the INSERT-side sibling of that
+// test's UPDATE-side neighbor two tests up. That earlier test proves a
+// signed-in customer can't PATCH total_cost on a booking that already
+// exists; this proves they can't smuggle an arbitrary total_cost in on
+// *creation* either, by calling POST /rest/v1/bookings directly instead of
+// going through create_booking_with_schedule (the app's only normal path).
+// Found by the 2026-09-04 adversarial review; closed by scoping
+// set_booking_total_cost()'s "trust the supplied value" branch to
+// non-authenticated callers only (backend/schema.sql).
+test("a signed-in customer cannot set an arbitrary total_cost by inserting a booking directly", async () => {
+  const testId = `bkg_livetest_${Date.now()}_price`;
+  const { status, data } = await rest("POST", "bookings", {
+    token: alexToken,
+    prefer: "return=representation",
+    body: {
+      booking_id: testId,
+      customer_id: alex.customerId,
+      listing_id: "lst_343432",
+      booking_status: "pending",
+      total_cost: 0.01,
+    },
+  });
+  assert.equal(status, 201, `expected the insert itself to succeed; got ${status}: ${JSON.stringify(data)}`);
+  assert.notEqual(data[0].total_cost, 0.01, "expected the trigger to recompute the price, not trust the supplied 1 cent");
+});
+
+// Rating-gating sibling of the total_cost/booking_status PATCH test above.
+// Found by the same review; closed by protect_booking_update() rejecting a
+// rating change on any booking not already 'completed' (backend/schema.sql).
+test("a signed-in customer cannot rate a booking that isn't completed yet", async () => {
+  const mine = await rest(
+    "GET",
+    `bookings?select=booking_id,booking_status&customer_id=eq.${taylor.customerId}&booking_status=neq.completed&limit=1`,
+    { token: taylorToken }
+  );
+  assert.ok(mine.data.length > 0, "need at least one of Taylor's own non-completed bookings for this check");
+  const { booking_id } = mine.data[0];
+
+  const { status, data } = await rest("PATCH", `bookings?booking_id=eq.${booking_id}`, {
+    token: taylorToken,
+    body: { rating: 5 },
+    prefer: "return=representation",
+  });
+  assert.notEqual(status, 200, `expected the premature rating to be rejected; got ${status}: ${JSON.stringify(data)}`);
+});

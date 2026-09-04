@@ -64,7 +64,15 @@ declare
   rate numeric(10, 2);
   commission numeric;
 begin
-  if new.total_cost is not null then
+  -- The "trust a supplied total_cost" branch below exists only for
+  -- backend/seed_data.sql loading historical prices -- seed scripts run as
+  -- service_role (auth.role() returns 'service_role' or null outside a
+  -- PostgREST request, never 'authenticated'). Scoping the trust to
+  -- non-authenticated callers closes a real gap: an authenticated customer
+  -- calling POST /rest/v1/bookings directly (bypassing create_booking_with_
+  -- schedule, the app's only normal path) could otherwise set an arbitrary
+  -- price for a real listing. Found in the 2026-09-04 adversarial review.
+  if new.total_cost is not null and auth.role() <> 'authenticated' then
     return new;
   end if;
 
@@ -127,6 +135,14 @@ begin
     then
       raise exception 'Customers may only update the rating on an existing booking.';
     end if;
+    -- A rating is only meaningful once the service actually happened.
+    -- Without this, a customer could set (or repeatedly overwrite) a rating
+    -- on a pending/confirmed/draft booking via a direct API call, bypassing
+    -- the app's own "rating unlocks once completed" UI rule entirely. Found
+    -- in the 2026-09-04 adversarial review.
+    if new.rating is distinct from old.rating and old.booking_status <> 'completed' then
+      raise exception 'A booking can only be rated once it is completed.';
+    end if;
   end if;
   return new;
 end;
@@ -148,6 +164,52 @@ create table if not exists customer_profiles (
   customer_id   text not null references customers (customer_id),
   display_name  text not null
 );
+
+-- ── Self-service signup ─────────────────────────────────────────────────────
+-- Until this pass, the only way into the app was one of four fixed demo
+-- accounts (frontend/js/demo-users.js) -- a real first-time visitor had no
+-- way to create their own account. auth.signUp() creates the auth.users row
+-- directly; this trigger provisions the matching customers/customer_profiles
+-- rows in the same instant, so a brand-new customer_id exists the moment
+-- signup completes, before any client-side follow-up call could race it.
+--
+-- Gated on raw_user_meta_data having a display_name key rather than firing
+-- unconditionally: backend/scripts/seed-demo-users.mjs creates its four
+-- accounts via auth.admin.createUser() with no such key, and separately
+-- upserts each into a pre-seeded customer_id of its own -- an unconditional
+-- trigger would insert a second, throwaway customer_id for each of them
+-- before that upsert overwrote the customer_profiles row, leaving an orphan
+-- customers row behind every time the seed script runs.
+create or replace function handle_new_customer_signup()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_customer_id text;
+  v_display_name text;
+begin
+  if not (new.raw_user_meta_data ? 'display_name') then
+    return new;
+  end if;
+
+  v_display_name := new.raw_user_meta_data->>'display_name';
+  v_customer_id := 'cust_' || substr(md5(new.id::text || clock_timestamp()::text), 1, 6);
+
+  insert into customers (customer_id, signup_date) values (v_customer_id, current_date);
+  insert into customer_profiles (user_id, customer_id, display_name)
+  values (new.id, v_customer_id, v_display_name)
+  on conflict (user_id) do nothing;
+
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row
+  execute function handle_new_customer_signup();
 
 -- The team's shared `bookings` table (see the schema doc) has no column for
 -- which availability_slot the customer picked — flagged for the team to
