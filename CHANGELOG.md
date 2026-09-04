@@ -2,6 +2,17 @@
 
 Milestone-level summary, not a commit-by-commit mirror — `git log` already is that. Grouped by working session; each entry names the theme, not every individual commit.
 
+## 2026-09-04 — Self-service sign-up, closing the live safety_team exposure, four fresh-eyes fix rounds
+
+- Added a real sign-up path (`signup.html`/`page-signup.js`) — until today the only way into the app was one of four fixed demo accounts. `handle_new_customer_signup` (new Postgres trigger) provisions the matching `customers`/`customer_profiles` rows the instant `auth.signUp()` creates the `auth.users` row.
+- Closed two live trigger-level gaps an adversarial review found: an authenticated customer could previously set an arbitrary `total_cost` or a premature `rating` via a direct API call, bypassing the app's normal RPC/UI paths. Both fixed in `backend/schema.sql`.
+- **Closed the `safety_team` privilege escalation** flagged since 2026-09-02: `alex.rivera@example.com`'s erroneous `app_metadata.role` is now cleared (confirmed `NULL` via a live query) — no longer read-*and-write* access to five shared tables through the account the README told reviewers to log in with first.
+- Applied the above as one migration (`backend/sql/2026-09-04-signup-and-trigger-hardening.sql`) against the live shared database, authorized directly by the product owner. Getting it typed into the Supabase SQL Editor without corruption took real troubleshooting — an intermittent editor bug was silently swallowing newlines mid-paste; worked around by writing the statements with no embedded line breaks at all.
+- Fixed a real bug the daily scheduled data-integrity check caught same-day: three seed availability slots had aged into the past across three mirrored data files.
+- Two rounds of independent fresh-eyes review immediately followed the fix pass, each finding and closing one real, new problem per round: (1) an unescaped `booking_id` reaching a DOM attribute on the My Bookings page (self-XSS, RLS-scoped — CodeQL `js/xss-through-dom`); (2) `signUp()`'s mock-mode path storing a real visitor's actual password as plaintext in browser storage (CodeQL `js/clear-text-storage-of-sensitive-data`) — now hashed; (3) the sign-up confirmation message was nested inside the form element hidden on success, so it silently disappeared along with the form on the exact path a real sign-up normally takes, given this project's Supabase instance sends real confirmation emails.
+- Smaller fixes: screen-reader announcements (`aria-live`) on the listings search results and empty state, a real branded 404 page (the routing already pointed at one; the file didn't exist), a three-major-version-stale GitHub Action pin corrected.
+- Test suite: 123 → 142 unit tests (all passing), ~191 total across all three tiers.
+
 ## 2026-09-03 — Accessibility consolidation + suite-wide audit follow-through
 
 - Added a dedicated Accessibility section to this README, and a consolidated cross-product accessibility section to the team's four-product audit report.
