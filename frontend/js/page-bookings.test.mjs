@@ -93,3 +93,50 @@ test("submitting a rating replaces the form with the saved rating, real mock dat
   assert.match(refreshedRow.textContent, /Rated 5\/5/);
   assert.equal(refreshedRow.querySelector(".rating-form"), null);
 });
+
+// CodeQL's js/xss-through-dom flagged this: booking_id reached the rating
+// form's data-booking-id attribute unescaped, unlike every other
+// user/DB-sourced string on this page (listingTitle, the booking_id shown as
+// text further down). create_booking_with_schedule's own p_booking_id
+// parameter has no server-side format check beyond uniqueness, so nothing
+// upstream guarantees this is always a safe bkg_XXXXXX string -- a
+// SECURITY DEFINER function bug or a direct RPC call with a crafted id could
+// still reach this template. Low real-world severity (RLS scopes a
+// customer's own bookings query to themselves, so this can only ever poison
+// that customer's own view -- self-XSS, not cross-customer), but the
+// escaping gap itself was real and is what this test guards against
+// regressing.
+test("a booking_id containing HTML-significant characters cannot break out of the rating form's data attribute", async () => {
+  setupDom(JSDOM, BOOKINGS_HTML, { url: "http://localhost/bookings.html" });
+  const user = signIn();
+  const maliciousId = `bkg_"><img src=x onerror=alert(1)>`;
+  localStorage.setItem(
+    MOCK_BOOKINGS_KEY,
+    JSON.stringify([
+      {
+        booking_id: maliciousId,
+        customer_id: user.customerId,
+        listing_id: "lst_343432",
+        booking_status: "completed",
+        total_cost: 42,
+        rating: null,
+        scheduled_slot: "2026-08-01T10:00:00Z",
+      },
+    ])
+  );
+  installFetchStub();
+
+  await importPageBookings();
+  await new Promise((r) => setTimeout(r, 50));
+
+  // The injected markup must not have actually been parsed as an element --
+  // if escaping regressed, this <img> would exist as a real DOM node.
+  assert.equal(document.querySelector('img[src="x"]'), null, "the crafted booking_id must not inject a real element");
+  const form = document.querySelector(".rating-form");
+  assert.ok(form, "expected the rating form to still render for this completed, unrated booking");
+  // The browser decodes the escaped attribute back to the original string on
+  // read, so the round-trip value should still exactly equal the malicious
+  // id -- proving escaping is happening at render time, not silently
+  // dropping/mangling legitimate ids as a side effect.
+  assert.equal(form.dataset.bookingId, maliciousId);
+});

@@ -27,7 +27,7 @@ if (session) {
         const ratingBlock =
           ratingState === "form"
             ? `
-              <form class="rating-form" data-booking-id="${b.booking_id}">
+              <form class="rating-form" data-booking-id="${escapeHtml(b.booking_id)}">
                 <select required aria-label="Rate this booking">
                   <option value="">Rate…</option>
                   <option value="5">5 - Excellent</option>
