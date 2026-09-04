@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#17181a" media="(prefers-color-scheme: dark)" />
-  <title>Log in · TaskLocal | Customer Booking</title>
+  <title>Sign up · TaskLocal | Customer Booking</title>
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="manifest" href="manifest.json" />
@@ -20,30 +20,29 @@
   <main class="auth-shell">
     <div class="auth-card">
       <img class="auth-logo" src="assets/logo.svg" alt="" width="56" height="56" />
-      <h1>TaskLocal | Customer Booking</h1>
-      <p class="subtitle">Sign in to browse and book local home services.</p>
+      <h1>Create your account</h1>
+      <p class="subtitle">Sign up to browse and book local home services.</p>
 
-      <form id="login-form" novalidate>
+      <form id="signup-form" novalidate>
+        <label for="display-name">Name</label>
+        <input id="display-name" type="text" autocomplete="name" required />
+
         <label for="email">Email</label>
-        <!-- No `name` attribute on purpose: the JS reads these by id, and a
-             `name` here would let a native (no-JS) form submission leak the
-             password into the URL query string via a GET fallback. -->
         <input id="email" type="email" autocomplete="username" required />
 
         <label for="password">Password</label>
-        <input id="password" type="password" autocomplete="current-password" required />
+        <!-- No `name` attribute, matching login.html: JS reads these by id,
+             and a `name` here would let a native (no-JS) form submission
+             leak the password into the URL query string via a GET fallback. -->
+        <input id="password" type="password" autocomplete="new-password" minlength="8" required />
+        <p class="field-hint">At least 8 characters.</p>
 
-        <button class="primary" type="submit">Log in</button>
+        <button class="primary" type="submit">Sign up</button>
         <p class="error-text" id="error-text" aria-live="polite"></p>
+        <p class="success-text" id="success-text" aria-live="polite"></p>
       </form>
 
-      <p class="auth-switch">New here? <a href="signup.html">Sign up</a></p>
-
-      <div class="demo-accounts">
-        <p>Demo accounts (click to fill in):</p>
-        <p>All four are pre-loaded with similar sample data — pick any one to explore the product.</p>
-        <div class="demo-grid" id="demo-grid"></div>
-      </div>
+      <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
     </div>
   </main>
 
@@ -51,6 +50,6 @@
   <script src="js/set-manifest-theme.js"></script>
   <script src="js/error-reporter.js"></script>
   <script src="js/register-sw.js"></script>
-  <script type="module" src="js/page-login.js"></script>
+  <script type="module" src="js/page-signup.js"></script>
 </body>
 </html>

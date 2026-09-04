@@ -233,6 +233,28 @@ button.primary:disabled {
   min-height: 1.1em;
 }
 
+.success-text {
+  color: var(--brand);
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}
+.success-text:empty {
+  display: none;
+}
+
+.field-hint {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin: 0.3rem 0 0;
+}
+
+.auth-switch {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 1.25rem;
+}
+
 .demo-accounts {
   margin-top: 1.5rem;
   padding-top: 1.25rem;

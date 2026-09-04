@@ -98,6 +98,75 @@ test("login() in real mode throws the Supabase error message on failure", async 
   await assert.rejects(() => api.login("real.user@example.com", "wrong"), /Invalid login credentials/);
 });
 
+test("signUp() in real mode passes display_name through as auth user_metadata and returns no confirmation needed when a session comes back immediately", async () => {
+  setupDom();
+  _setClientForTesting({
+    auth: {
+      signUp: async ({ email, password, options }) => {
+        assert.equal(email, "new.customer@example.com");
+        assert.equal(password, "a-strong-password");
+        assert.deepEqual(options, { data: { display_name: "New Customer" } });
+        return { data: { session: { user: { id: "auth-uid-new" } } }, error: null };
+      },
+    },
+  });
+
+  const result = await api.signUp({
+    email: "new.customer@example.com",
+    password: "a-strong-password",
+    displayName: "New Customer",
+  });
+  assert.deepEqual(result, { email: "new.customer@example.com", needsEmailConfirmation: false });
+});
+
+test("signUp() in real mode reports needsEmailConfirmation when signUp succeeds without an immediate session", async () => {
+  setupDom();
+  _setClientForTesting({
+    auth: {
+      signUp: async () => ({ data: { session: null, user: { id: "auth-uid-pending" } }, error: null }),
+    },
+  });
+
+  const result = await api.signUp({
+    email: "pending.customer@example.com",
+    password: "a-strong-password",
+    displayName: "Pending Customer",
+  });
+  assert.deepEqual(result, { email: "pending.customer@example.com", needsEmailConfirmation: true });
+});
+
+test("signUp() in real mode passes a known-safe Supabase error straight through", async () => {
+  setupDom();
+  _setClientForTesting({
+    auth: {
+      signUp: async () => ({ data: null, error: { message: "User already registered" } }),
+    },
+  });
+
+  await assert.rejects(
+    () =>
+      api.signUp({ email: "existing@example.com", password: "a-strong-password", displayName: "Existing" }),
+    /User already registered/
+  );
+});
+
+test("signUp() in real mode genericizes an unrecognized/internal Supabase error instead of leaking it", async () => {
+  setupDom();
+  _setClientForTesting({
+    auth: {
+      signUp: async () => ({
+        data: null,
+        error: { message: 'duplicate key value violates unique constraint "customers_pkey"' },
+      }),
+    },
+  });
+
+  await assert.rejects(
+    () => api.signUp({ email: "new@example.com", password: "a-strong-password", displayName: "New" }),
+    /Something went wrong on our end/
+  );
+});
+
 test("getSession() in real mode joins auth session with the customer_profiles row", async () => {
   setupDom();
   const calls = { select: [], eq: [], lte: [], or: [], order: [], update: [], range: [] };

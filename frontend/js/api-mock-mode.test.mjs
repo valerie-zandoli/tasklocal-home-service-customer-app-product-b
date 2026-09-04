@@ -10,7 +10,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
-import { login, logout, createBooking, fetchMyBookings, rateBooking, fetchBookedSlots, fetchListings, LISTINGS_PAGE_SIZE } from "./api.js";
+import { login, logout, signUp, createBooking, fetchMyBookings, rateBooking, fetchBookedSlots, fetchListings, LISTINGS_PAGE_SIZE } from "./api.js";
 import { DEMO_USERS } from "./demo-users.js";
 import { installFetchStub } from "./test-helpers.mjs";
 
@@ -33,6 +33,64 @@ test("login() rejects an empty email without ever checking credentials", async (
 test("login() rejects an empty password without ever checking credentials", async () => {
   setupDom();
   await assert.rejects(() => login("real.user@example.com", ""), /Enter both an email and a password/);
+});
+
+test("signUp() rejects missing fields without creating an account", async () => {
+  setupDom();
+  await assert.rejects(
+    () => signUp({ email: "", password: "a-strong-password", displayName: "Someone" }),
+    /Enter your name, email, and a password/
+  );
+});
+
+test("signUp() rejects a short password before creating an account", async () => {
+  setupDom();
+  await assert.rejects(
+    () => signUp({ email: "short@example.com", password: "short1", displayName: "Someone" }),
+    /at least 8 characters/
+  );
+});
+
+test("signUp() rejects an email already used by a fixed demo account", async () => {
+  setupDom();
+  const demo = DEMO_USERS[0];
+  await assert.rejects(
+    () => signUp({ email: demo.email, password: "a-strong-password", displayName: "Impersonator" }),
+    /already exists/
+  );
+});
+
+test("signUp() creates a locally-persisted account and signs the new user in immediately", async () => {
+  setupDom();
+  const result = await signUp({
+    email: "brand.new@example.com",
+    password: "a-strong-password",
+    displayName: "Brand New",
+  });
+  assert.deepEqual(result, { email: "brand.new@example.com", needsEmailConfirmation: false });
+
+  const stored = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+  assert.equal(stored.email, "brand.new@example.com");
+  assert.equal(stored.displayName, "Brand New");
+  assert.match(stored.customerId, /^cust_/);
+});
+
+test("signUp() rejects a second signup with the same email as an earlier local signup", async () => {
+  setupDom();
+  await signUp({ email: "repeat@example.com", password: "a-strong-password", displayName: "First" });
+  await assert.rejects(
+    () => signUp({ email: "repeat@example.com", password: "another-password", displayName: "Second" }),
+    /already exists/
+  );
+});
+
+test("a freshly signed-up mock account can log back in with the same credentials", async () => {
+  setupDom();
+  await signUp({ email: "roundtrip@example.com", password: "a-strong-password", displayName: "Round Trip" });
+  await logout();
+
+  const user = await login("roundtrip@example.com", "a-strong-password");
+  assert.equal(user.displayName, "Round Trip");
 });
 
 test("logout() clears the stored session", async () => {

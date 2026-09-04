@@ -4,6 +4,40 @@ import { filterListings } from "./utils.js";
 
 const SESSION_KEY = "tasklocal_session";
 const MOCK_BOOKINGS_KEY = "tasklocal_mock_bookings";
+const MOCK_USERS_KEY = "tasklocal_mock_signups";
+
+// Supabase/PostgREST error text ranges from already-friendly ("Invalid login
+// credentials") to raw internals a schema change could alter tomorrow (a
+// constraint name, a JWT parsing error). Throwing the former straight
+// through is fine and is what callers below already relied on; throwing the
+// latter straight through leaks internal detail to a confused real user.
+// Everything in this list is a message this app deliberately raises or a
+// known-stable Supabase Auth string; anything else falls back to a generic,
+// safe message instead of reaching the page verbatim.
+const SAFE_ERROR_MESSAGES = [
+  /^invalid login credentials$/i,
+  /^user already registered$/i,
+  /^email not confirmed$/i,
+  /^password should be at least/i,
+  /^that time slot has already passed$/i,
+  /^that time slot is no longer available for this listing$/i,
+  /^not authorized to book as this customer$/i,
+  /^a booking can only be rated once it is completed\.?$/i,
+];
+
+function toUserMessage(error) {
+  const message = error?.message || String(error);
+  if (SAFE_ERROR_MESSAGES.some((re) => re.test(message))) return message;
+  return "Something went wrong on our end. Please try again in a moment.";
+}
+
+function readMockUsers() {
+  const stored = localStorage.getItem(MOCK_USERS_KEY);
+  return stored ? JSON.parse(stored) : [];
+}
+function writeMockUsers(rows) {
+  localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(rows));
+}
 
 // Cached per page load (a fresh navigation always gets fresh data): without
 // this, typing in the search box re-fetched and re-parsed listings.json on
@@ -41,17 +75,60 @@ export async function login(email, password) {
   if (isSupabaseConfigured()) {
     const supabase = await getSupabase();
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(toUserMessage(error));
     return { email: data.user.email };
   }
 
-  const user = DEMO_USERS.find((u) => u.email === email && u.password === password);
+  // Mock mode has two sources of accounts: the four fixed demo users, and
+  // anyone who has signed up locally via signUp() below (stored under
+  // MOCK_USERS_KEY so it survives a page reload the same way MOCK_BOOKINGS
+  // does).
+  const user = [...DEMO_USERS, ...readMockUsers()].find((u) => u.email === email && u.password === password);
   if (!user) throw new Error("Incorrect email or password.");
   sessionStorage.setItem(
     SESSION_KEY,
     JSON.stringify({ email: user.email, displayName: user.displayName, customerId: user.customerId })
   );
   return user;
+}
+
+// Until this pass, the only way into the app was one of the four fixed demo
+// accounts — a genuinely new visitor had no way to create their own account.
+// Supabase mode: auth.signUp() creates the auth.users row; backend/schema.sql's
+// handle_new_customer_signup trigger provisions the matching customers/
+// customer_profiles rows server-side in the same instant (see that trigger's
+// own comment for why it's gated on display_name being present). Whether a
+// session comes back immediately depends on this project's email-
+// confirmation setting, which this function doesn't assume either way —
+// callers should check needsEmailConfirmation and route accordingly.
+export async function signUp({ email, password, displayName }) {
+  if (!email || !password || !displayName) {
+    throw new Error("Enter your name, email, and a password.");
+  }
+  if (password.length < 8) {
+    throw new Error("Password should be at least 8 characters.");
+  }
+
+  if (isSupabaseConfigured()) {
+    const supabase = await getSupabase();
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { display_name: displayName } },
+    });
+    if (error) throw new Error(toUserMessage(error));
+    return { email, needsEmailConfirmation: !data.session };
+  }
+
+  const allUsers = [...DEMO_USERS, ...readMockUsers()];
+  if (allUsers.some((u) => u.email === email)) {
+    throw new Error("An account with that email already exists.");
+  }
+  const customerId = "cust_" + crypto.randomUUID().slice(0, 8);
+  const newUser = { email, password, displayName, customerId };
+  writeMockUsers([...readMockUsers(), newUser]);
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(newUser));
+  return { email, needsEmailConfirmation: false };
 }
 
 export async function logout() {
