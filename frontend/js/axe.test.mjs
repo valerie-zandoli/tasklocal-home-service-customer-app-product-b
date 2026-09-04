@@ -36,7 +36,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND_DIR = path.resolve(__dirname, "..");
 const AXE_SOURCE = readFileSync(path.join(FRONTEND_DIR, "node_modules/axe-core/axe.min.js"), "utf8");
 
-const PAGES = ["index.html", "login.html", "listings.html", "listing.html", "bookings.html"];
+const PAGES = ["index.html", "login.html", "signup.html", "listings.html", "listing.html", "bookings.html", "404.html"];
 
 for (const page of PAGES) {
   test(`${page} has no axe-core accessibility violations (structural checks; color-contrast covered separately)`, async () => {
