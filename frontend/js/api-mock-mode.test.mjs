@@ -93,6 +93,36 @@ test("a freshly signed-up mock account can log back in with the same credentials
   assert.equal(user.displayName, "Round Trip");
 });
 
+// CodeQL's js/clear-text-storage-of-sensitive-data flagged an earlier version
+// of signUp() that stored the caller's actual chosen password verbatim in
+// both localStorage (MOCK_USERS_KEY) and the sessionStorage session object --
+// unlike DEMO_USERS' plaintext passwords (fictional, already public in this
+// repo's own source), a real signup's password is something a real visitor
+// actually typed. Fixed by storing only a SHA-256 digest; these two tests are
+// the regression guard for that fix, checked against the raw storage keys
+// directly rather than through login()'s own successful round-trip (which
+// would pass even if the fix silently regressed back to plaintext).
+test("signUp() never writes the caller's plaintext password to localStorage", async () => {
+  setupDom();
+  await signUp({ email: "hash.check@example.com", password: "a-very-guessable-password", displayName: "Hash Check" });
+
+  const stored = localStorage.getItem("tasklocal_mock_signups");
+  assert.ok(stored, "expected signUp() to persist something to MOCK_USERS_KEY");
+  assert.ok(!stored.includes("a-very-guessable-password"), "the raw password must never appear in localStorage");
+  const [savedUser] = JSON.parse(stored);
+  assert.equal(savedUser.password, undefined, "no plaintext password field should exist on the stored record");
+  assert.match(savedUser.passwordHash, /^[0-9a-f]{64}$/, "expected a hex SHA-256 digest instead");
+});
+
+test("signUp() never writes the caller's plaintext password to the sessionStorage session object", async () => {
+  setupDom();
+  await signUp({ email: "session.hash.check@example.com", password: "another-guessable-one", displayName: "Session Check" });
+
+  const stored = sessionStorage.getItem(SESSION_KEY);
+  assert.ok(!stored.includes("another-guessable-one"), "the raw password must never appear in the session object");
+  assert.deepEqual(Object.keys(JSON.parse(stored)).sort(), ["customerId", "displayName", "email"]);
+});
+
 test("logout() clears the stored session", async () => {
   setupDom();
   const user = DEMO_USERS[0];

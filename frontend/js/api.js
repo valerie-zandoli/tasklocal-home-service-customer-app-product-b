@@ -46,6 +46,21 @@ function toUserMessage(error) {
   return "Something went wrong on our end. Please try again in a moment.";
 }
 
+// DEMO_USERS' plaintext passwords are fine as-is (fictional, already public
+// in this repo's own source, documented as such) -- but a real visitor's
+// self-service signUp() below must not persist what they actually typed.
+// SHA-256 isn't meant to defend against a real attacker (mock mode has no
+// server, no salt, and this is client-side JS anyone can read) -- it exists
+// only so a real chosen password never sits in localStorage/sessionStorage
+// as recoverable plaintext, which is what CodeQL's clear-text-storage check
+// (correctly) flags a plaintext version of doing.
+async function hashPassword(password) {
+  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(password));
+  return Array.from(new Uint8Array(bytes))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 function readMockUsers() {
   const stored = localStorage.getItem(MOCK_USERS_KEY);
   return stored ? JSON.parse(stored) : [];
@@ -94,11 +109,15 @@ export async function login(email, password) {
     return { email: data.user.email };
   }
 
-  // Mock mode has two sources of accounts: the four fixed demo users, and
+  // Mock mode has two sources of accounts: the four fixed demo users (real,
+  // plaintext password field -- fine, see demo-users.js's own comment), and
   // anyone who has signed up locally via signUp() below (stored under
-  // MOCK_USERS_KEY so it survives a page reload the same way MOCK_BOOKINGS
-  // does).
-  const user = [...DEMO_USERS, ...readMockUsers()].find((u) => u.email === email && u.password === password);
+  // MOCK_USERS_KEY as a passwordHash instead, so a real chosen password
+  // never round-trips through localStorage as plaintext).
+  const demoMatch = DEMO_USERS.find((u) => u.email === email && u.password === password);
+  const passwordHash = await hashPassword(password);
+  const mockMatch = readMockUsers().find((u) => u.email === email && u.passwordHash === passwordHash);
+  const user = demoMatch || mockMatch;
   if (!user) throw new Error("Incorrect email or password.");
   sessionStorage.setItem(
     SESSION_KEY,
@@ -140,9 +159,9 @@ export async function signUp({ email, password, displayName }) {
     throw new Error("An account with that email already exists.");
   }
   const customerId = "cust_" + crypto.randomUUID().slice(0, 8);
-  const newUser = { email, password, displayName, customerId };
+  const newUser = { email, passwordHash: await hashPassword(password), displayName, customerId };
   writeMockUsers([...readMockUsers(), newUser]);
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(newUser));
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email, displayName, customerId }));
   return { email, needsEmailConfirmation: false };
 }
 
