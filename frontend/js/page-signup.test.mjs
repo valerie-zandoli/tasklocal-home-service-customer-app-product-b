@@ -5,9 +5,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
+import { _setClientForTesting } from "./supabaseClient.js";
 
 const SESSION_KEY = "tasklocal_session";
 
+// success-text is deliberately a SIBLING of the form, not a child -- see
+// signup.html's own comment. A regression that nests it back inside the form
+// would make the real-Supabase-mode test below fail (the message would be
+// hidden along with the form), which is the whole point of that test.
 const SIGNUP_HTML = `<!doctype html><body>
   <form id="signup-form" novalidate>
     <input id="display-name" type="text" />
@@ -15,8 +20,8 @@ const SIGNUP_HTML = `<!doctype html><body>
     <input id="password" type="password" minlength="8" />
     <button class="primary" type="submit">Sign up</button>
     <p class="error-text" id="error-text" aria-live="polite"></p>
-    <p class="success-text" id="success-text" aria-live="polite"></p>
   </form>
+  <p class="success-text" id="success-text" aria-live="polite"></p>
 </body>`;
 
 let importCounter = 0;
@@ -116,4 +121,47 @@ test("signing up twice with the same email shows an error on the second attempt"
   await new Promise((r) => setTimeout(r, 0));
 
   assert.match(document.getElementById("error-text").textContent, /already exists/i);
+});
+
+// The exact gap an independent review found live: every other test in this
+// file runs in mock mode, whose signUp() never returns
+// needsEmailConfirmation: true -- so nothing exercised this branch's actual
+// DOM output before. This project's Supabase instance sends real
+// confirmation emails and doesn't disable that for the demo, so
+// needsEmailConfirmation: true is the NORMAL outcome of a real sign-up
+// against the live database, not a rare edge case -- confirmed live: hiding
+// the whole form previously hid the confirmation message along with it,
+// since that message used to be a child of the form (fixed in signup.html by
+// making it a sibling instead).
+test("real mode: a sign-up that needs email confirmation shows the message and hides the form fields, without navigating", async () => {
+  const { jsdomErrors } = setupDom();
+  sessionStorage.removeItem(SESSION_KEY);
+  window.APP_CONFIG = { SUPABASE_URL: "https://fake.supabase.co", SUPABASE_ANON_KEY: "fake-anon-key" };
+  _setClientForTesting({
+    auth: {
+      getSession: async () => ({ data: { session: null } }),
+      signUp: async () => ({ data: { session: null, user: { id: "auth-uid-pending" } }, error: null }),
+    },
+  });
+
+  await importPageSignup();
+  await new Promise((r) => setTimeout(r, 0));
+
+  document.getElementById("display-name").value = "Pending Person";
+  document.getElementById("email").value = "pending.person@example.com";
+  document.getElementById("password").value = "a-strong-password";
+  document.getElementById("signup-form").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
+  await new Promise((r) => setTimeout(r, 0));
+
+  const successText = document.getElementById("success-text");
+  assert.match(successText.textContent, /check your email/i);
+  // offsetParent is null for any element that is display:none or has a
+  // display:none ancestor in a real layout engine -- jsdom doesn't run
+  // layout, so it always reports null; the real, load-bearing check is that
+  // success-text itself is not hidden and isn't inside the now-hidden form.
+  assert.equal(successText.hidden, false, "the confirmation message itself must not be hidden");
+  assert.equal(successText.closest("form"), null, "the confirmation message must not be inside the hidden form");
+  assert.equal(document.getElementById("signup-form").hidden, true, "the form fields should still be hidden post-signup");
+  assert.equal(sessionStorage.getItem(SESSION_KEY), null, "no session should exist until email confirmation completes");
+  assert.equal(navigationWasAttempted(jsdomErrors), false, "should not navigate away while confirmation is still pending");
 });

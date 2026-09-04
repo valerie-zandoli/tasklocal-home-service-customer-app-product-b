@@ -39,8 +39,13 @@
 
         <button class="primary" type="submit">Sign up</button>
         <p class="error-text" id="error-text" aria-live="polite"></p>
-        <p class="success-text" id="success-text" aria-live="polite"></p>
       </form>
+      <!-- Deliberately a sibling of the form, not a child: page-signup.js
+           hides the whole form on success (needsEmailConfirmation), and a
+           message nested inside the element being hidden would disappear
+           along with it -- found live by an independent review, since Tier 1
+           tests only ever exercise mock mode, which never takes this branch. -->
+      <p class="success-text" id="success-text" aria-live="polite"></p>
 
       <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
     </div>
