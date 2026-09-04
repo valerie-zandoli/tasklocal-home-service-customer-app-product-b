@@ -25,7 +25,22 @@ const SAFE_ERROR_MESSAGES = [
   /^a booking can only be rated once it is completed\.?$/i,
 ];
 
+// Supabase Auth's error_code (not its free-text message, which changes
+// wording across versions) for a couple of cases worth a specific,
+// actionable message rather than the generic fallback below -- found live
+// while testing signUp() against the real project: an oddly-formatted but
+// syntactically valid address can come back as "email_address_invalid" (a
+// user mistake worth naming), and this project's Free-tier email sending
+// has a very low rate limit, so "over_email_send_rate_limit" is a real,
+// expected case during a demo, not an internal error.
+const SAFE_ERROR_CODES = {
+  email_address_invalid: "That email address looks invalid — double-check it and try again.",
+  over_email_send_rate_limit: "Too many sign-up attempts in a short time. Please try again in a few minutes.",
+};
+
 function toUserMessage(error) {
+  const code = error?.code || error?.error_code;
+  if (code && SAFE_ERROR_CODES[code]) return SAFE_ERROR_CODES[code];
   const message = error?.message || String(error);
   if (SAFE_ERROR_MESSAGES.some((re) => re.test(message))) return message;
   return "Something went wrong on our end. Please try again in a moment.";

@@ -150,6 +150,23 @@ test("signUp() in real mode passes a known-safe Supabase error straight through"
   );
 });
 
+test("signUp() in real mode translates a known Supabase Auth error_code into a specific, actionable message", async () => {
+  setupDom();
+  _setClientForTesting({
+    auth: {
+      signUp: async () => ({
+        data: null,
+        error: { message: 'Email address "a@b" is invalid', code: "email_address_invalid" },
+      }),
+    },
+  });
+
+  await assert.rejects(
+    () => api.signUp({ email: "a@b", password: "a-strong-password", displayName: "Someone" }),
+    /looks invalid/
+  );
+});
+
 test("signUp() in real mode genericizes an unrecognized/internal Supabase error instead of leaking it", async () => {
   setupDom();
   _setClientForTesting({
