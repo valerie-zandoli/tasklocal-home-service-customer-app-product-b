@@ -62,6 +62,8 @@ check_status "/" 200
 check_status "/login" 200
 check_status "/login/" 308
 check_status "/login.html" 308
+check_status "/signup" 200
+check_status "/signup/" 308
 check_status "/listings" 200
 check_status "/listings/" 308
 check_status "/listing" 200
@@ -95,8 +97,16 @@ check_header "/sw.js" "cache-control"
 # used here because listings/listing/bookings all share that nav markup.
 check_body "/" 'id="loading-state"'
 check_body "/login" 'id="login-form"'
+check_body "/signup" 'id="signup-form"'
 check_body "/listings" 'id="listing-grid"'
 check_body "/listing" 'id="listing-detail"'
 check_body "/bookings" 'id="bookings-list"'
+# Added 2026-09-05: this script checked the 404 case's *status code* (line
+# above) but never its body -- exactly the class of gap its own check_body
+# design note warns about. That's how vercel.json's error-route dest (/404,
+# no file extension) silently served Vercel's own generic error page instead
+# of this repo's branded 404.html for an unknown length of time: the status
+# code was right, so check_status alone saw nothing wrong.
+check_body "/this-path-should-not-exist-smoketest" 'id="not-found"'
 
 exit $FAIL
