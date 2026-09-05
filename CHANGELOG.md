@@ -2,6 +2,15 @@
 
 Milestone-level summary, not a commit-by-commit mirror — `git log` already is that. Grouped by working session; each entry names the theme, not every individual commit.
 
+## 2026-09-05 — Fifth round of fresh-eyes review, chasing two consecutive clean passes
+
+- **Found and fixed a real live bug**: the branded 404 page never actually loaded in production, despite being built, tested, and changelogged the day before. `vercel.json`'s error route pointed `dest` at `/404` (no file extension) — Vercel served its own generic error page instead of `frontend/404.html`, silently, since a status-code-only check can't tell "right status, wrong body" apart from correct. Fixed the route, gave `404.html` a stable id, and added the missing response-body check (plus `/signup` coverage) to `scripts/smoke-test-deployment.sh` so this class of bug can't silently recur.
+- Closed a real security-invariant gap: `protect_booking_update()`'s guard checked `customer_id`/`listing_id`/`total_cost`/`booking_status` but not `created_at`, despite README documenting the trigger as blocking all of those — a signed-in customer could have backdated their own booking's timestamp via a direct API call. Added `created_at` to the same check, plus a new live test.
+- Fixed an intermittent ~10% flake in `page-login.test.mjs`, reproduced by an independent review running the full suite 21 times: a fixed one-tick wait after dispatching the login form's submit event raced against the async handler under load. Replaced with a poll-based wait for the actual expected end-state.
+- One more instance of the recurring seed-availability-slot-aging bug, caught by the daily scheduled check and fixed same-day (see 2026-09-04's entry for the earlier instances of this same class).
+- Several rounds of doc-accuracy fixes as this and the prior day's fixes kept shifting the real numbers out from under the prose describing them — README's total-test-count claim moved 191 → 193 → 197 → 198 over two days purely from tests being added elsewhere, a live demonstration of why an independent review process is worth running repeatedly rather than once: `cleanup-deployments.sh`'s schedule claim, `known-issues.test.mjs`'s stale description of the (by-then-fixed) `safety_team` issue, and this file itself missing an entry for a day's work — twice — were all doc drift, not code defects.
+- Test suite: 144 → 144 unit tests (unchanged; the day's new tests were all Tier 2, live-database checks), 198 total across all three tiers (144 + 20 + 34).
+
 ## 2026-09-04 — Self-service sign-up, closing the live safety_team exposure, four fresh-eyes fix rounds
 
 - Added a real sign-up path (`signup.html`/`page-signup.js`) — until today the only way into the app was one of four fixed demo accounts. `handle_new_customer_signup` (new Postgres trigger) provisions the matching `customers`/`customer_profiles` rows the instant `auth.signUp()` creates the `auth.users` row.
