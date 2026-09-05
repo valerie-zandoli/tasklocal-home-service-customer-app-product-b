@@ -7,14 +7,16 @@
 // network, or offline). Bump CACHE_NAME when the app shell's file list
 // below changes, so clients pick up the new set instead of serving a stale
 // mix of old and new files.
-const CACHE_NAME = "tasklocal-shell-v3";
+const CACHE_NAME = "tasklocal-shell-v4";
 
 const APP_SHELL = [
   "index.html",
   "login.html",
+  "signup.html",
   "listings.html",
   "listing.html",
   "bookings.html",
+  "404.html",
   "css/styles.css",
   "js/config.js",
   "js/register-sw.js",
@@ -26,6 +28,7 @@ const APP_SHELL = [
   "js/demo-users.js",
   "js/page-index.js",
   "js/page-login.js",
+  "js/page-signup.js",
   "js/page-listings.js",
   "js/page-listing.js",
   "js/page-bookings.js",
