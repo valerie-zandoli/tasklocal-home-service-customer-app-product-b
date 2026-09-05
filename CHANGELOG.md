@@ -11,7 +11,8 @@ Milestone-level summary, not a commit-by-commit mirror — `git log` already is 
 - Fixed a real bug the daily scheduled data-integrity check caught same-day: three seed availability slots had aged into the past across three mirrored data files.
 - Two rounds of independent fresh-eyes review immediately followed the fix pass, each finding and closing one real, new problem per round: (1) an unescaped `booking_id` reaching a DOM attribute on the My Bookings page (self-XSS, RLS-scoped — CodeQL `js/xss-through-dom`); (2) `signUp()`'s mock-mode path storing a real visitor's actual password as plaintext in browser storage (CodeQL `js/clear-text-storage-of-sensitive-data`) — now hashed; (3) the sign-up confirmation message was nested inside the form element hidden on success, so it silently disappeared along with the form on the exact path a real sign-up normally takes, given this project's Supabase instance sends real confirmation emails.
 - Smaller fixes: screen-reader announcements (`aria-live`) on the listings search results and empty state, a real branded 404 page (the routing already pointed at one; the file didn't exist), a three-major-version-stale GitHub Action pin corrected.
-- Test suite: 123 → 142 unit tests (all passing), ~191 total across all three tiers.
+- Test suite: 123 → 144 unit tests (all passing). A further fresh-eyes review found the Tier 2/3 totals README quoted had been wrong for a while, not just stale from today — corrected to a precise, directly-verified 198 across all three tiers (144 + 20 + 34), rather than the "~191"/"~193" estimates two different sections of README previously, and inconsistently, gave.
+- `frontend/sw.js`'s offline precache list was missing today's two new pages (`signup.html`, `404.html`) and `page-signup.js` — found by the same review; added.
 
 ## 2026-09-03 — Accessibility consolidation + suite-wide audit follow-through
 
