@@ -273,3 +273,24 @@ test("alex.rivera's session no longer carries Trust & Safety reviewer access (sa
       `the safety_team role fix may have regressed.`
   );
 });
+
+// Found by an independent review on 2026-09-05: protect_booking_update()'s
+// IF guard checked customer_id/listing_id/total_cost/booking_status but not
+// created_at, despite README documenting the trigger as blocking all of
+// those -- a signed-in customer could have backdated their own booking's
+// timestamp via a direct PATCH. Closed by adding created_at to the same IF.
+test("a signed-in customer cannot backdate their own booking's created_at via a raw PATCH", async () => {
+  const mine = await rest("GET", `bookings?select=booking_id,created_at&customer_id=eq.${taylor.customerId}&limit=1`, {
+    token: taylorToken,
+  });
+  assert.ok(mine.data.length > 0, "need at least one of Taylor's own bookings for this check");
+  const { booking_id, created_at } = mine.data[0];
+
+  const { status, data } = await rest("PATCH", `bookings?booking_id=eq.${booking_id}`, {
+    token: taylorToken,
+    body: { created_at: "2000-01-01T00:00:00Z" },
+    prefer: "return=representation",
+  });
+  assert.notEqual(status, 200, `expected the backdate attempt to be rejected; got ${status}: ${JSON.stringify(data)}`);
+  assert.notEqual(created_at, "2000-01-01T00:00:00Z", "sanity check: this booking wasn't already dated 2000-01-01");
+});

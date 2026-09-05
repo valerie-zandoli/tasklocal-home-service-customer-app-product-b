@@ -132,6 +132,7 @@ begin
        or new.listing_id is distinct from old.listing_id
        or new.total_cost is distinct from old.total_cost
        or new.booking_status is distinct from old.booking_status
+       or new.created_at is distinct from old.created_at
     then
       raise exception 'Customers may only update the rating on an existing booking.';
     end if;
