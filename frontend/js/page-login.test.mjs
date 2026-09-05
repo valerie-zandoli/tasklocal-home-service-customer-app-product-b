@@ -44,6 +44,27 @@ function navigationWasAttempted(jsdomErrors) {
   return jsdomErrors.some((e) => /navigation/i.test(e.message));
 }
 
+// A flat `await new Promise((r) => setTimeout(r, 0))` after dispatching the
+// form's 'submit' event waits exactly one macrotask tick for the async
+// handler to settle -- correct in isolation, but found live (2026-09-05, an
+// independent review) to flake intermittently (~10% of runs) specifically
+// when this file runs alongside the other 15 in one `node --test` invocation
+// (each file is its own OS process -- confirmed directly -- so this isn't
+// cross-file global pollution; the most likely remaining explanation is
+// event-loop/scheduler pressure from 15 sibling processes occasionally
+// pushing that one queued macrotask later than a single fixed tick assumes).
+// Polling for the actual expected end-state removes the race entirely,
+// regardless of the precise mechanism, instead of just picking a longer
+// fixed delay that would only make the flake rarer, not impossible.
+async function waitFor(conditionFn, { timeout = 500, interval = 5 } = {}) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    if (conditionFn()) return;
+    await new Promise((r) => setTimeout(r, interval));
+  }
+  throw new Error(`waitFor() timed out after ${timeout}ms waiting for its condition to become true`);
+}
+
 test("attempts a redirect immediately if a session already exists", async () => {
   const { jsdomErrors } = setupDom();
   sessionStorage.setItem(
@@ -87,8 +108,9 @@ test("submitting valid demo credentials logs in and attempts to navigate to list
   document.getElementById("email").value = user.email;
   document.getElementById("password").value = user.password;
   document.getElementById("login-form").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
-  // login() (api.js) is async before the redirect attempt.
-  await new Promise((r) => setTimeout(r, 0));
+  // login() (api.js) is async before the redirect attempt -- wait for its
+  // actual, observable effect rather than a fixed tick count.
+  await waitFor(() => sessionStorage.getItem(SESSION_KEY) !== null);
 
   const stored = JSON.parse(sessionStorage.getItem(SESSION_KEY));
   assert.equal(stored.email, user.email);
@@ -107,7 +129,7 @@ test("submitting the wrong password shows an error and does not navigate", async
   document.getElementById("password").value = "definitely-the-wrong-password";
   const submitBtn = document.querySelector("button[type=submit]");
   document.getElementById("login-form").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
-  await new Promise((r) => setTimeout(r, 0));
+  await waitFor(() => document.getElementById("error-text").textContent !== "");
 
   assert.match(document.getElementById("error-text").textContent, /incorrect/i);
   assert.equal(sessionStorage.getItem(SESSION_KEY), null);
