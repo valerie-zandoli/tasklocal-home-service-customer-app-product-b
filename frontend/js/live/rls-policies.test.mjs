@@ -253,3 +253,23 @@ test("a signed-in customer cannot rate a booking that isn't completed yet", asyn
   });
   assert.notEqual(status, 200, `expected the premature rating to be rejected; got ${status}: ${JSON.stringify(data)}`);
 });
+
+// Moved here from known-issues.test.mjs on 2026-09-04, once fixed -- this was
+// the deliberately-failing KNOWN LIVE ISSUE test from 2026-09-02 through
+// today: alex.rivera@example.com carried a Trust & Safety `safety_team` role
+// (found by this exact check, when three ordinary customer-isolation tests
+// above originally used her and failed instead of Jordan/Taylor). Confirmed
+// live that her `app_metadata.role` claim is now cleared
+// (backend/sql/fix-alex-rivera-safety-team-role.sql, applied 2026-09-04) --
+// this now belongs as a normal, permanently-passing regression test alongside
+// the other customer-isolation checks above, not as a known, tracked failure.
+test("alex.rivera's session no longer carries Trust & Safety reviewer access (safety_team role cleared 2026-09-04)", async () => {
+  const { data } = await rest("GET", "bookings?select=customer_id", { token: alexToken });
+  const otherCustomers = data.filter((r) => r.customer_id !== alex.customerId);
+  assert.deepEqual(
+    otherCustomers,
+    [],
+    `alex.rivera@example.com can read ${otherCustomers.length} bookings belonging to other customers -- ` +
+      `the safety_team role fix may have regressed.`
+  );
+});
