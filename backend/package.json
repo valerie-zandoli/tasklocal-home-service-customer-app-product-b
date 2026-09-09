@@ -8,6 +8,6 @@
     "cleanup:live-tests": "node scripts/cleanup-live-test-data.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "2.112.4"
+    "@supabase/supabase-js": "2.115.0"
   }
 }
