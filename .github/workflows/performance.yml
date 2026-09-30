@@ -11,8 +11,8 @@ name: Performance trend
 # creep in page weight/load time between runs -- see performance.spec.mjs's
 # own comment on why a per-run number, not just pass/fail, is the point.
 on:
-  schedule:
-    - cron: "0 15 * * 1"
+  # Weekly schedule removed 2026-09-30: TaskLocal is paused and the runs
+  # only produced failure emails.  Run by hand with workflow_dispatch.
   workflow_dispatch:
 
 permissions:
